@@ -37,17 +37,38 @@
                 height: 50px;
                 border-radius: 25px;
             }
-            body {
-                background: #FFEFBA;  /* fallback for old browsers */
-                background: -webkit-linear-gradient(to right, #FFFFFF, #FFEFBA);  /* Chrome 10-25, Safari 5.1-6 */
-                background: linear-gradient(to right, #FFFFFF, #FFEFBA); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-            }
         </style>
 	</head>
 	<body>
-        <a href="{% url 'register' %}">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="/">
+					<img src="https://www.cmu.edu/brand/downloads/assets/images/seal-r-600x600-min.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
+					<span id="id_name_of_site">Group buying</span>
+				</a>
+	
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav ml-auto">
+						{% block navBar %}
+						<li class="nav-item dropdown">
+							<a id="id_show_nav_button" class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Signed In As <span id="id_logged_in_user_name">Username</span>
+							</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+							  	<a id="id_nav_global_stream" class="dropdown-item" href="/">Global Stream</a>
+							  	<a id="id_nav_follower_stream" class="dropdown-item" href="/">Follower Stream</a>
+								<a id="id_nav_profile" class="dropdown-item" href="/">My Profile</a>
+								<a id="id_nav_logout" class="dropdown-item" href="/">Logout</a>
+							</div>
+						</li>
+						{% endblock %}
+					</ul>
+				</div>
+			</div>
+		</nav>
+        <!-- <a href="{% url 'register' %}">
             <button class='top_button' id='id_register_link'>Register</button>
-        </a>
+        </a> -->
 		<div class="container">
             <h1 class="mb-10 font-weight-normal text-center mx-auto">
 				<span id="id_name_of_page">Login</span>
@@ -86,7 +107,8 @@
         <br>
         <div class="row">
             <p class="text-muted mx-auto">&copy; 2020 CMU team23</p>
-        </div>
+        </div>            
+        <script async>(function(w, d) { w.CollectId = "5e7a409f4657ea409772bf2f"; var h = d.head || d.getElementsByTagName("head")[0]; var s = d.createElement("script"); s.setAttribute("type", "text/javascript"); s.setAttribute("src", "https://collectcdn.com/launcher.js"); h.appendChild(s); })(window, document);</script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	</body>
