@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'groupbuying'
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'team23.urls'
+
+# Used by the authentication system for the private-todo-list application.
+# URL to use if the authentication system requires a user to log in.
+LOGIN_URL = '/groupbuying/login'
+
+# Default URL to redirect to after a user logs in.
+LOGIN_REDIRECT_URL = '/groupbuying/'
 
 TEMPLATES = [
     {
@@ -105,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'US/Eastern'
 
 USE_I18N = True
 
@@ -118,3 +126,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'groupbuying/images/')

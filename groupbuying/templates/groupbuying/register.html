@@ -1,0 +1,30 @@
+{% block top-button %}
+    <a href="{% url 'login' %}">
+        <button class='top_button' id='id_login_link'>Login</button>
+    </a>
+{% endblock %}
+
+{% block content %}
+    <p><span id="id_name_of_page">Register on social network master</span></p>
+    <form method="post" action="{% url 'register' %}">
+        <table>
+            {% for field in form.visible_fields %}
+                <tr>
+                    <td>{{field.label_tag}}</td>
+                    <td>{{field}}</td>
+                    <td class="error">
+                        {% for error in field.errors %} {{error}} {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% csrf_token %}
+        <button type="submit" id='id_register_button' class='button'>Register</button>
+    </form>
+    {% for error in form.non_field_errors %}
+        <p class="error">
+            {{ error }}
+        </p>
+    {% endfor %}
+
+{% endblock %}
