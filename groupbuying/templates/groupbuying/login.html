@@ -18,9 +18,13 @@ Login
 <br>
 <div class="row">
     <div class="col-4 mx-auto">
-        <form method="post" action="{% url 'login' %}" class="form-group text-center">
+        <form method="post" action="{% url 'login' %}" class="text-center">
             <table>
-                {{form}}
+                {% for entry in form %}
+                <div class="form-group">
+                  {{entry}}
+                </div>
+                {% endfor %}
             </table>
             {% csrf_token %}
             <br>
