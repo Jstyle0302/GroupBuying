@@ -43,16 +43,16 @@ class LoginForm(forms.Form):
         return cleaned_data
 
 class RegistrationForm(forms.Form):
-    username = forms.CharField(max_length=50)
-    password  = forms.CharField(max_length=200, widget = forms.PasswordInput())
+    username = forms.CharField(label="",max_length=50,widget = forms.TextInput(attrs={'placeholder': 'Username', 'class':'form-control', 'id':'id_username'}))
+    password  = forms.CharField(label="",max_length=200, widget = forms.PasswordInput(attrs={'placeholder': 'Password', 'class':'form-control', 'id':'id_password'}))
     confirm_password  = forms.CharField(max_length = 200, 
-                                 label='Confirm password',
-                                 widget = forms.PasswordInput())
-    first_name = forms.CharField(max_length=20)
-    last_name  = forms.CharField(max_length=20)
-    email      = forms.CharField(max_length=50, widget = forms.EmailInput())
-    cell_phone = forms.CharField(max_length=16, widget = forms.NumberInput())
-    address    = forms.CharField(required=False, max_length=200)
+                                 label="",
+                                 widget = forms.PasswordInput(attrs={'placeholder': 'Confirm password', 'class':'form-control', 'id':'id_password2'}))
+    first_name = forms.CharField(label="",max_length=20,widget = forms.TextInput(attrs={'placeholder': 'First name', 'class':'form-control', 'id':'id_firstname'}))
+    last_name  = forms.CharField(label="",max_length=20,widget = forms.TextInput(attrs={'placeholder': 'Last name', 'class':'form-control', 'id':'id_lastname'}))
+    email      = forms.CharField(label="",max_length=50, widget = forms.EmailInput(attrs={'placeholder': 'E-mail', 'class':'form-control', 'id':'id_email'}))
+    cell_phone = forms.CharField(label="",max_length=16, widget = forms.NumberInput(attrs={'placeholder': 'Cell phone', 'class':'form-control', 'id':'id_phone'}))
+    address    = forms.CharField(label="",required=False, max_length=200,widget = forms.TextInput(attrs={'placeholder': 'Address', 'class':'form-control', 'id':'id_address'}))
 
     # Customizes form validation for properties that apply to more
     # than one field.  Overrides the forms.Form.clean function.

@@ -1,30 +1,54 @@
-{% block top-button %}
-    <a href="{% url 'login' %}">
-        <button class='top_button' id='id_login_link'>Login</button>
-    </a>
+{% extends "groupbuying/base.html" %}
+
+{% block navBar %}
+<li><a id="id_register_link" class="nav-item nav-link" href="{% url 'login' %}">Log In</a></li>
+{% endblock %}
+
+{% block pageName %}
+Register
 {% endblock %}
 
 {% block content %}
-    <p><span id="id_name_of_page">Register on social network master</span></p>
-    <form method="post" action="{% url 'register' %}">
-        <table>
-            {% for field in form.visible_fields %}
-                <tr>
-                    <td>{{field.label_tag}}</td>
-                    <td>{{field}}</td>
-                    <td class="error">
-                        {% for error in field.errors %} {{error}} {% endfor %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        {% csrf_token %}
-        <button type="submit" id='id_register_button' class='button'>Register</button>
-    </form>
-    {% for error in form.non_field_errors %}
-        <p class="error">
-            {{ error }}
-        </p>
-    {% endfor %}
-
+<div class="row">
+    <h1 class="mb-3 font-weight-normal text-center mx-auto">
+      <span id="id_name_of_page">Register</span>
+    </h1>
+</div>
+<div class="row justify-content-center">
+    <div class="col-4">
+        <form method="post" action="{% url 'register' %}" class="text-center">
+            <table>
+                {% for entry in form.visible_fields %}
+                <div class="form-group">
+                  {{entry}}
+                </div>
+                {% endfor %}
+            </table>
+            {% csrf_token %}
+            <button class="btn btn-lg btn-primary btn-block" type="submit" id="id_login_button">Submit</button>
+        </form>
+    </div>
+    <div class="divider align-items-center"></div>
+    <div class="col-4">
+      <div class="row align-items-center">
+        <div class="col">
+          <!-- Facebook -->
+        <a href="/account/provider/facebook" title="Facebook" class="btn btn-block btn-social btn-facebook">
+          <i class="fa fa-facebook"></i> Sign up with Facebook
+        </a>
+        <br>
+        <!-- Google -->
+        <a href="/account/provider/google" title="Google" class="btn btn-block btn-social btn-google">
+          <i class="fa fa-google"></i> Sign up with Google
+        </a>
+        </div>
+      </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<div class="row">
+    <p class="text-muted mx-auto">&copy; 2020 Spring, CMU Web development, team 23</p>
+</div>
 {% endblock %}
