@@ -1,0 +1,22 @@
+migrations
+*.log
+*.pot
+*.pyc
+local_settings.py
+
+# Editor backup files
+*~
+*#
+
+# Django's SQL Lite Database File
+db.sqlite3
+
+# Django generated migrations
+0*.py
+
+# Image files (so we don't put into the repo demo files uploaded when this app was run)
+
+# MacOS index file
+.DS_Store
+
+.vscode/
