@@ -1,115 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" integrity="sha384-v8BU367qNbs/aIZIxuivaU55N5GPF89WBerHoGA4QTcbUjYiLQtKdrfXnqAcXyTv" crossorigin="anonymous">
-        <script src="https://kit.fontawesome.com/c00d132968.js" crossorigin="anonymous"></script>
-        <link rel="icon" sizes="32x32" href="https://www.cmu.edu/brand/downloads/assets/images/seal-r-600x600-min.jpg" type="image/png"/>
-        <style>
-            .divider {
-                width: 1px;
-                opacity: .8;
-                background-color: #858f96;
-                margin: 0 71px;
-            }
-            .bg1 {
-                background-color: #3b5998;
-            }
-            .bg2 {
-                background-color: #1da1f2;
-            }
-            .btn-login-with {
-                font-family: Oswald-Medium;
-                font-size: 16px;
-                color: #fff;
-                line-height: 1.2;
-                display: -webkit-box;
-                display: -webkit-flex;
-                display: -moz-box;
-                display: -ms-flexbox;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 100%;
-                height: 50px;
-                border-radius: 25px;
-            }
-        </style>
-	</head>
-	<body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
-			<div class="container-fluid">
-				<a class="navbar-brand" href="/">
-					<img src="https://www.cmu.edu/brand/downloads/assets/images/seal-r-600x600-min.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
-					<span id="id_name_of_site">Group buying</span>
-				</a>
-	
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav ml-auto">
-						{% block navBar %}
-						<li class="nav-item dropdown">
-							<a id="id_show_nav_button" class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								Signed In As <span id="id_logged_in_user_name">Username</span>
-							</a>
-							<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-							  	<a id="id_nav_global_stream" class="dropdown-item" href="/">Global Stream</a>
-							  	<a id="id_nav_follower_stream" class="dropdown-item" href="/">Follower Stream</a>
-								<a id="id_nav_profile" class="dropdown-item" href="/">My Profile</a>
-								<a id="id_nav_logout" class="dropdown-item" href="/">Logout</a>
-							</div>
-						</li>
-						{% endblock %}
-					</ul>
-				</div>
-			</div>
-		</nav>
-        <!-- <a href="{% url 'register' %}">
-            <button class='top_button' id='id_register_link'>Register</button>
-        </a> -->
-		<div class="container">
-            <h1 class="mb-10 font-weight-normal text-center mx-auto">
-				<span id="id_name_of_page">Login</span>
-            </h1>
+{% extends "groupbuying/base.html" %}
+
+{% block navBar %}
+<li><a id="id_register_link" class="nav-item nav-link" href="{% url 'register' %}">Sign Up</a></li>
+{% endblock %}
+
+{% block pageName %}
+Login
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <h1 class="mb-3 font-weight-normal text-center mx-auto">
+      <span id="id_name_of_page">Login</span>
+    </h1>
+</div>
+<br>
+<br>
+<div class="row">
+    <div class="col-4 mx-auto">
+        <form method="post" action="{% url 'login' %}" class="form-group text-center">
+            <table>
+                {{form}}
+            </table>
+            {% csrf_token %}
             <br>
-            <br>
-			<div class="row justify-content-md-center mt-auto">
-                <div class="col-4 mx-auto">
-                    <form method="post" action="{% url 'login' %}" class="form-group text-center">
-                        <table>
-                            {{form}}
-                        </table>
-                        {% csrf_token %}
-                        <br>
-                        <button class="btn btn-lg btn-primary btn-block" type="submit" id="id_login_button">Submit</button>
-                        <br>
-                    </form>
-                </div>
-                <div class="divider">
-                </div>
-                <div class="col-4 mx-auto align-items-center">
-                    <a href="#" class="btn-login-with bg1">
-                        <i class="fab fa-facebook"></i>
-                        Login with Facebook
-                    </a>
-                    <br>
-                    <a href="#" class="btn-login-with bg2">
-                        <i class="fab fa-google"></i>
-                        Login with Google
-                    </a>
-                </div>
-			</div>
-        </div>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" id="id_login_button">Submit</button>
+        </form>
+    </div>
+    <div class="divider">
+    </div>
+    <div class="col-4 mx-auto align-items-center">
+        <a href="#" class="btn-login-with bg1">
+          <i class="fab fa-facebook"></i>
+          Login with Facebook
+        </a>
         <br>
-        <br>
-        <br>
-        <div class="row">
-            <p class="text-muted mx-auto">&copy; 2020 CMU team23</p>
-        </div>            
-        <script async>(function(w, d) { w.CollectId = "5e7a409f4657ea409772bf2f"; var h = d.head || d.getElementsByTagName("head")[0]; var s = d.createElement("script"); s.setAttribute("type", "text/javascript"); s.setAttribute("src", "https://collectcdn.com/launcher.js"); h.appendChild(s); })(window, document);</script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	</body>
-</html>
+        <a href="#" class="btn-login-with bg2">
+          <i class="fab fa-google"></i>
+          Login with Google
+        </a>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<div class="row">
+    <p class="text-muted mx-auto">&copy; 2020 Spring, CMU Web development, team 23</p>
+</div>
+{% endblock %}
