@@ -37,6 +37,11 @@
                 height: 50px;
                 border-radius: 25px;
             }
+            body {
+                background: #FFEFBA;  /* fallback for old browsers */
+                background: -webkit-linear-gradient(to right, #FFFFFF, #FFEFBA);  /* Chrome 10-25, Safari 5.1-6 */
+                background: linear-gradient(to right, #FFFFFF, #FFEFBA); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            }
         </style>
 	</head>
 	<body>
@@ -44,46 +49,44 @@
             <button class='top_button' id='id_register_link'>Register</button>
         </a>
 		<div class="container">
-            <h1 class="mb-3 font-weight-normal text-center mx-auto">
+            <h1 class="mb-10 font-weight-normal text-center mx-auto">
 				<span id="id_name_of_page">Login</span>
-			</h1>
-			<div class="row justify-content-md-center">
+            </h1>
+            <br>
+            <br>
+			<div class="row justify-content-md-center mt-auto">
                 <div class="col-4 mx-auto">
-                    <!--<form action="/login" method="POST" class="form-group text-center">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="YL0EH7lNxpouN4rME9Ip49Mjhad0vLaI2o3BKtYJYdoiHhWWUFTQqfRLf1fexz4j">
-                        <tr><th></th><td><input type="text" name="username" placeholder="Username" class="form-control" id="id_username" maxlength="20" required></td></tr>
-                <tr><th></th><td><input type="password" name="password" placeholder="Password" class="form-control" id="id_password" maxlength="200" required></td></tr>
+                    <form method="post" action="{% url 'login' %}" class="form-group text-center">
+                        <table>
+                            {{form}}
+                        </table>
+                        {% csrf_token %}
                         <br>
-                        <button class="btn btn-lg btn-primary btn-block" type="submit" id="id_login_button">Sign in</button>
+                        <button class="btn btn-lg btn-primary btn-block" type="submit" id="id_login_button">Submit</button>
                         <br>
-                        <p class="text-muted">&copy; 2020 Cheng-chieh Lin</p>
-                    </form>-->
-                <form method="post" action="{% url 'login' %}">
-                    <table>
-                        {{form}}
-                    </table>
-                    {% csrf_token %}
-                    <button type="submit" id='id_login_button'>Submit</button>
-                </form>
-                
+                    </form>
                 </div>
                 <div class="divider">
                 </div>
-                <div class="col-4 mx-auto">
-                    <div>
-						<a href="#" class="btn-login-with bg1 m-b-20">
-                            <i class="fab fa-facebook"></i>
-							Login with Facebook
-						</a>
-
-						<a href="#" class="btn-login-with bg2">
-							<i class="fab fa-google"></i>
-							Login with Google
-						</a>
-					</div>
+                <div class="col-4 mx-auto align-items-center">
+                    <a href="#" class="btn-login-with bg1">
+                        <i class="fab fa-facebook"></i>
+                        Login with Facebook
+                    </a>
+                    <br>
+                    <a href="#" class="btn-login-with bg2">
+                        <i class="fab fa-google"></i>
+                        Login with Google
+                    </a>
                 </div>
 			</div>
-		</div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="row">
+            <p class="text-muted mx-auto">&copy; 2020 CMU team23</p>
+        </div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	</body>

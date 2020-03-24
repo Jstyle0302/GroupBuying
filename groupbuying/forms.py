@@ -22,8 +22,8 @@ class UserForm(forms.ModelForm):
         return picture
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length = 20) # id = id_username
-    password = forms.CharField(max_length = 200, widget = forms.PasswordInput())
+    username = forms.CharField(max_length = 20, widget = forms.TextInput(attrs={'placeholder': 'Username', 'class':'form-control', 'id':'id_username'})) # id = id_username
+    password = forms.CharField(max_length = 200, widget = forms.PasswordInput(attrs={'placeholder': 'Password','class':'form-control', 'id':'id_password'}))
 
     # Customizes form validation for properties that apply to more
     # than one field.  Overrides the forms.Form.clean function.
