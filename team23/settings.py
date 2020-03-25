@@ -29,7 +29,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+# To install social_django: pip install social-auth-app-django
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
