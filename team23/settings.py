@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'groupbuying'
+    'groupbuying',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'team23.urls'
@@ -55,9 +57,9 @@ ROOT_URLCONF = 'team23.urls'
 # Used by the authentication system for the private-todo-list application.
 # URL to use if the authentication system requires a user to log in.
 LOGIN_URL = '/groupbuying/login'
-
-# Default URL to redirect to after a user logs in.
 LOGIN_REDIRECT_URL = '/groupbuying/'
+LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = '/groupbuying/login'
 
 TEMPLATES = [
     {
@@ -70,6 +72,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -107,6 +111,31 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# OAuth
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+SOCIAL_AUTH_FACEBOOK_KEY = '253633395666195'  # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET = '11b458518cb2ac6f149c8ebcccaaa8f1'  # App Secret
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_link'] # add this
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {       # add this
+  'fields': 'id, name, email, picture.type(large), link'
+}
+SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [                 # add this
+    ('name', 'name'),
+    ('email', 'email'),
+    ('picture', 'picture'),
+    ('link', 'profile_url'),
+]
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '358416296068-m78dk091jidcdd3qv5qo7os9mf0avpte.apps.googleusercontent.com' # Google Consumer Key
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'CJKJ5HwBSRKqzZQxbqxuf4aX' # Google Consumer Secret
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -120,7 +149,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

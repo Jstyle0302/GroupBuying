@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 from . import views
 
@@ -8,6 +9,8 @@ urlpatterns = [
     path('logout', views.logout_action, name='logout'),
     path('register', views.register_action, name='register'),
     path('global', views.global_stream, name='global'),
+    url(r'oauth/', include('social_django.urls', namespace='social')),
+
     # path('follower', views.follower_stream, name='follower'),
     # path('follow_user/<int:follower_id>', views.follow_user, name='follow_user'),
     # path('unfollow_user/<int:follower_id>', views.unfollow_user, name='unfollow_user'),
