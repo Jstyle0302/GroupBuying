@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'groupbuying',
     'social_django',
+    'sslserver',
 ]
 
 MIDDLEWARE = [
