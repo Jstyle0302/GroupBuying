@@ -20,10 +20,10 @@ from groupbuying.models import UserItem
 # Create your views here.
 
 #@ensure_csrf_cookie
-@login_required
-def global_stream(request):
-    #context = {}
-    return render(request, 'groupbuying/base.html')
+# @login_required
+def home_page(request):
+    context = {}
+    return render(request, 'groupbuying/home.html',context)
 
 def login_action(request):
     context = {}

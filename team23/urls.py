@@ -19,7 +19,7 @@ from groupbuying import views
 
 urlpatterns = [
     # path('', views.global_stream),
-    path('', views.global_stream),
+    # path('', views.home_page),
     path('admin/', admin.site.urls),
     path('groupbuying/', include('groupbuying.urls')),
 ]

@@ -4,11 +4,11 @@ from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('', views.global_stream, name='home'),
+    path('', views.home_page, name='home'),
     path('login', views.login_action, name='login'),
     path('logout', views.logout_action, name='logout'),
     path('register', views.register_action, name='register'),
-    path('global', views.global_stream, name='global'),
+    path('global', views.home_page, name='global'),
     url(r'oauth/', include('social_django.urls', namespace='social')),
 
     # path('follower', views.follower_stream, name='follower'),
