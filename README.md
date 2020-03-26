@@ -12,4 +12,5 @@ How to run groupbuying
 
 (Optional for https)
 1. pip install django-sslserver
-2. python manage.py runsslserver
+2. add 'sslserver' in INSTALLED_APPS in setting.py
+3. python manage.py runsslserver
