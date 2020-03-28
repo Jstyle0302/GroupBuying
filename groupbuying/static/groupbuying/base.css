@@ -8,3 +8,6 @@
     background-image: url(https://static.toiimg.com/photo/72023714.cms);
     background-size: 100%;
 }
+.checked {
+  color: orange;
+}
