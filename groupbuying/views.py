@@ -27,6 +27,8 @@ def home_page(request):
 
 def search_page(request):
     context = {}
+    context['pages'] = range(1,10)
+    context['current_page'] = 1
     context['categories'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
     context['restaurants'] = []
     restaurant1 = {
