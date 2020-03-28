@@ -55,7 +55,20 @@ Shops
     </div>
   </div>
   <div class="col-9">
-    <h3 class="text-uppercase">Restaurants</h3>
+    <h3 class="text-uppercase">Restaurants<span class="float-right">
+        <div class="btn-group mb-2">
+          <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
+            data-toggle="search_order" aria-haspopup="true" aria-expanded="false">
+            Sort by
+          </button>
+          <div class="dropdown-menu" aria-labelledby="search_order">
+            <a class="dropdown-item" href="#">Name</a>
+            <a class="dropdown-item" href="#">Rating</a>
+            <a class="dropdown-item" href="#">Price</a>
+          </div>
+        </div>
+      </span>
+    </h3>
     <div id="restaurants-list">
       {% for restaurant in restaurants %}
       <div class="card mb-3" id="card_restaurant_{{ restaurant.id }}">
@@ -65,11 +78,11 @@ Shops
           </div>
           <div class="col-9">
             <div class="card-body">
-              <h3 class="card-title"><a id="id_restaurant_profile_{{ restaurant.id }}"
-                href="">{{ restaurant.name }}</a></h3>
+              <h3 class="card-title"><a id="id_restaurant_profile_{{ restaurant.id }}" href="">{{ restaurant.name }}</a>
+              </h3>
               <h5 class="card-subtitle mb-2">
                 <span>$ {{restaurant.price}}</span>&nbsp;
-              <!-- </h5>
+                <!-- </h5>
               <h5 class="card-subtitle mb-2"> -->
                 {% for j in '01234'|make_list %}
                 {% if forloop.counter <= restaurant.rating %}
@@ -80,14 +93,14 @@ Shops
                 {% endfor %}
               </h5>
               <h6 class="card-subtitle mb-2 text-muted">
-              {% for category in restaurant.categories%}
+                {% for category in restaurant.categories%}
                 <span>#{{category}} </span>
-              {% endfor %}
+                {% endfor %}
               </h6>
               <p class="card-text" id="id_restaurant_description_{{ restaurant.id }}">{{ restaurant.description }}</p>
-                <p>
-                  <a href="/" class="btn btn-primary">More Info</a>
-                </p>
+              <p>
+                <a href="/" class="btn btn-primary">More Info</a>
+              </p>
             </div>
           </div>
         </div>
