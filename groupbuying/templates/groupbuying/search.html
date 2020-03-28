@@ -9,39 +9,50 @@ Shops
 {% block content %}
 <div class="row">
   <div class="col-3">
-    <h3 class="pb-3 mb-4 font-italic border-bottom">Search Restaurants</h3>
-    <h4>Price</h4>
-    <div class="d-flex justify-content-center my-4">
-      <span class="font-weight-bold indigo-text mr-2 mt-1">0</span>
-      <form class="range-field form-group">
-        <input class="form-control-range" type="range" min="0" max="100" id="formControlRange">
-      </form>
-      <span class="font-weight-bold indigo-text ml-2 mt-1">100</span>
+    <div class="card">
+      <div class="card-body">
+        <h3 class="pb-3 mb-4 font-italic border-bottom">Search Restaurants</h3>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <h4>Price</h4>
+            <div class="d-flex justify-content-center my-4">
+              <span class="font-weight-bold indigo-text mr-2 mt-1">0</span>
+              <form class="range-field form-group">
+                <input class="form-control-range" type="range" min="0" max="100" id="formControlRange">
+              </form>
+              <span class="font-weight-bold indigo-text ml-2 mt-1">100</span>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <h4>Rating</h4>
+            {% for i in '01234'|make_list %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="star{{i}}">
+              {% for j in '01234'|make_list %}
+              {% if j <= i %}
+              <span class="fa fa-star checked"></span>
+              {%else%}
+              <span class="fa fa-star"></span>
+              {% endif %}
+              {% endfor %}
+              <br>
+            </div>
+            {% endfor %}
+          </li>
+          <li class="list-group-item">
+            <h4>Category</h4>
+            {%for category in categories%}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="category_{{fooloop.counter}}">
+              <label class="form-check-label" for="category_{{fooloop.counter}}">
+                {{category}}
+              </label>
+            </div>
+            {% endfor %}
+          </li>
+        </ul>
+      </div>
     </div>
-    <h4>Rating</h4>
-    {% for i in '01234'|make_list %}
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="star{{i}}">
-      {% for j in '01234'|make_list %}
-        {% if j <= i %}
-        <span class="fa fa-star checked"></span>
-        {%else%}
-        <span class="fa fa-star"></span>
-        {% endif %}
-      {% endfor %}
-      <br>
-      </div>
-    {% endfor %}
-    
-    <h4>Category</h4>
-    {%for category in categories%}
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="category_{{fooloop.counter}}">
-        <label class="form-check-label" for="category_{{fooloop.counter}}">
-          {{category}}
-        </label>
-      </div>
-    {% endfor %}
   </div>
   <div class="col-9">
     <p>Restaurants card</p>
