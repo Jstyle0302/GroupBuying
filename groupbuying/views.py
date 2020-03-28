@@ -25,6 +25,10 @@ def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html',context)
 
+def search_page(request):
+    context = {}
+    return render(request, 'groupbuying/search.html',context)
+    
 def login_action(request):
     context = {}
 
