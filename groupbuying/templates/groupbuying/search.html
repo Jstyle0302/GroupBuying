@@ -32,6 +32,16 @@ Shops
       <br>
       </div>
     {% endfor %}
+    
+    <h4>Category</h4>
+    {%for category in categories%}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="category_{{fooloop.counter}}">
+        <label class="form-check-label" for="category_{{fooloop.counter}}">
+          {{category}}
+        </label>
+      </div>
+    {% endfor %}
   </div>
   <div class="col-9">
     <p>Restaurants card</p>

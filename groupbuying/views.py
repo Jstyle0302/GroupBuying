@@ -27,7 +27,7 @@ def home_page(request):
 
 def search_page(request):
     context = {}
-    context['category'] = ['Drinks','Appetizer','Snake','Fast-food']
+    context['categories'] = ['Drinks','Appetizer','Snake','Fast-food']
     return render(request, 'groupbuying/search.html',context)
     
 def login_action(request):
