@@ -11,10 +11,10 @@ Shops
   <div class="col-3">
     <div class="card">
       <div class="card-body">
-        <h3 class="pb-3 mb-4 font-italic border-bottom">Search Restaurants</h3>
+        <h4 class="pb-3 mb-4 font-italic border-bottom">Search Restaurants</h4>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
-            <h4>Price</h4>
+            <h5>Price</h5>
             <div class="d-flex justify-content-center my-4">
               <span class="font-weight-bold indigo-text mr-2 mt-1">0</span>
               <form class="range-field form-group">
@@ -24,7 +24,7 @@ Shops
             </div>
           </li>
           <li class="list-group-item">
-            <h4>Rating</h4>
+            <h5>Rating</h5>
             {% for i in '01234'|make_list %}
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="" id="star{{i}}">
@@ -40,7 +40,7 @@ Shops
             {% endfor %}
           </li>
           <li class="list-group-item">
-            <h4>Category</h4>
+            <h5>Category</h5>
             {%for category in categories%}
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="" id="category_{{fooloop.counter}}">
@@ -56,6 +56,44 @@ Shops
   </div>
   <div class="col-9">
     <p>Restaurants card</p>
+    <div id="restaurants-list">
+      {% for restaurant in restaurants %}
+      <div class="card mb-3" id="card_restaurant_{{ restaurant.id }}">
+        <div class="row no-gutters">
+          <div class="col-3 align-self-center">
+            <img src="{{restaurant.image}}" class="card-img px-1 rounded mx-auto" alt="{{ restaurant.name }}">
+          </div>
+          <div class="col-9">
+            <div class="card-body">
+              <h3 class="card-title"><a id="id_restaurant_profile_{{ restaurant.id }}"
+                href="">{{ restaurant.name }}</a></h3>
+              <h5 class="card-subtitle mb-2">
+                <span>$ {{restaurant.price}}</span>&nbsp;
+              <!-- </h5>
+              <h5 class="card-subtitle mb-2"> -->
+                {% for j in '01234'|make_list %}
+                {% if forloop.counter <= restaurant.rating %}
+                <span class="fa fa-star checked"></span>
+                {%else%}
+                <span class="fa fa-star"></span>
+                {% endif %}
+                {% endfor %}
+              </h5>
+              <h6 class="card-subtitle mb-2 text-muted">
+              {% for category in restaurant.categories%}
+                <span>#{{category}} </span>
+              {% endfor %}
+              </h6>
+              <p class="card-text" id="id_restaurant_description_{{ restaurant.id }}">{{ restaurant.description }}</p>
+                <p>
+                  <a href="/" class="btn btn-primary">More Info</a>
+                </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock %}

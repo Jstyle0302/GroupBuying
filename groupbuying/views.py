@@ -27,7 +27,38 @@ def home_page(request):
 
 def search_page(request):
     context = {}
-    context['categories'] = ['Drinks','Appetizer','Snake','Fast-food']
+    context['categories'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
+    context['restaurants'] = []
+    restaurant1 = {
+        'id': 1,
+        'name': 'Starbucks',
+        'description': 'Starbucks was established in 1971 by three local businessmen to sell high quality whole beans coffee. In 1981 when Howard Schultz visited the store he plan to build a strong company and expand high quality coffee business with the name of Starbucks.',
+        'image': "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png",
+        'categories': ['Drinks','Snack'],
+        'rating': 4,
+        'price' : 5
+    }
+    restaurant2 = {
+        'id': 2,
+        'name': 'Pandas Express',
+        'description': 'Panda Express is a fast food restaurant chain which serves American Chinese cuisine. With over 2,200 locations, it is the largest Asian segment restaurant chain in the United States, where it was founded and is mainly located (in addition to other countries and territories in North America and Asia).',
+        'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png",
+        'categories': ['Lunch','Dinner'],
+        'rating': 5,
+        'price' : 12
+    }
+    restaurant3 = {
+        'id': 3,
+        'name': 'Mcdonald',
+        'description': 'McDonalds.com is your hub for everything McDonald\'s. Find out more about our menu items and promotions today!',
+        'image': "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/McDonald%27s_Golden_Arches.svg/1200px-McDonald%27s_Golden_Arches.svg.png",
+        'categories': ['Fast-food'],
+        'rating': 2,
+        'price' : 7
+    }
+    context['restaurants'].append(restaurant1)
+    context['restaurants'].append(restaurant2)
+    context['restaurants'].append(restaurant3)
     return render(request, 'groupbuying/search.html',context)
     
 def login_action(request):
