@@ -16,7 +16,9 @@ var btn = document.getElementById("myBtn");
 var span = document.getElementsByClassName("close")[0];
 
 // When the user clicks on the button, open the modal
-$("i").click(function(){
+$("i").click(function(e){
+    var target = $(e.target);
+    // console.log(target)
     modalContext.append(getModal())
     modal.style.display = "block";
 });
@@ -24,14 +26,14 @@ $("i").click(function(){
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
   modal.style.display = "none";
-  modalContext.remove();
+  modalContext.empty();
 }
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
   if (event.target == modal) {
     modal.style.display = "none";
-    modalContext.remove();
+    modalContext.empty();
   }
 }
 
