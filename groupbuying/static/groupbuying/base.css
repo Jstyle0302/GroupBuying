@@ -12,11 +12,11 @@
   color: orange;
 }
 
-#menu-tabContent .list-group-item:hover {
+#menu-tabContent .menu .list-group-item:hover {
   background-color: #E9E9E9;
 }
 
-#menu-tabContent .active {
+#menu-tabContent .menu .active {
   background-color: #E9E9E9;
 }
 
