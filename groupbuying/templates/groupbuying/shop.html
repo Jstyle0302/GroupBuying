@@ -50,11 +50,11 @@ Shops
               </div>
             </div>
           </div>
-          <div class="card menu">
+          <div class="card">
             <div class="card-body">
               <ul class="list-group list-group-flush">
                 {% for dish,dish_info in dishes.items %}
-                <li class="list-group-item">
+                <li class="list-group-item menu">
                   <div class="row no-gutters">
                     <div class="col-3 align-self-center">
                       <img src="{{dish_info.image}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
@@ -66,12 +66,39 @@ Shops
                   </div>
                 </li>
                 {% endfor %}
+                <li class="list-group-item">
+                  <h4 class="card-title">Add an new {{category}}</h4>
+                  <form>
+                    <div class="form-row">
+                      <div class="form-group col-6">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Name">
+                      </div>
+                      <div class="form-group col-6">
+                        <label for="price">Price</label>
+                        <input type="text" class="form-control" id="price" placeholder="Price">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="description">Description</label>
+                      <textarea class="form-control" id="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label for="image">Image</label>
+                      <input type="file" class="form-control-file" id="image">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </form>
+                </li>
               </ul>
             </div>
           </div>
         </div>
         {% endfor %}
       </div>
+    </div>
+    <div>
+      
     </div>
   </div>
   {% endblock %}
