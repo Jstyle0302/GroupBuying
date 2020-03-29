@@ -19,3 +19,7 @@
 #menu-tabContent .active {
   background-color: #E9E9E9;
 }
+
+.menu img {
+  object-fit: cover;
+}

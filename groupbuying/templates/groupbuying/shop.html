@@ -32,7 +32,7 @@ Shops
       </div>
     </div>
   </div>
-  <div class="col-9">
+  <div class="col-6">
     <div class="tab-content" id="menu-tabContent">
       {% for category,dishes in menu.items %}
       {% if forloop.counter == 1 %}
@@ -42,17 +42,32 @@ Shops
         <div class="tab-pane fade active" id="list-{{category}}" role="tabpanel"
           aria-labelledby="list-{{category}}-list">
           {% endif %}
-          <ul class="list-group list-group-flush">
-            {% for dish,dish_info in dishes.items %}
-            <li class="list-group-item">
-              {{dish}} {{dish_info}}
-            </li>
-            {% endfor %}
-          </ul>
+          <div class="card menu">
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                {% for dish,dish_info in dishes.items %}
+                <li class="list-group-item">
+                  <div class="row no-gutters">
+                    <div class="col-3 align-self-center">
+                      <img src="{{dish_info.image}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
+                    </div>
+                    <div class="col-9">
+                      <h4 class="card-title">{{ dish }}<span class="float-right"><h6>$ {{dish_info.price}}</h6></span></h4>
+                      <p class="card-text">{{ dish_info.description }}</p>
+                    </div>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
         </div>
         {% endfor %}
       </div>
     </div>
+  </div>
+  <div class="col-3">
+
   </div>
   {% endblock %}
 
