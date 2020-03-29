@@ -3,4 +3,4 @@ $('#list-menu a').on('click', function (e) {
     $(this).tab('show')
   })
 
-  alert("Hi")
+//   alert("Hi")

@@ -11,3 +11,11 @@
 .checked {
   color: orange;
 }
+
+#menu-tabContent .list-group-item:hover {
+  background-color: #E9E9E9;
+}
+
+#menu-tabContent .active {
+  background-color: #E9E9E9;
+}

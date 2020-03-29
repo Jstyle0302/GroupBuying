@@ -27,7 +27,7 @@ def home_page(request):
 
 def shop_page(request):
     context = {}
-    context['shop_name'] = "Starbuck"
+    context['shop_name'] = "Starbucks"
     context['menu'] = {
         'Coffee': {
             'Cappuccino':{

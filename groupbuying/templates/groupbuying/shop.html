@@ -15,34 +15,49 @@ Shops
         <div class="list-group list-group-flush text-center font-weight-bold" id="list-tab" role="tablist">
           {% for category in menu %}
           {% if forloop.counter == 1 %}
-          <a class="list-group-item list-group-item-action active" id="list-{{category}}-list" data-toggle="list" href="#list-{{category}}" role="tab" aria-controls="{{category}}"><h5>{{category}}</h5></a>
+          <a class="list-group-item list-group-item-action active" id="list-{{category}}-list" data-toggle="list"
+            href="#list-{{category}}" role="tab" aria-controls="{{category}}">
+            <h5>{{category}}</h5>
+          </a>
           {% else %}
-          <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="list" href="#list-{{category}}" role="tab" aria-controls="{{category}}"><h5>{{category}}</h5></a>
+          <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="list"
+            href="#list-{{category}}" role="tab" aria-controls="{{category}}">
+            <h5>{{category}}</h5>
+          </a>
           {% endif %}
           {% endfor %}
-          <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="list" href="/" role="tab" aria-controls="{{category}}"><i class="fas fa-plus"></i></a>
+          <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="list" href="/"
+            role="tab" aria-controls="{{category}}"><i class="fas fa-plus"></i></a>
         </div>
       </div>
     </div>
   </div>
   <div class="col-9">
-    <div class="tab-content" id="nav-tabContent">
-      {% for category in menu %}
+    <div class="tab-content" id="menu-tabContent">
+      {% for category,dishes in menu.items %}
       {% if forloop.counter == 1 %}
-      <div class="tab-pane fade show active" id="list-{{category}}" role="tabpanel" aria-labelledby="list-{{category}}-list">
-      {% else %}
-      <div class="tab-pane fade active" id="list-{{category}}" role="tabpanel" aria-labelledby="list-{{category}}-list">
-      {% endif %}
-        {{category}}
+      <div class="tab-pane fade show active" id="list-{{category}}" role="tabpanel"
+        aria-labelledby="list-{{category}}-list">
+        {% else %}
+        <div class="tab-pane fade active" id="list-{{category}}" role="tabpanel"
+          aria-labelledby="list-{{category}}-list">
+          {% endif %}
+          <ul class="list-group list-group-flush">
+            {% for dish,dish_info in dishes.items %}
+            <li class="list-group-item">
+              {{dish}} {{dish_info}}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
   </div>
-</div>
-{% endblock %}
+  {% endblock %}
 
 
-{% block footer %}
-{% load static %}
-<script src="{% static 'groupbuying/shop.js' %}" type="text/javascript"></script>
-{% endblock %}
+  {% block footer %}
+  {% load static %}
+  <script src="{% static 'groupbuying/shop.js' %}" type="text/javascript"></script>
+  {% endblock %}
