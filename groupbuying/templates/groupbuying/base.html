@@ -31,6 +31,9 @@
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav ml-auto">
 						{% block navBar %}
+						<form class="form-inline my-2 my-lg-0">
+							<input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+						</form>
 						<li class="nav-item dropdown">
 							<a id="id_show_nav_button" class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								Signed In As <span id="id_logged_in_user_name">{{user.first_name}} {{user.last_name}}</span>
@@ -76,6 +79,5 @@
 		<!-- Chatbot embeded source -->
 		<script
   async>(function (w, d) { w.CollectId = "5e7a409f4657ea409772bf2f"; var h = d.head || d.getElementsByTagName("head")[0]; var s = d.createElement("script"); s.setAttribute("type", "text/javascript"); s.setAttribute("src", "https://collectcdn.com/launcher.js"); h.appendChild(s); })(window, document);</script>
-
 	</body>
 </html>

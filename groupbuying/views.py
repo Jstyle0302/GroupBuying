@@ -25,6 +25,37 @@ def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html',context)
 
+def shop_page(request):
+    context = {}
+    context['shop_name'] = "Starbuck"
+    context['menu'] = {
+        'Coffee': {
+            'Cappuccino':{
+                'price': 5,
+                'image': '',
+                'description': ''
+            },
+            'Cold brew':{
+                'price': 6,
+                'image': '',
+                'description': ''
+            }
+        },
+        'Tea':{
+            'Green Tea':{
+                'price': 4,
+                'image': '',
+                'description': ''
+            },
+            'Chai Latte':{
+                'price': 4.5,
+                'image': '',
+                'description': ''
+            }
+        }
+    }
+    return render(request, 'groupbuying/shop.html',context)
+
 def search_page(request):
     context = {}
     context['pages'] = range(1,10)

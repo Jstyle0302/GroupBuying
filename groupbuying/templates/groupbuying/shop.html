@@ -1,0 +1,48 @@
+{% extends "groupbuying/base.html" %}
+
+{% block pageName %}
+Shops
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-3">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="pb-3 mb-4 font-italic border-bottom">{{shop_name}}</h4>
+        <div class="list-group list-group-flush text-center font-weight-bold" id="list-tab" role="tablist">
+          {% for category in menu %}
+          {% if forloop.counter == 1 %}
+          <a class="list-group-item list-group-item-action active" id="list-{{category}}-list" data-toggle="list" href="#list-{{category}}" role="tab" aria-controls="{{category}}"><h5>{{category}}</h5></a>
+          {% else %}
+          <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="list" href="#list-{{category}}" role="tab" aria-controls="{{category}}"><h5>{{category}}</h5></a>
+          {% endif %}
+          {% endfor %}
+          <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="list" href="/" role="tab" aria-controls="{{category}}"><i class="fas fa-plus"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-9">
+    <div class="tab-content" id="nav-tabContent">
+      {% for category in menu %}
+      {% if forloop.counter == 1 %}
+      <div class="tab-pane fade show active" id="list-{{category}}" role="tabpanel" aria-labelledby="list-{{category}}-list">
+      {% else %}
+      <div class="tab-pane fade active" id="list-{{category}}" role="tabpanel" aria-labelledby="list-{{category}}-list">
+      {% endif %}
+        {{category}}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block footer %}
+{% load static %}
+<script src="{% static 'groupbuying/shop.js' %}" type="text/javascript"></script>
+{% endblock %}
