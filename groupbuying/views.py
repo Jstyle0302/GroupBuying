@@ -24,63 +24,71 @@ from functools import reduce
 
 # Create your views here.
 
+
 #@ensure_csrf_cookie
 # @login_required
 def home_page(request):
     context = {}
-    return render(request, 'groupbuying/home.html',context)
+    return render(request, 'groupbuying/home.html', context)
+
 
 def shop_page(request):
     context = {}
     context['shop_name'] = "Starbucks"
     context['menu'] = {
         'Coffee': {
-            'Cappuccino':{
+            'Cappuccino': {
                 'price': 5,
                 'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
                 'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
             },
-            'Cold brew':{
+            'Cold brew': {
                 'price': 6,
                 'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
                 'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
             }
         },
-        'Tea':{
-            'Green Tea':{
+        'Tea': {
+            'Green Tea': {
                 'price': 4,
                 'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
                 'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
             },
-            'Chai Latte':{
+            'Chai Latte': {
                 'price': 4.5,
                 'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
                 'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
             }
         }
     }
-    return render(request, 'groupbuying/shop.html',context)
+    return render(request, 'groupbuying/shop.html', context)
+
 
 def category_proc(obj):
     tag_tmp = (obj.tagList.split(','))
     tag_tmp = list(filter(None, tag_tmp))
     return tag_tmp
 
+
 def rating_proc(obj):
-    avg_rating = Rating.objects.values('ratedTarget').annotate(avg_rating=Avg('rating')).order_by('ratedTarget')
-    
-    if not avg_rating.filter(ratedTarget = int(obj.id)):
+    avg_rating = Rating.objects.values('ratedTarget').annotate(
+        avg_rating=Avg('rating')).order_by('ratedTarget')
+
+    if not avg_rating.filter(ratedTarget=int(obj.id)):
         #default rating
         return 3
     else:
-        return float(avg_rating.filter(ratedTarget = int(obj.id))[0]['avg_rating'])
+        return float(
+            avg_rating.filter(ratedTarget=int(obj.id))[0]['avg_rating'])
+
 
 def search_text_proc(search_text):
     search_result = VendorInfo.objects.filter(Q(name__contains=search_text) \
     | Q(address__contains=search_text) | Q(tagList__contains=search_text))
-    
-    return  search_result
-    
+
+    return search_result
+
+
 def fill_restaurant_info(obj):
     restaurant = {}
     restaurant['id'] = int(obj.id)
@@ -88,166 +96,191 @@ def fill_restaurant_info(obj):
     restaurant['description'] = str(obj.description)
     ## tag/category
     restaurant['categories'] = category_proc(obj)
-    #rating 
+    #rating
     restaurant['rating'] = rating_proc(obj)
 
     ## TBD
     restaurant['price'] = 5
-    restaurant['image'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
-    
+    restaurant[
+        'image'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
+
     return restaurant
+
 
 def fill_restaurant_context_info(search_result, search_text):
     context = {}
-    context['pages'] = range(1,10)
+    context['pages'] = range(1, 10)
     context['current_page'] = 1
     context['restaurants'] = []
     context['categories'] = []
     context['last_search_text'] = search_text
     context['rating'] = []
-    
+
     for obj in search_result:
-      restaurant = fill_restaurant_info(obj)
-      context['restaurants'].append(restaurant)
-      
-      context['rating'].append(restaurant['rating'])
-    
+        restaurant = fill_restaurant_info(obj)
+        context['restaurants'].append(restaurant)
+
+        context['rating'].append(restaurant['rating'])
+
     #collect all categories
-    for obj in VendorInfo.objects.all(): 
+    for obj in VendorInfo.objects.all():
         context['categories'] = context['categories'] + category_proc(obj)
     context['categories'] = list(set(context['categories']))
-    context['categories'] =  sorted(context['categories'], key = lambda i: i.lower())
-    
+    context['categories'] = sorted(context['categories'],
+                                   key=lambda i: i.lower())
+
     return context
+
 
 def filtering(request):
     context = {}
     print('test\n')
     result = VendorInfo.objects.all()
-    
+
     result = filter_by_rating(request, result)
     result = filter_by_rating(request, result)
     result = filter_by_tag(request, result)
-    
+
     context = fill_restaurant_context_info(result, '')
-    
-    return render(request, 'groupbuying/search.html',context)  
+
+    return render(request, 'groupbuying/search.html', context)
+
 
 def filter_by_price(request, prev_result):
     if ('price_filter' in request.POST and request.POST['price_filter']):
         print('dummy\n')
-        
+
     return prev_result
+
 
 def filter_by_rating(request, prev_result):
     rating = -1
-    
-    if ('star0' in request.POST):    
+
+    if ('star0' in request.POST):
         rating = 1
-    if ('star1' in request.POST):    
+    if ('star1' in request.POST):
         rating = 2
-    if ('star2' in request.POST):    
+    if ('star2' in request.POST):
         rating = 3
-    if ('star3' in request.POST):    
+    if ('star3' in request.POST):
         rating = 4
-    if ('star4' in request.POST):    
+    if ('star4' in request.POST):
         rating = 5
     if (rating == -1):
         return prev_result
-    
-    avg_rating = Rating.objects.values('ratedTarget').annotate(avg_rating=Avg('rating')).order_by('ratedTarget')
+
+    avg_rating = Rating.objects.values('ratedTarget').annotate(
+        avg_rating=Avg('rating')).order_by('ratedTarget')
     avg_rating_filtered = avg_rating.filter(rating__gte=rating)
-    result = prev_result.filter(id__in = avg_rating_filtered.values('ratedTarget'))
-        
+    result = prev_result.filter(
+        id__in=avg_rating_filtered.values('ratedTarget'))
+
     return result
+
 
 def filter_by_tag(request, prev_result):
     all_tag = []
     result = VendorInfo.objects.none()
-    
-    for obj in VendorInfo.objects.all(): 
+
+    for obj in VendorInfo.objects.all():
         all_tag = all_tag + category_proc(obj)
     all_tag = list(set(all_tag))
-    
+
     fitler_tag = []
     for tag in all_tag:
         if tag in request.POST:
-            fitler_tag.append(tag)    
-    
+            fitler_tag.append(tag)
+
     if not fitler_tag:
         return prev_result
-        
-    query = reduce(operator.or_, (Q(tagList__contains = item) for item in fitler_tag))    
+
+    query = reduce(operator.or_,
+                   (Q(tagList__contains=item) for item in fitler_tag))
     result = prev_result.filter(query)
-    
+
     return result
-    
+
+
 def sorting(request):
     context = {}
-    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
-        return render(request, 'groupbuying/search.html',context)
+    if ('last_search_text' not in request.POST
+            or not request.POST['last_search_text']):
+        return render(request, 'groupbuying/search.html', context)
 
-    
     if ('sort_by_name' in request.POST):
         context = sort_by_name(request)
 
     if ('sort_by_rating' in request.POST):
         context = sort_by_rating(request)
-        
+
     if ('sort_by_price' in request.POST):
         context = sort_by_price(request)
-        
-    return render(request, 'groupbuying/search.html',context)    
-        
+
+    return render(request, 'groupbuying/search.html', context)
+
+
 def sort_by_name(request):
     context = {}
-    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
-        return render(request, 'groupbuying/search.html',context)
-    
-    search_result =  search_text_proc(request.POST['last_search_text'])
+    if ('last_search_text' not in request.POST
+            or not request.POST['last_search_text']):
+        return render(request, 'groupbuying/search.html', context)
+
+    search_result = search_text_proc(request.POST['last_search_text'])
     #ordered = sorted(search_result, key = lambda w: w.name.lower())
-    context = fill_restaurant_context_info(search_result, request.POST['last_search_text'])
-    context['restaurants'] =  sorted(context['restaurants'], key = lambda i: i['name'].lower())
-    
+    context = fill_restaurant_context_info(search_result,
+                                           request.POST['last_search_text'])
+    context['restaurants'] = sorted(context['restaurants'],
+                                    key=lambda i: i['name'].lower())
+
     return context
-    
+
+
 def sort_by_rating(request):
     context = {}
-    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
-        return render(request, 'groupbuying/search.html',context)
-    
-    search_result =  search_text_proc(request.POST['last_search_text'])
-    context = fill_restaurant_context_info(search_result, request.POST['last_search_text'])
-    context['restaurants'] =  sorted(context['restaurants'], key = lambda i: i['rating'], reverse = True) 
-    
+    if ('last_search_text' not in request.POST
+            or not request.POST['last_search_text']):
+        return render(request, 'groupbuying/search.html', context)
+
+    search_result = search_text_proc(request.POST['last_search_text'])
+    context = fill_restaurant_context_info(search_result,
+                                           request.POST['last_search_text'])
+    context['restaurants'] = sorted(context['restaurants'],
+                                    key=lambda i: i['rating'],
+                                    reverse=True)
+
     return context
+
 
 def sort_by_price(request):
-    context = {}    
-    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
-        return render(request, 'groupbuying/search.html',context)
+    context = {}
+    if ('last_search_text' not in request.POST
+            or not request.POST['last_search_text']):
+        return render(request, 'groupbuying/search.html', context)
     ##############TBD
-    search_result =  search_text_proc(request.POST['last_search_text'])
-    ordered = sorted(search_result, key = lambda w: w.name.lower())
-    context = fill_restaurant_context_info(ordered, request.POST['last_search_text'])
+    search_result = search_text_proc(request.POST['last_search_text'])
+    ordered = sorted(search_result, key=lambda w: w.name.lower())
+    context = fill_restaurant_context_info(ordered,
+                                           request.POST['last_search_text'])
 
     return context
-    
+
+
 def search_page(request):
     context = {}
     errors = []
-    
+
     if request.method == 'GET':
-        return render(request, 'groupbuying/search.html',context)
-        
+        return render(request, 'groupbuying/search.html', context)
+
     if ('search_text' not in request.POST or not request.POST['search_text']):
         errors.append('Empty text. Please must enter restaurant info.')
-        return render(request, 'groupbuying/search.html',context)
-    
-    search_result =  search_text_proc(request.POST['search_text'])
-    context = fill_restaurant_context_info(search_result, request.POST['search_text'])
+        return render(request, 'groupbuying/search.html', context)
 
-    return render(request, 'groupbuying/search.html',context)
+    search_result = search_text_proc(request.POST['search_text'])
+    context = fill_restaurant_context_info(search_result,
+                                           request.POST['search_text'])
+
+    return render(request, 'groupbuying/search.html', context)
     '''
     context['pages'] = range(1,10)
     context['current_page'] = 1
@@ -285,6 +318,8 @@ def search_page(request):
     context['restaurants'].append(restaurant3)
     return render(request, 'groupbuying/search.html',context)
     '''
+
+
 def login_action(request):
     context = {}
 
@@ -293,24 +328,26 @@ def login_action(request):
         context['form'] = LoginForm()
         return render(request, 'groupbuying/login.html', context)
 
-    # Creates a bound form from the request POST parameters and makes the 
+    # Creates a bound form from the request POST parameters and makes the
     # form available in the request context dictionary.
     form = LoginForm(request.POST)
     context['form'] = form
-    
+
     # Validates the form.
     if not form.is_valid():
         return render(request, 'groupbuying/login.html', context)
 
     new_user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
-    
+
     login(request, new_user)
     return redirect(reverse('home'))
+
 
 def logout_action(request):
     logout(request)
     return redirect(reverse('login'))
+
 
 def register_action(request):
     context = {}
@@ -320,7 +357,7 @@ def register_action(request):
         context['form'] = RegistrationForm()
         return render(request, 'groupbuying/register.html', context)
 
-    # Creates a bound form from the request POST parameters and makes the 
+    # Creates a bound form from the request POST parameters and makes the
     # form available in the request context dictionary.
     form = RegistrationForm(request.POST)
     context['form'] = form
@@ -330,18 +367,19 @@ def register_action(request):
         return render(request, 'groupbuying/register.html', context)
 
     # At this point, the form data is valid.  Register and login the user.
-    new_user = User.objects.create_user(username=form.cleaned_data['username'], 
-                                        password=form.cleaned_data['password'],
-                                        email=form.cleaned_data['email'],
-                                        first_name=form.cleaned_data['first_name'],
-                                        last_name=form.cleaned_data['last_name'])
+    new_user = User.objects.create_user(
+        username=form.cleaned_data['username'],
+        password=form.cleaned_data['password'],
+        email=form.cleaned_data['email'],
+        first_name=form.cleaned_data['first_name'],
+        last_name=form.cleaned_data['last_name'])
     new_user.save()
 
     new_user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
 
     new_item = UserItem(user_id=new_user.id,
-                        user_name=form.cleaned_data['username'], 
+                        user_name=form.cleaned_data['username'],
                         email=form.cleaned_data['email'],
                         first_name=form.cleaned_data['first_name'],
                         last_name=form.cleaned_data['last_name'],

@@ -14,7 +14,6 @@ urlpatterns = [
     path('sorting', views.sorting, name='sorting'),
     path('filtering', views.filtering, name='filtering'),
 
-    
     # path('follower', views.follower_stream, name='follower'),
     # path('follow_user/<int:follower_id>', views.follow_user, name='follow_user'),
     # path('unfollow_user/<int:follower_id>', views.unfollow_user, name='unfollow_user'),
@@ -40,5 +39,5 @@ urlpatterns = [
     # path('create', views.create_action, name='create'),
 
     # path('delete/<int:id>', views.delete_action, name='delete'),
-    # path('edit/<int:id>', views.edit_action, name='edit'),    
+    # path('edit/<int:id>', views.edit_action, name='edit'),
 ]
