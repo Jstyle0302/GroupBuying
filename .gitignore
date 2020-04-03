@@ -1,8 +1,12 @@
 migrations
-__pycache__
 *.log
 *.pot
 *.pyc
+*.cpython-37.pyc
+*/*/*/__pycache__/
+*/*/__pycache__/
+*/__pycache__/
+
 local_settings.py
 
 # Editor backup files
@@ -21,3 +25,4 @@ db.sqlite3
 .DS_Store
 
 .vscode/
+team23/__pycache__/
