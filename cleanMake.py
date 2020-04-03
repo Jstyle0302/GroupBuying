@@ -19,5 +19,5 @@ if os.path.exists("./groupbuying/migrations"):
 else:
     print("groupbuying/migrations does not exist")
 
-os.system("python manage.py makemigrations")
+os.system("python manage.py makemigrations groupbuying")
 os.system("python manage.py migrate")
