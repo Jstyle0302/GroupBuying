@@ -1,0 +1,77 @@
+Step1:
+	delete team23\db.sqlite3
+	delete team23\groupbuying\migrations
+Step2: 
+	python3 manage.py makemigrations --empty groupbuying
+	python3 manage.py makemigrations
+	python3 manage.py migrate
+Step3:
+	python3 manage.py shell	
+Step4:
+    //copy and paste the whole following instructions
+	
+	from groupbuying.models import *
+	from django.db.models import Q
+	from django.db.models import Avg
+	
+	//dummy customer data
+	cust1 = CustomerInfo(name = 'charles', email = 'charles@ddd.edu.tw', address = 'cust1abc', phoneNum = '1234567')
+	cust1.save()
+	cust2 = CustomerInfo(name = 'andy', email = 'andy@ddd.edu.tw', address = 'cust1abc', phoneNum = '12345678')
+	cust2.save()
+	cust3 = CustomerInfo(name = 'fukc', email = 'fukc@ddd.edu.tw', address = 'cust1abc', phoneNum = '12345678')
+	cust3.save()
+	cust4 = CustomerInfo(name = 'pogger', email = 'pogger@ddd.edu.tw', address = 'cust1abc', phoneNum = '12345678')
+	cust4.save()
+
+	//dummy vendor(restaurant) data
+	v1 = VendorInfo(name = 'Starbucks1', description =  '11111'
+	 , email = 'aa@ddd.edu.tw', address = 'abc', phoneNum = '12345678')
+	v1.save()
+	v1.tagList += 'Drinks,'
+	v1.tagList += 'Snack,'
+	v1.save()
+	rating1 = Rating(rating = 1, rater = cust1, ratedTarget = v1)
+	rating1.save()
+	v1.save()
+
+
+	v2 = VendorInfo(name = 'Panda2', description =  '222222'
+	 , email = 'aa@ddd.edu.tw', address = 'abc', phoneNum = '12345678')
+	v2.save()
+	v2.tagList += 'Rice,'
+	v2.tagList += 'Noddle,'
+	v2.save()
+	rating2 = Rating(rating = 2, rater = cust2, ratedTarget = v2)
+	rating2.save()
+	v2.save()
+
+	v3 = VendorInfo(name = 'Starbucks3', description =  '333333'
+	 , email = 'aa@ddd.edu.tw', address = 'abc', phoneNum = '12345678')
+	v3.save()
+	v3.tagList += 'Drinks,'
+	v3.save()
+	rating3 = Rating(rating = 3, rater = cust3, ratedTarget = v3)
+	rating3.save()
+	v3.save()
+
+
+	v4 = VendorInfo(name = 'bambooshark', description =  'bbbcca'
+	 , email = 'aa@ddd.edu.tw', address = 'abc', phoneNum = '12345678')
+	v4.save()
+	v4.tagList += '18613'
+	v4.tagList += 'qq,'
+	v4.save()
+	rating4 = Rating(rating = 4, rater = cust4, ratedTarget = v4)
+	rating4.save()
+	v4.save()
+	
+	v5 = VendorInfo(name = 'aAappleBbBall', description =  'bbbcca'
+	 , email = 'aa@ddd.edu.tw', address = 'abc', phoneNum = '12345678')
+	v5.save()
+	v5.tagList += 'banana'
+	v5.tagList += 'apple,'
+	v5.save()
+	rating5 = Rating(rating = 5, rater = cust4, ratedTarget = v5)
+	rating5.save()
+	v5.save()

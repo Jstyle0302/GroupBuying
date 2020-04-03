@@ -13,43 +13,50 @@ Shops
       <div class="card-body">
         <h4 class="pb-3 mb-4 font-italic border-bottom">Search Restaurants</h4>
         <ul class="list-group list-group-flush">
+		<form method="post" action="{% url 'filtering' %}">
+		
           <li class="list-group-item">
             <h5>Price</h5>
             <div class="d-flex justify-content-center my-4">
               <span class="font-weight-bold indigo-text mr-2 mt-1">0</span>
-              <form class="range-field form-group">
-                <input class="form-control-range" type="range" min="0" max="100" id="formControlRange">
-              </form>
+              <!--<form class="range-field form-group"> -->
+                <input class="form-control-range" type="range" min="0" max="100" id="formControlRange" name="price_filter">
+              <!--</form> -->
               <span class="font-weight-bold indigo-text ml-2 mt-1">100</span>
             </div>
           </li>
+		  
           <li class="list-group-item">
             <h5>Rating</h5>
             {% for i in '01234'|make_list %}
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="star{{i}}">
-              {% for j in '01234'|make_list %}
-              {% if j <= i %}
-              <span class="fa fa-star checked"></span>
-              {%else%}
-              <span class="fa fa-star"></span>
-              {% endif %}
-              {% endfor %}
-              <br>
+				<input class="form-check-input" type="checkbox" value="" id="star{{i}}" name="star{{i}}">
+				{% for j in '01234'|make_list %}
+				{% if j <= i %}
+				<span class="fa fa-star checked"></span>
+				{%else%}
+				<span class="fa fa-star"></span>
+				{% endif %}
+				{% endfor %}
+				<br>
             </div>
             {% endfor %}
           </li>
+		  
           <li class="list-group-item">
             <h5>Category</h5>
             {%for category in categories%}
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="category_{{fooloop.counter}}">
+              <input class="form-check-input" type="checkbox" value="{{category}}" id="category_{{fooloop.counter}}" name="{{category}}">
               <label class="form-check-label" for="category_{{fooloop.counter}}">
                 {{category}}
               </label>
             </div>
             {% endfor %}
           </li>
+		  <input  type="submit" name="filter">
+		  {% csrf_token %}
+		  </form>
         </ul>
       </div>
     </div>
@@ -62,9 +69,13 @@ Shops
             Sort by
           </button>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="search_order">
-            <a class="dropdown-item" href="#">Name</a>
-            <a class="dropdown-item" href="#">Rating</a>
-            <a class="dropdown-item" href="#">Price</a>
+		  <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'sorting' %}">
+			<input type="hidden" name="last_search_text" value={{ last_search_text }}>
+			<button class="dropdown-item" type="submit" name="sort_by_name"  class="btn-link" >Name</button>
+            <button class="dropdown-item" type="submit" name="sort_by_rating"  class="btn-link" >Rating</button>
+            <button class="dropdown-item" type="submit" name="sort_by_price"  class="btn-link" >Price</button>
+			{% csrf_token %}
+          </form>
           </div>
         </div>
       </span>

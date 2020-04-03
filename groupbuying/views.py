@@ -1,4 +1,6 @@
 import json
+import operator
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
@@ -15,7 +17,10 @@ from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from groupbuying.forms import LoginForm, RegistrationForm, UserForm
-from groupbuying.models import UserItem
+from groupbuying.models import *
+from django.db.models import Q
+from django.db.models import Avg
+from functools import reduce
 
 # Create your views here.
 
@@ -56,8 +61,194 @@ def shop_page(request):
     }
     return render(request, 'groupbuying/shop.html',context)
 
+def category_proc(obj):
+    tag_tmp = (obj.tagList.split(','))
+    tag_tmp = list(filter(None, tag_tmp))
+    return tag_tmp
+
+def rating_proc(obj):
+    avg_rating = Rating.objects.values('ratedTarget').annotate(avg_rating=Avg('rating')).order_by('ratedTarget')
+    
+    if not avg_rating.filter(ratedTarget = int(obj.id)):
+        #default rating
+        return 3
+    else:
+        return float(avg_rating.filter(ratedTarget = int(obj.id))[0]['avg_rating'])
+
+def search_text_proc(search_text):
+    search_result = VendorInfo.objects.filter(Q(name__contains=search_text) \
+    | Q(address__contains=search_text) | Q(tagList__contains=search_text))
+    
+    return  search_result
+    
+def fill_restaurant_info(obj):
+    restaurant = {}
+    restaurant['id'] = int(obj.id)
+    restaurant['name'] = str(obj.name)
+    restaurant['description'] = str(obj.description)
+    ## tag/category
+    restaurant['categories'] = category_proc(obj)
+    #rating 
+    restaurant['rating'] = rating_proc(obj)
+
+    ## TBD
+    restaurant['price'] = 5
+    restaurant['image'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
+    
+    return restaurant
+
+def fill_restaurant_context_info(search_result, search_text):
+    context = {}
+    context['pages'] = range(1,10)
+    context['current_page'] = 1
+    context['restaurants'] = []
+    context['categories'] = []
+    context['last_search_text'] = search_text
+    context['rating'] = []
+    
+    for obj in search_result:
+      restaurant = fill_restaurant_info(obj)
+      context['restaurants'].append(restaurant)
+      
+      context['rating'].append(restaurant['rating'])
+    
+    #collect all categories
+    for obj in VendorInfo.objects.all(): 
+        context['categories'] = context['categories'] + category_proc(obj)
+    context['categories'] = list(set(context['categories']))
+    context['categories'] =  sorted(context['categories'], key = lambda i: i.lower())
+    
+    return context
+
+def filtering(request):
+    context = {}
+    print('test\n')
+    result = VendorInfo.objects.all()
+    
+    result = filter_by_rating(request, result)
+    result = filter_by_rating(request, result)
+    result = filter_by_tag(request, result)
+    
+    context = fill_restaurant_context_info(result, '')
+    
+    return render(request, 'groupbuying/search.html',context)  
+
+def filter_by_price(request, prev_result):
+    if ('price_filter' in request.POST and request.POST['price_filter']):
+        print('dummy\n')
+        
+    return prev_result
+
+def filter_by_rating(request, prev_result):
+    rating = -1
+    
+    if ('star0' in request.POST):    
+        rating = 1
+    if ('star1' in request.POST):    
+        rating = 2
+    if ('star2' in request.POST):    
+        rating = 3
+    if ('star3' in request.POST):    
+        rating = 4
+    if ('star4' in request.POST):    
+        rating = 5
+    if (rating == -1):
+        return prev_result
+    
+    avg_rating = Rating.objects.values('ratedTarget').annotate(avg_rating=Avg('rating')).order_by('ratedTarget')
+    avg_rating_filtered = avg_rating.filter(rating__gte=rating)
+    result = prev_result.filter(id__in = avg_rating_filtered.values('ratedTarget'))
+        
+    return result
+
+def filter_by_tag(request, prev_result):
+    all_tag = []
+    result = VendorInfo.objects.none()
+    
+    for obj in VendorInfo.objects.all(): 
+        all_tag = all_tag + category_proc(obj)
+    all_tag = list(set(all_tag))
+    
+    fitler_tag = []
+    for tag in all_tag:
+        if tag in request.POST:
+            fitler_tag.append(tag)    
+    
+    if not fitler_tag:
+        return prev_result
+        
+    query = reduce(operator.or_, (Q(tagList__contains = item) for item in fitler_tag))    
+    result = prev_result.filter(query)
+    
+    return result
+    
+def sorting(request):
+    context = {}
+    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
+        return render(request, 'groupbuying/search.html',context)
+
+    
+    if ('sort_by_name' in request.POST):
+        context = sort_by_name(request)
+
+    if ('sort_by_rating' in request.POST):
+        context = sort_by_rating(request)
+        
+    if ('sort_by_price' in request.POST):
+        context = sort_by_price(request)
+        
+    return render(request, 'groupbuying/search.html',context)    
+        
+def sort_by_name(request):
+    context = {}
+    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
+        return render(request, 'groupbuying/search.html',context)
+    
+    search_result =  search_text_proc(request.POST['last_search_text'])
+    #ordered = sorted(search_result, key = lambda w: w.name.lower())
+    context = fill_restaurant_context_info(search_result, request.POST['last_search_text'])
+    context['restaurants'] =  sorted(context['restaurants'], key = lambda i: i['name'].lower())
+    
+    return context
+    
+def sort_by_rating(request):
+    context = {}
+    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
+        return render(request, 'groupbuying/search.html',context)
+    
+    search_result =  search_text_proc(request.POST['last_search_text'])
+    context = fill_restaurant_context_info(search_result, request.POST['last_search_text'])
+    context['restaurants'] =  sorted(context['restaurants'], key = lambda i: i['rating'], reverse = True) 
+    
+    return context
+
+def sort_by_price(request):
+    context = {}    
+    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
+        return render(request, 'groupbuying/search.html',context)
+    ##############TBD
+    search_result =  search_text_proc(request.POST['last_search_text'])
+    ordered = sorted(search_result, key = lambda w: w.name.lower())
+    context = fill_restaurant_context_info(ordered, request.POST['last_search_text'])
+
+    return context
+    
 def search_page(request):
     context = {}
+    errors = []
+    
+    if request.method == 'GET':
+        return render(request, 'groupbuying/search.html',context)
+        
+    if ('search_text' not in request.POST or not request.POST['search_text']):
+        errors.append('Empty text. Please must enter restaurant info.')
+        return render(request, 'groupbuying/search.html',context)
+    
+    search_result =  search_text_proc(request.POST['search_text'])
+    context = fill_restaurant_context_info(search_result, request.POST['search_text'])
+
+    return render(request, 'groupbuying/search.html',context)
+    '''
     context['pages'] = range(1,10)
     context['current_page'] = 1
     context['categories'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
@@ -93,7 +284,7 @@ def search_page(request):
     context['restaurants'].append(restaurant2)
     context['restaurants'].append(restaurant3)
     return render(request, 'groupbuying/search.html',context)
-    
+    '''
 def login_action(request):
     context = {}
 

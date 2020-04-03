@@ -11,7 +11,10 @@ urlpatterns = [
     path('search', views.search_page, name='search'),
     path('shop', views.shop_page, name='shop'),
     url(r'oauth/', include('social_django.urls', namespace='social')),
+    path('sorting', views.sorting, name='sorting'),
+    path('filtering', views.filtering, name='filtering'),
 
+    
     # path('follower', views.follower_stream, name='follower'),
     # path('follow_user/<int:follower_id>', views.follow_user, name='follow_user'),
     # path('unfollow_user/<int:follower_id>', views.unfollow_user, name='unfollow_user'),

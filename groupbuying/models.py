@@ -25,7 +25,7 @@ class UserItem(models.Model):
 # pip install django-phonenumber-field
 # pip install phonenumbers
 from phonenumber_field.modelfields import PhoneNumberField 
-
+'''
 class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=200)
@@ -44,24 +44,25 @@ class CustomerInfo(models.Model):
     name = models.CharField(max_length=50) 
     email = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
-    phoneNum = PhoneNumberField()
+    phoneNum = models.CharField(max_length=16)
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
-        ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum.as_e164 )
+        ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
 
     
 class VendorInfo(models.Model):
     # VendorInfo.name is different from UserProefile.firstName or UserProefile.lastName, can be user name or vendor name
     name = models.CharField(max_length=50) 
+    description = models.CharField(max_length=500)
     email = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
-    phoneNum = PhoneNumberField()
+    phoneNum = models.CharField(max_length=16)
     tagList = models.CharField(max_length=200) 
     
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
-        ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum.as_e164 )
+        ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
 
 class Rating(models.Model):
     
@@ -105,4 +106,4 @@ class OrderBundle(models.Model):
     def __str__(self):
         return 'id=' + str(self.id) + ',buyer=' + self.buyer + ',num=' + self.num + \
         ',comment=' + str(self.comment) 
-'''    
+  

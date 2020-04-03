@@ -18,13 +18,15 @@ Login
         </div>
 
         <div class="col-md-6">
-          <form class="form-inline my-2 my-lg-0">
+          <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'search' %}">
             <input class="form-control form-control-lg mr-sm-0 col-8
                      border-right-0 " style="border-radius: 5px 0px 0px 5px; " type="search"
-              placeholder="What Do You Want To Eat?" aria-label="Search">
+              placeholder="What Do You Want To Eat?" aria-label="Search" name = "search_text">
 
             <button class="btn btn-light btn-lg my-2 my-sm-0 col-2 border-left-0"
               style="border-radius: 0px 5px 5px 0px;" type="submit"><i class="fas text-danger fa-search"></i></button>
+			  
+			{% csrf_token %}
           </form>
         </div>
       </div>
