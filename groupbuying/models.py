@@ -26,10 +26,10 @@ class UserItem(models.Model):
 
 
 '''
-# install the following packages if compile error with PhoneNumberField 
+# install the following packages if compile error with PhoneNumberField
 # pip install django-phonenumber-field
 # pip install phonenumbers
-from phonenumber_field.modelfields import PhoneNumberField 
+from phonenumber_field.modelfields import PhoneNumberField
 '''
 
 
@@ -45,11 +45,12 @@ class Product(models.Model):
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',description=' + self.description +  \
-        ',price=' + str(self.price) + ',seller_id=' + self.sellerId + ',isAvailable=' + str(self.isAvailable)
+            ',price=' + str(self.price) + ',seller_id=' + self.sellerId + ',isAvailable=' + str(self.isAvailable)
 
 
 class CustomerInfo(models.Model):
-    # CustomerInfo.name is different from UserProefile.firstName or UserProefile.lastName, can be user name or vendor name
+    # CustomerInfo.name is different from UserProefile.firstName or
+    # UserProefile.lastName, can be user name or vendor name
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
@@ -57,11 +58,12 @@ class CustomerInfo(models.Model):
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
-        ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
+            ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
 
 
 class VendorInfo(models.Model):
-    # VendorInfo.name is different from UserProefile.firstName or UserProefile.lastName, can be user name or vendor name
+    # VendorInfo.name is different from UserProefile.firstName or
+    # UserProefile.lastName, can be user name or vendor name
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=500)
     email = models.CharField(max_length=50)
@@ -71,7 +73,7 @@ class VendorInfo(models.Model):
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
-        ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
+            ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
 
 
 class Rating(models.Model):
@@ -88,9 +90,9 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return 'id=' + str(self.id) +  \
-        ', username="' + self.user.username + '"' \
-        ', first_name="' + self.user.first_name + '"' \
-        ', last_name="' + self.user.last_name + '"'
+            ', username="' + self.user.username + '"' \
+            ', first_name="' + self.user.first_name + '"' \
+            ', last_name="' + self.user.last_name + '"'
 
 
 class OrderUnit(models.Model):
@@ -109,8 +111,8 @@ class OrderUnit(models.Model):
                                     on_delete=models.CASCADE)
 
     def __str__(self):
-        return 'id=' + str(self.id) + ',buyer=' + self.buyer + ',num=' + self.num + \
-        ',comment=' + str(self.comment)
+        return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
+            ',num=' + self.num + ',comment=' + str(self.comment)
 
 
 class OrderBundle(models.Model):
@@ -118,5 +120,5 @@ class OrderBundle(models.Model):
     vendor = models.ForeignKey('VendorInfo', on_delete=models.CASCADE)
 
     def __str__(self):
-        return 'id=' + str(self.id) + ',buyer=' + self.buyer + ',num=' + self.num + \
-        ',comment=' + str(self.comment)
+        return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
+            ',num=' + self.num + ',comment=' + str(self.comment)

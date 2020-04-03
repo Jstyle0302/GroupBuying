@@ -25,7 +25,7 @@ from functools import reduce
 # Create your views here.
 
 
-#@ensure_csrf_cookie
+# @ensure_csrf_cookie
 # @login_required
 def home_page(request):
     context = {}
@@ -75,7 +75,7 @@ def rating_proc(obj):
         avg_rating=Avg('rating')).order_by('ratedTarget')
 
     if not avg_rating.filter(ratedTarget=int(obj.id)):
-        #default rating
+        # default rating
         return 3
     else:
         return float(
@@ -83,8 +83,8 @@ def rating_proc(obj):
 
 
 def search_text_proc(search_text):
-    search_result = VendorInfo.objects.filter(Q(name__contains=search_text) \
-    | Q(address__contains=search_text) | Q(tagList__contains=search_text))
+    search_result = VendorInfo.objects.filter(Q(name__contains=search_text) | Q(
+        address__contains=search_text) | Q(tagList__contains=search_text))
 
     return search_result
 
@@ -94,12 +94,12 @@ def fill_restaurant_info(obj):
     restaurant['id'] = int(obj.id)
     restaurant['name'] = str(obj.name)
     restaurant['description'] = str(obj.description)
-    ## tag/category
+    # tag/category
     restaurant['categories'] = category_proc(obj)
-    #rating
+    # rating
     restaurant['rating'] = rating_proc(obj)
 
-    ## TBD
+    # TBD
     restaurant['price'] = 5
     restaurant[
         'image'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
@@ -122,7 +122,7 @@ def fill_restaurant_context_info(search_result, search_text):
 
         context['rating'].append(restaurant['rating'])
 
-    #collect all categories
+    # collect all categories
     for obj in VendorInfo.objects.all():
         context['categories'] = context['categories'] + category_proc(obj)
     context['categories'] = list(set(context['categories']))
@@ -256,7 +256,7 @@ def sort_by_price(request):
     if ('last_search_text' not in request.POST
             or not request.POST['last_search_text']):
         return render(request, 'groupbuying/search.html', context)
-    ##############TBD
+    # TBD
     search_result = search_text_proc(request.POST['last_search_text'])
     ordered = sorted(search_result, key=lambda w: w.name.lower())
     context = fill_restaurant_context_info(ordered,
