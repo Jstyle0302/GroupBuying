@@ -1,4 +1,6 @@
-$('#list-menu a').on('click', function (e) {
+
+/* Start for shop.html */
+$('#list-tab a').on('click', function (e) {
     e.preventDefault()
     $(this).tab('show')
   })
@@ -62,3 +64,4 @@ function getModal() {
   return contextForm;
 }
 
+/* End for shop.html */
