@@ -106,6 +106,16 @@ def fill_restaurant_info(obj):
 
     return restaurant
 
+def get_all_tags():
+    all_tag = []
+
+    for obj in VendorInfo.objects.all():
+        all_tag = all_tag + category_proc(obj)
+
+    all_tag = list(set(all_tag))
+    all_tag = sorted(all_tag)
+
+    return all_tag
 
 def fill_restaurant_context_info(search_result, search_text):
     context = {}
@@ -115,29 +125,21 @@ def fill_restaurant_context_info(search_result, search_text):
     context['categories'] = []
     context['last_search_text'] = search_text
     context['rating'] = []
+    context['categories'] = get_all_tags()
 
     for obj in search_result:
         restaurant = fill_restaurant_info(obj)
         context['restaurants'].append(restaurant)
-
         context['rating'].append(restaurant['rating'])
-
-    # collect all categories
-    for obj in VendorInfo.objects.all():
-        context['categories'] = context['categories'] + category_proc(obj)
-    context['categories'] = list(set(context['categories']))
-    context['categories'] = sorted(context['categories'],
-                                   key=lambda i: i.lower())
 
     return context
 
 
 def filtering(request):
     context = {}
-    print('test\n')
-    result = VendorInfo.objects.all()
 
-    result = filter_by_rating(request, result)
+    result = VendorInfo.objects.all()
+    result = filter_by_price(request, result)
     result = filter_by_rating(request, result)
     result = filter_by_tag(request, result)
 
@@ -180,13 +182,11 @@ def filter_by_rating(request, prev_result):
 
 def filter_by_tag(request, prev_result):
     all_tag = []
-    result = VendorInfo.objects.none()
-
-    for obj in VendorInfo.objects.all():
-        all_tag = all_tag + category_proc(obj)
-    all_tag = list(set(all_tag))
-
     fitler_tag = []
+
+    result = VendorInfo.objects.none()
+    all_tag = get_all_tags()
+
     for tag in all_tag:
         if tag in request.POST:
             fitler_tag.append(tag)
