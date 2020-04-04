@@ -62,6 +62,14 @@ Shops
     </div>
   </div>
   <div class="col-9">
+    {% if restaurants is None %}
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Sorry for our dear customers</h1>
+        <p class="lead">Most of the restaurants are not ready, please come back to our website after some days.</p>
+      </div>
+    </div>
+    {% else %}
     <h3 class="text-uppercase">Restaurants<span class="float-right">
         <div class="btn-group mb-2">
           <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
@@ -108,7 +116,7 @@ Shops
               </h6>
               <p class="card-text" id="id_restaurant_description_{{ restaurant.id }}">{{ restaurant.description }}</p>
               <p>
-                <a href="/" class="btn btn-primary">More Info</a>
+                <a href="{% url 'shop' %}" class="btn btn-primary">More Info</a>
               </p>
             </div>
           </div>
@@ -139,6 +147,7 @@ Shops
         </li>
       </ul>
     </nav>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
