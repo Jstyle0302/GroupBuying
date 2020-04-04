@@ -70,24 +70,30 @@ Shops
                 {% endfor %}
                 <li class="list-group-item">
                   <h4 class="card-title">Add an new {{category}}</h4>
+                  {{ errors }}
+                  <form enctype="multipart/form-data" action="{% url 'add_product' %}" method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" class="btn btn-primary" value="Submit">
+                  </form>
                   <form>
                     <div class="form-row">
                       <div class="form-group col-6">
                         <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="Name">
+                        <input type="text" class="form-control" id="name" placeholder="Name" name="product_name">
                       </div>
                       <div class="form-group col-6">
                         <label for="price">Price</label>
-                        <input type="text" class="form-control" id="price" placeholder="Price">
+                        <input type="text" class="form-control" id="price" placeholder="Price" name="product_price">
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="description">Description</label>
-                      <textarea class="form-control" id="description" rows="3"></textarea>
+                      <textarea class="form-control" id="description" rows="3" name="product_description"></textarea>
                     </div>
                     <div class="form-group">
                       <label for="image">Image</label>
-                      <input type="file" class="form-control-file" id="image">
+                      <input type="file" class="form-control-file" id="image" name="product_image">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                   </form>

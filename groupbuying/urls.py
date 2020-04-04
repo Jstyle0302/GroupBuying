@@ -8,11 +8,14 @@ urlpatterns = [
     path('login', views.login_action, name='login'),
     path('logout', views.logout_action, name='logout'),
     path('register', views.register_action, name='register'),
-    path('search', views.search_page, name='search'),
-    path('shop', views.shop_page, name='shop'),
     url(r'oauth/', include('social_django.urls', namespace='social')),
+    # search features
+    path('search', views.search_page, name='search'),
     path('sorting', views.sorting, name='sorting'),
     path('filtering', views.filtering, name='filtering'),
+    # seller features
+    path('shop', views.shop_page, name='shop'),
+    path('add_product', views.add_product, name='add_product'),
 
     # path('follower', views.follower_stream, name='follower'),
     # path('follow_user/<int:follower_id>', views.follow_user, name='follow_user'),
