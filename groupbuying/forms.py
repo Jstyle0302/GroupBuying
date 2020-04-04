@@ -2,27 +2,31 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
-from groupbuying.models import UserItem
+from groupbuying.models import Product
 
 MAX_UPLOAD_SIZE = 2500000
 
 
-class UserForm(forms.ModelForm):
+class ProductForm(forms.ModelForm):
     class Meta:
-        model = UserItem
-        fields = ['profile_picture', 'bio_input_text']
+        model = Product
+        fields = ['name', 'price', 'description', 'image']
 
     def clean_picture(self):
-        picture = self.cleaned_data['profile_picture']
-        if not picture:
-            raise forms.ValidationError('You must upload a picture')
-        if not picture.content_type or not picture.content_type.startswith(
+        image = self.cleaned_data['image']
+        if not image:
+            raise forms.ValidationError('You must upload a image')
+        if not image.content_type or not image.content_type.startswith(
                 'image'):
             raise forms.ValidationError('File type is not image')
-        if picture.size > MAX_UPLOAD_SIZE:
+        if image.size > MAX_UPLOAD_SIZE:
             raise forms.ValidationError(
                 'File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
-        return picture
+        return image
+
+
+class ImageUploadForm(forms.Form):
+    image = forms.FileField()
 
 
 class LoginForm(forms.Form):

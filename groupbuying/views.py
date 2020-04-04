@@ -16,17 +16,16 @@ from django.utils.timezone import is_aware, make_aware
 from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from groupbuying.forms import LoginForm, RegistrationForm, UserForm
-from groupbuying.models import *
+from groupbuying.forms import LoginForm, RegistrationForm, ProductForm, ImageUploadForm
+from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle
 from django.db.models import Q
 from django.db.models import Avg
 from functools import reduce
 
-# Create your views here.
-
-
 # @ensure_csrf_cookie
 # @login_required
+
+
 def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
@@ -34,6 +33,7 @@ def home_page(request):
 
 def shop_page(request):
     context = {}
+    context['form'] = ProductForm()
     context['shop_name'] = "Starbucks"
     context['menu'] = {
         'Coffee': {
@@ -62,6 +62,72 @@ def shop_page(request):
         }
     }
     return render(request, 'groupbuying/shop.html', context)
+
+
+@login_required
+def add_product(request):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+    form = None
+    print(request.POST)
+
+    # if 'product_name' not in request.POST or not request.POST['product_name'] or \
+    #     'product_price' not in request.POST or not request.POST['product_price']:
+    #     errors.append('You must have at least "name and price" for the product')
+    # else:
+    #     new_product = Product(name=str(request.POST['product_name']),
+    #                         description=str(request.POST['product_description']),
+    #                         price=float(request.POST['product_price']),
+    #                         sellerId=str(request.user.id),
+    #                         isAvailable=True,
+    #                         saleVolume=0,
+    #                         vendor=request.user)
+
+    if 'name' not in request.POST or not request.POST['name'] or \
+            'price' not in request.POST or not request.POST['price']:
+        errors.append(
+            'You must have at least "name and price" for the product')
+    else:
+        new_product = Product(name=str(request.POST['name']),
+                              description=str(request.POST['description']),
+                              price=float(request.POST['price']),
+                              sellerId=str(request.user.id),
+                              isAvailable=True,
+                              saleVolume=0,
+                              vendor=request.user)
+
+        form = ProductForm(request.POST, request.FILES, instance=new_product)
+        # form = ImageUploadForm(request.POST, request.FILES)
+
+        if not form.is_valid():
+            print("form is NOT valid")
+            form = ProductForm()
+        else:
+            print("form is valid")
+            if 'product_picture' in request.FILES:
+                new_product.image = form.cleaned_data['image']
+                # new_product.image = form.cleaned_data['product_image']
+                # new_product.content_type = form.cleaned_data['product_picture'].content_type
+            # form.save()
+            context['message'] = 'Product #{0} saved.'.format(new_product.id)
+
+        new_product.save()
+
+    products = Product.objects.all()
+    context = {'products': products, 'form': form, 'errors': errors}
+    print(products)
+
+    return render(request, 'groupbuying/shop.html', context)
+    # return redirect(reverse('shop', kwargs=context))
+
+
+@login_required
+def get_product_photo(request, id):
+    product = get_object_or_404(Product, id=str(id))
+    if not product.picture:
+        raise Http404
+
+    return HttpResponse(product.picture, content_type=product.content_type)
 
 
 def category_proc(obj):
@@ -378,14 +444,15 @@ def register_action(request):
     new_user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
 
-    new_item = UserItem(user_id=new_user.id,
-                        user_name=form.cleaned_data['username'],
-                        email=form.cleaned_data['email'],
-                        first_name=form.cleaned_data['first_name'],
-                        last_name=form.cleaned_data['last_name'],
-                        cell_phone=form.cleaned_data['cell_phone'],
-                        address=form.cleaned_data['address'])
-    new_item.save()
+    # new_item = UserItem(user_id=new_user.id,
+    #                     user_name=form.cleaned_data['username'],
+    #                     email=form.cleaned_data['email'],
+    #                     first_name=form.cleaned_data['first_name'],
+    #                     last_name=form.cleaned_data['last_name'],
+    #                     cell_phone=form.cleaned_data['cell_phone'],
+    #                     address=form.cleaned_data['address'])
+    # new_item.save()
+
     login(request, new_user)
 
     return redirect(reverse('home'))
