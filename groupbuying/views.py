@@ -147,7 +147,7 @@ def add_product(request):
         target_category = Category.objects.filter(name=str(request.POST['current_category']))
         if (target_category):
             print(target_category)
-            new_product.category = target_category
+            new_product.category = target_category[0]
         else:
             new_product.category = None
             print("Cannot find the catrgory")
