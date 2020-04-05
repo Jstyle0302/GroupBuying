@@ -1,5 +1,6 @@
 import json
 import operator
+import math
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,6 +16,7 @@ from django.utils import timezone
 from django.utils.timezone import is_aware, make_aware
 from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.core.cache import cache
 
 from groupbuying.forms import LoginForm, RegistrationForm, ProductForm, ImageUploadForm
 from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle
@@ -24,7 +26,8 @@ from functools import reduce
 
 # @ensure_csrf_cookie
 # @login_required
-
+def PAGESIZE_CONSTANT():
+    return 2
 
 def home_page(request):
     context = {}
@@ -204,10 +207,9 @@ def get_all_tags():
 
     return all_tag
 
-def fill_restaurant_context_info(search_result, search_text):
+def fill_restaurant_context_info(search_result, search_text, page):
     context = {}
-    context['pages'] = range(1, 10)
-    context['current_page'] = 1
+
     context['restaurants'] = []
     context['categories'] = []
     context['query_rules'] = []
@@ -215,6 +217,15 @@ def fill_restaurant_context_info(search_result, search_text):
     context['rating'] = []
     context['categories'] = get_all_tags()
 
+    page_size = PAGESIZE_CONSTANT()
+    result_num = len(search_result)
+    page_num = math.ceil(result_num/page_size) + 1
+
+    context['pages'] = range(1, page_num)
+    context['page_size'] = page_size
+    context['current_page'] = page
+
+    search_result = search_result[(page-1)*PAGESIZE_CONSTANT():page*PAGESIZE_CONSTANT()]
     for obj in search_result:
         restaurant = fill_restaurant_info(obj)
         context['restaurants'].append(restaurant)
@@ -225,6 +236,24 @@ def fill_restaurant_context_info(search_result, search_text):
     
 
     return context
+
+def page(request, page):
+    context = {}
+    search_result = cache.get('search_result')
+    last_context = cache.get('context')
+    if not search_result or not last_context:
+        return render(request, 'groupbuying/search.html', context)
+
+    if ('last_search_text' not in last_context or not last_context['last_search_text']):
+        last_search_text = ''
+    else:
+        last_search_text = last_context['last_search_text']
+
+    
+    print(page)
+    context = fill_restaurant_context_info(search_result,
+                                          last_search_text, page)
+    return render(request, 'groupbuying/search.html', context)
 
 def fill_context_filter_query_rules(context, fitler_query):
     if fitler_query.rating != '':
@@ -254,10 +283,11 @@ def filtering(request):
     result, fitler_query.rating = filter_by_rating(request, result)
     result, fitler_query.tag = filter_by_tag(request, result)
      
-    context = fill_restaurant_context_info(result, search_text)
+    context = fill_restaurant_context_info(result, search_text, 1)
     context = fill_context_filter_query_rules(context, fitler_query)
 
-
+    cache.set('search_result', result)
+    cache.set('context',context)
     return render(request, 'groupbuying/search.html', context)
 
 
@@ -342,7 +372,7 @@ def sort_by_name(request):
     search_result = search_text_proc(request.POST['last_search_text'])
     #ordered = sorted(search_result, key = lambda w: w.name.lower())
     context = fill_restaurant_context_info(search_result,
-                                           request.POST['last_search_text'])
+                                           request.POST['last_search_text'], 1)
     context['restaurants'] = sorted(context['restaurants'],
                                     key=lambda i: i['name'].lower())
 
@@ -357,7 +387,7 @@ def sort_by_rating(request):
 
     search_result = search_text_proc(request.POST['last_search_text'])
     context = fill_restaurant_context_info(search_result,
-                                           request.POST['last_search_text'])
+                                           request.POST['last_search_text'], 1)
     context['restaurants'] = sorted(context['restaurants'],
                                     key=lambda i: i['rating'],
                                     reverse=True)
@@ -374,7 +404,7 @@ def sort_by_price(request):
     search_result = search_text_proc(request.POST['last_search_text'])
     ordered = sorted(search_result, key=lambda w: w.name.lower())
     context = fill_restaurant_context_info(ordered,
-                                           request.POST['last_search_text'])
+                                           request.POST['last_search_text'], 1)
 
     return context
 
@@ -391,10 +421,13 @@ def search_page(request):
         return render(request, 'groupbuying/search.html', context)
 
     search_result = search_text_proc(request.POST['search_text'])
+    cache.set('search_result',search_result)
+    page = 1
     context = fill_restaurant_context_info(search_result,
-                                           request.POST['search_text'])
+                                           request.POST['search_text'], page)
 
     
+    cache.set('context',context)
     return render(request, 'groupbuying/search.html', context)
     '''
     context['pages'] = range(1,10)
