@@ -20,10 +20,10 @@ Profile
             <div class="card-header">
                 Order Number: {{order_number}}, Order shop: {{shop}}, Order founder: {{founder}}
             </div>
-            {{ receipt }}
+            {% for order in receipt.orders %}
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <h5 class="card-title">Charles</h5>
+                    <h5 class="card-title">{{order.username}}</h5>
                     <table class="table">
                         <thead>
                             <tr>
@@ -32,33 +32,30 @@ Profile
                                 <th scope="col">Count</th>
                                 <th scope="col">Price</th>
                             </tr>
+                            <tbody>
+                                {% for item in order.order %}
+                                <tr>
+                                    <th scope="row">{{forloop.counter}}</th>
+                                    <td>{{item.product}}</td>
+                                    <td>{{item.count}}</td>
+                                    <td>{{item.price}}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <th scope="row">Total</th>
+                                    <td></td>
+                                    <td></td>
+                                    <td>{{order.total}}</td>
+                                </tr>
+                            </tbody>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Cold brew</td>
-                                <td>1</td>
-                                <td>5</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Cake</td>
-                                <td>1</td>
-                                <td>6</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Total</th>
-                                <td></td>
-                                <td></td>
-                                <td>11</td>
-                            </tr>
-                        </tbody>
                     </table>
                 </li>
             </ul>
+            {% endfor %}
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <h5 class="card-title">Summary</h5>
+                    <h3 class="card-title">Summary</h3>
                 <table class="table">
                     <thead>
                         <tr>
@@ -69,23 +66,19 @@ Profile
                         </tr>
                     </thead>
                     <tbody>
+                        {% for item in receipt.summary.order %}
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Cold brew</td>
-                            <td>1</td>
-                            <td>5</td>
+                            <th scope="row">{{forloop.counter}}</th>
+                            <td>{{item.product}}</td>
+                            <td>{{item.count}}</td>
+                            <td>{{item.price}}</td>
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Cake</td>
-                            <td>1</td>
-                            <td>6</td>
-                        </tr>
+                        {% endfor %}
                         <tr>
                             <th scope="row">Total</th>
                             <td></td>
-                            <td>2</td>
-                            <td>11</td>
+                            <td></td>
+                            <td class="bg-warning text-dark">{{receipt.summary.total}}</td>
                         </tr>
                     </tbody>
                 </table>

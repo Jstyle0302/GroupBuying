@@ -43,8 +43,45 @@ def order_page(request):
     context['receipt'] = {
         'orders' : [{
             'username': 'Charles',
-            'order': ['cake','coffee']
-        }]
+            'order': [{
+                'product': 'Cold Brew',
+                'count': 1,
+                'price': 5
+            },{
+                'product': 'Cheese Cake',
+                'count': 1,
+                'price': 6
+            }],
+            'total': 11
+        },{
+            'username': 'Shine',
+            'order': [{
+                'product': 'Milk Tea',
+                'count': 1,
+                'price': 7
+            },{
+                'product': 'Cheese Cake',
+                'count': 1,
+                'price': 6
+            }],
+            'total': 13
+        }],
+        'summary': {
+            'order': [{
+                'product': 'Cold Brew',
+                'count': 1,
+                'price': 5
+            },{
+                'product': 'Cheese Cake',
+                'count': 2,
+                'price': 12
+            },{
+                'product': 'Milk Tea',
+                'count': 1,
+                'price': 7
+            }],
+            'total': 24
+        }
     }
     return render(request, 'groupbuying/order.html', context)
 
