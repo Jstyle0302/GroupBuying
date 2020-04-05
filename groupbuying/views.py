@@ -109,11 +109,21 @@ def add_category(request):
         new_category.save()
 
     context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
+    context['products'] = None # empty page in the beginning
     context['errors'] = errors
     # context = {'categories': Category.objects.all(), 'products': Product.objects.all(), 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)
+
+
+@login_required
+def get_product_photo(request, product_id):
+    product = get_object_or_404(Product, pk=str(product_id))
+    if not product.image:
+        print("Cannot find photo")
+        raise Http404
+
+    return HttpResponse(product.image, content_type=product.content_type)
 
 @login_required
 def add_product(request):
@@ -131,28 +141,39 @@ def add_product(request):
                               sellerId=str(request.user.id),
                               isAvailable=True,
                               saleVolume=0,
-                              vendor=request.user,
-                              category=Category.objects.filter(name=request.POST['current_category'])[0])
+                              vendor=request.user)
+                              #category=Category.objects.filter(name=str(request.POST['current_category']))[0])
+        
+        target_category = Category.objects.filter(name=str(request.POST['current_category']))
+        if (target_category):
+            print(target_category)
+            new_product.category = target_category
+        else:
+            new_product.category = None
+            print("Cannot find the catrgory")
+
 
         form = ProductForm(request.POST, request.FILES, instance=new_product)
         # form = ImageUploadForm(request.POST, request.FILES)
 
         if not form.is_valid():
-            # print("form is NOT valid")
             form = ProductForm()
         else:
-            # print("form is valid")
             if 'product_picture' in request.FILES:
                 new_product.image = form.cleaned_data['image']
+                new_product.content_type = form.cleaned_data['product_picture'].content_type
                 # new_product.image = form.cleaned_data['product_image']
-                # new_product.content_type = form.cleaned_data['product_picture'].content_type
+
             # form.save()
             context['message'] = 'Product #{0} saved.'.format(new_product.id)
 
         new_product.save()
-
+    
+    print(request.POST['current_category'])
+    print(Product.objects.filter(category__name=request.POST['current_category']))
+    
     context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.filter(category=request.POST['current_category'])
+    context['products'] = Product.objects.filter(category__name=request.POST['current_category'], vendor__id=request.user.id)
     context['errors'] = errors
 
     return render(request, 'groupbuying/shop.html', context)
@@ -198,15 +219,6 @@ def update_profile(request):
     print(products)
 
     return render(request, 'groupbuying/shop.html', context)
-
-@login_required
-def get_product_photo(request, id):
-    product = get_object_or_404(Product, id=str(id))
-    if not product.picture:
-        raise Http404
-
-    return HttpResponse(product.picture, content_type=product.content_type)
-
 
 def category_proc(obj):
     tag_tmp = (obj.tagList.split(','))

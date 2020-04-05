@@ -48,6 +48,7 @@ class Product(models.Model):
     isAvailable = models.BooleanField(default=True)
     saleVolume = models.IntegerField()
     image = models.FileField(blank=False, upload_to='img/') # Note: use ImageField?
+    content_type = models.CharField(max_length=50, default="")
     vendor = models.ForeignKey(User, null=True, on_delete=models.CASCADE)  # Note: use User instead?
     category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)  # Note: use User instead?
 
