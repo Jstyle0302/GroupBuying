@@ -17,7 +17,7 @@ from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from groupbuying.forms import LoginForm, RegistrationForm, ProductForm, ImageUploadForm
-from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle
+from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle, Category
 from django.db.models import Q
 from django.db.models import Avg
 from functools import reduce
@@ -25,11 +25,11 @@ from functools import reduce
 # @ensure_csrf_cookie
 # @login_required
 
-
 def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
 
+<<<<<<< Updated upstream
 def profile_page(request):
     context = {}
     context['username'] = 'Jeff'
@@ -50,6 +50,9 @@ def other_page(request):
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     return render(request, 'groupbuying/others.html', context)
 
+=======
+@login_required
+>>>>>>> Stashed changes
 def shop_page(request):
     context = {}
     context['form'] = ProductForm()
@@ -82,32 +85,85 @@ def shop_page(request):
             }
         }
     }
+
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+    # context = {'categories': categories, 'products': products, 'errors': errors}
+
     return render(request, 'groupbuying/shop.html', context)
 
+@login_required
+def add_category(request):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+
+    # Adds the new item to the database if the request parameter is present
+    if 'new_category' not in request.POST or not request.POST['new_category']:
+        errors.append('You must enter text to add new category.')
+    else:
+        new_category = Category(name=request.POST['new_category'],
+                                vendor=request.user)
+        new_category.save()
+
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+    context['errors'] = errors
+    # context = {'categories': Category.objects.all(), 'products': Product.objects.all(), 'errors': errors}
+
+    return render(request, 'groupbuying/shop.html', context)
 
 @login_required
 def add_product(request):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
     form = None
-    print(request.POST)
-
-    # if 'product_name' not in request.POST or not request.POST['product_name'] or \
-    #     'product_price' not in request.POST or not request.POST['product_price']:
-    #     errors.append('You must have at least "name and price" for the product')
-    # else:
-    #     new_product = Product(name=str(request.POST['product_name']),
-    #                         description=str(request.POST['product_description']),
-    #                         price=float(request.POST['product_price']),
-    #                         sellerId=str(request.user.id),
-    #                         isAvailable=True,
-    #                         saleVolume=0,
-    #                         vendor=request.user)
 
     if 'name' not in request.POST or not request.POST['name'] or \
-            'price' not in request.POST or not request.POST['price']:
-        errors.append(
-            'You must have at least "name and price" for the product')
+        'price' not in request.POST or not request.POST['price']:
+        errors.append('You must have at least "name and price" for the product')
+    else:
+        new_product = Product(name=str(request.POST['name']),
+                              description=str(request.POST['description']),
+                              price=float(request.POST['price']),
+                              sellerId=str(request.user.id),
+                              isAvailable=True,
+                              saleVolume=0,
+                              vendor=request.user,
+                              category=Category.objects.filter(name=request.POST['current_category'])[0])
+
+        form = ProductForm(request.POST, request.FILES, instance=new_product)
+        # form = ImageUploadForm(request.POST, request.FILES)
+
+        if not form.is_valid():
+            # print("form is NOT valid")
+            form = ProductForm()
+        else:
+            # print("form is valid")
+            if 'product_picture' in request.FILES:
+                new_product.image = form.cleaned_data['image']
+                # new_product.image = form.cleaned_data['product_image']
+                # new_product.content_type = form.cleaned_data['product_picture'].content_type
+            # form.save()
+            context['message'] = 'Product #{0} saved.'.format(new_product.id)
+
+        new_product.save()
+
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.filter(category=request.POST['current_category'])
+    context['errors'] = errors
+
+    return render(request, 'groupbuying/shop.html', context)
+    # return redirect(reverse('shop', kwargs=context))
+
+@login_required
+def update_profile(request):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+    form = None
+
+    if 'name' not in request.POST or not request.POST['name'] or \
+        'price' not in request.POST or not request.POST['price']:
+        errors.append('You must have at least "name and price" for the product')
     else:
         new_product = Product(name=str(request.POST['name']),
                               description=str(request.POST['description']),
@@ -139,8 +195,6 @@ def add_product(request):
     print(products)
 
     return render(request, 'groupbuying/shop.html', context)
-    # return redirect(reverse('shop', kwargs=context))
-
 
 @login_required
 def get_product_photo(request, id):
