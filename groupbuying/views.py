@@ -317,6 +317,8 @@ def fill_context_filter_query_rules(context, fitler_query):
     for tag in fitler_query.tag:
         context['query_rules'].append(tag) 
     
+    cache.set('context',context)
+    
     return context
 
 def filtering(request):
