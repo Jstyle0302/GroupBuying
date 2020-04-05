@@ -355,7 +355,7 @@ def sort_by_price(request):
 def search_page(request):
     context = {}
     errors = []
-
+    context['query_rules'] = ['Five stars', 'Coffee', 'Contain: pandas']
     if request.method == 'GET':
         return render(request, 'groupbuying/search.html', context)
 

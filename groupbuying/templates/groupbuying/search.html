@@ -62,7 +62,7 @@ Shops
     </div>
   </div>
   <div class="col-9">
-    {% if restaurants is None %}
+    {% if restaurants is not None %}
     <div class="alert alert-secondary" role="alert">
       Sorry we could not find any restaurants fit the condition!
     </div>
@@ -86,6 +86,11 @@ Shops
       </span>
     </h3>
     <div id="restaurants-list">
+      {% for rule in query_rules %}
+      <p class="btn btn-light btn-sm">
+        {{rule}}<span class="fas fa-times"></span>
+      </p>
+      {% endfor %}
       {% for restaurant in restaurants %}
       <div class="card mb-3" id="card_restaurant_{{ restaurant.id }}">
         <div class="row no-gutters">
