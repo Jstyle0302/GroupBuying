@@ -1,8 +1,8 @@
 """
-2. Delete the database (rm db.sqlite3)
-3. Delete the migrations (rm -fr <appname>/migrations)
-4. Make migrations (python manage.py makemigrations <appname>)
-5. Migrate (python manage.py migrate)
+1. Delete the database (rm db.sqlite3)
+2. Delete the migrations (rm -fr <appname>/migrations)
+3. Make migrations (python manage.py makemigrations <appname>)
+4. Migrate (python manage.py migrate)
 """
 import os
 import shutil
