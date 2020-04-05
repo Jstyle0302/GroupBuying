@@ -64,4 +64,71 @@ function getModal() {
   return contextForm;
 }
 
+// google.js
+google.charts.load('current', {'packages':['bar']});
+google.charts.setOnLoadCallback(drawBarChart);
+
+function drawBarChart() {
+  var data = google.visualization.arrayToDataTable([
+    ['Year', 'Coffee', 'Tea', 'Cake'],
+    ['2014', 1000, 400, 200],
+    ['2015', 1170, 460, 250],
+    ['2016', 660, 1120, 300],
+    ['2017', 1030, 540, 350]
+  ]);
+
+  var options = {
+    bars: 'horizontal' // Required for Material Bar Charts.
+  };
+
+  var chart = new google.charts.Bar(document.getElementById('statistics_bar'));
+
+  chart.draw(data, google.charts.Bar.convertOptions(options));
+}
+
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawLineChart);
+
+function drawLineChart() {
+  var data = google.visualization.arrayToDataTable([
+    ['Year', 'Sales', 'Expenses'],
+    ['2004',  1000,      400],
+    ['2005',  1170,      460],
+    ['2006',  660,       1120],
+    ['2007',  1030,      540]
+  ]);
+
+  var options = {
+    curveType: 'function',
+    legend: { position: 'bottom' }
+  };
+
+  var chart = new google.visualization.LineChart(document.getElementById('statistics_line'));
+
+  chart.draw(data, options);
+}
+
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawPieChart);
+
+function drawPieChart() {
+
+  var data = google.visualization.arrayToDataTable([
+    ['Customers', 'Number'],
+    ['Under 20',     11],
+    ['21 to 30',      2],
+    ['31 to 40',  2],
+    ['41 to 50', 2],
+    ['Above 51',    7]
+  ]);
+
+  var options = {
+
+  };
+
+  var chart = new google.visualization.PieChart(document.getElementById('statistics_pie'));
+
+  chart.draw(data, options);
+}
+
 /* End for shop.html */

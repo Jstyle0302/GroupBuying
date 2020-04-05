@@ -83,7 +83,20 @@ Shops
         </div>
       </div>
       <div class="tab-pane fade active" id="list-statistics" role="tabpanel" aria-labelledby="list-statistics-list">
-        <h6>Hello two</h6>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <h5>Company Performance</h5>
+            <div id="statistics_line"></div>
+          </li>
+          <li class="list-group-item">
+            <h5>Sales Performance</h5>
+            <div class="card-body" id="statistics_bar"></div>
+          </li>
+          <li class="list-group-item">
+            <h5>Target Customers</h5>
+            <div id="statistics_pie"></div>
+          </li>
+        </ul>
       </div>
       {% for category,dishes in menu.items %}
       <div class="tab-pane fade active" id="list-{{category}}" role="tabpanel" aria-labelledby="list-{{category}}-list">
@@ -164,5 +177,6 @@ Shops
   </div>
 </div>
 {% load static %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="{% static 'groupbuying/shop.js' %}" type="text/javascript"></script>
 {% endblock %}

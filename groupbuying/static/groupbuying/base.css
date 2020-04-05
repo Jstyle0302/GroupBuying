@@ -12,6 +12,7 @@
   color: orange;
 }
 
+/* shop page start */
 #menu-tabContent .list-group-item.menu:hover {
   background-color: #E9E9E9;
 }
@@ -62,3 +63,6 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+
+/*shop page end*/
