@@ -10,7 +10,7 @@ Profile
 <div class="row">
     <div class="col-3">
         <div class="card mb-3">
-            <div class="card-header"><strong>Your Recently Orders</strong></div>
+            <div class="card-header"><strong>His/Her Recently Orders</strong></div>
             {% if orders %}
             <ul class="list-group list-group-flush">
                 {% for order in orders %}
@@ -40,28 +40,21 @@ Profile
                 <div class="col-9 align-self-center">
                     <div class="card-body">
                         <h4 class="card-title">
-                            <span>{{username}}'s Profile</span>
+                            <span>About {{username}}</span>
                         </h4>
-                        <form action="/" method="POST" class="form-group" enctype="multipart/form-data">
-                            <div class="form-group">
-                                <textarea class="form-control" id="description" rows="3">{{description}}</textarea>
-                            </div>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="shopLogo">
-                                <label class="custom-file-label" for="shopLogo">Choose your shop logo</label>
-                            </div>
-                            <div class="text-right">
-                                <button class="btn btn-sm btn-primary mt-2" id="id_update_profile_button">
-                                    Submit
-                                </button>
-                            </div>
-                        </form>
+                        <textarea readonly class="card-text col mb-2 form-control form-control-lg" id="id_user_bio">{{ description }}</textarea>
+                        <button class="btn btn-sm btn-primary mt-2" id="id_unfollow" name="action" value="unfollow">
+                            Unfollow
+                        </button>
+                        <button class="btn btn-sm btn-primary mt-2" id="id_follow" name="action" value="follow">
+                            Follow
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="card mt-3">
-            <div class="card-header"><strong>You are following</strong></div>
+            <div class="card-header"><strong>He/ She is following</strong></div>
             {% if followers %}
             <ul class="list-group list-group-flush">
                 {% for follower in followers %}

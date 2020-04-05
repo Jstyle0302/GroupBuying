@@ -16,8 +16,8 @@ urlpatterns = [
     # seller features
     path('shop', views.shop_page, name='shop'),
     path('add_product', views.add_product, name='add_product'),
-    path('profile', views.profile_page, name='profile')
-
+    path('profile', views.profile_page, name='profile'),
+    path('other', views.other_page, name='other')
     # path('follower', views.follower_stream, name='follower'),
     # path('follow_user/<int:follower_id>', views.follow_user, name='follow_user'),
     # path('unfollow_user/<int:follower_id>', views.unfollow_user, name='unfollow_user'),

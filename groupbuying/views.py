@@ -32,11 +32,23 @@ def home_page(request):
 
 def profile_page(request):
     context = {}
+    context['username'] = 'Jeff'
+    context['description'] = 'Amazing!'
     context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
     context['followers'] = ['Shine','Charles','Ari','En-ting','Ting']
     context['subcribes'] = ['Starbucks','Pandas','Subway']
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     return render(request, 'groupbuying/profile.html', context)
+
+def other_page(request):
+    context = {}
+    context['username'] = 'Jeff'
+    context['description'] = 'Amazing!'
+    context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
+    context['followers'] = ['Shine','Charles','Ari','En-ting','Ting']
+    context['subcribes'] = ['Starbucks','Pandas','Subway']
+    context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+    return render(request, 'groupbuying/others.html', context)
 
 def shop_page(request):
     context = {}
