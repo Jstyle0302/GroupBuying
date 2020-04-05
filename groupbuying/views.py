@@ -35,6 +35,8 @@ def shop_page(request):
     context = {}
     context['form'] = ProductForm()
     context['shop_name'] = "Starbucks"
+    context['description'] = "Very expensive and unhealthy food."
+    context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
     context['menu'] = {
         'Coffee': {
             'Cappuccino': {

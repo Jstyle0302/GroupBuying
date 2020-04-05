@@ -63,11 +63,8 @@ Shops
   </div>
   <div class="col-9">
     {% if restaurants is None %}
-    <div class="jumbotron jumbotron-fluid">
-      <div class="container">
-        <h1 class="display-4">Sorry for our dear customers</h1>
-        <p class="lead">Most of the restaurants are not ready, please come back to our website after some days.</p>
-      </div>
+    <div class="alert alert-secondary" role="alert">
+      Sorry we could not find any restaurants fit the condition!
     </div>
     {% else %}
     <h3 class="text-uppercase">Restaurants<span class="float-right">
