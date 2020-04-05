@@ -35,8 +35,23 @@ Shops
           </a>
           {% endif %}
           {% endfor %}
+          <!-- test start -->
+          {% for category in categories %}
+          <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="tab"
+            href="#list-{{category}}" role="tab" aria-controls="{{category}}">
+            <h5>{{category.name}}</h5>
+          </a>
+          {% endfor %}
+          <!-- test -->
           <a class="list-group-item list-group-item-action fas fa-plus" id="list-{{category}}-list" data-toggle="tab"
             href="/" role="tab" aria-controls="{{category}}"></a>
+          <br></br>
+          <form action="{% url 'add_category' %}" method="POST">
+            <input type="text" name="new_category" autofocus>
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Add</button>    
+          </form>
+          <!-- test end -->
         </div>
       </div>
     </div>
@@ -66,6 +81,7 @@ Shops
                   <form action="/" method="POST" class="form-group" enctype="multipart/form-data">
                       <div class="form-group">
                           <textarea class="form-control" id="description" rows="3">{{description}}</textarea>
+
                       </div>
                       <div class="custom-file">
                           <input type="file" class="custom-file-input" id="shopLogo">
@@ -134,14 +150,42 @@ Shops
                 </div>
               </li>
               {% endfor %}
+              <!-- test start -->
+              {% for product in products %}
+              <li class="list-group-item menu">
+                <div class="row no-gutters">
+                  <div class="col-3 align-self-center">
+                    <img src="{% url 'get_product_photo' product.id %}" class="card-img px-1 rounded mx-auto">
+                  </div>
+                  <div class="col-9">
+                    <h4 class="card-title">{{ product.name }}&nbsp;<i class="far fa-edit btn"></i><span class="float-right">
+                        <h6>$ {{product.price}}</h6>
+                      </span></h4>
+                    <p class="card-text">{{ product.description }}</p>
+                    <form>
+                      <div class="form-row">
+                        <i class="fas fa-minus-circle btn btn-default"></i>
+                        <input type="number" name="" value="1" class="form-control-sm">
+                        <i class="fas fa-plus-circle btn btn-default"></i>
+                        <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </li>
+              {% endfor %}
+              <!-- test end -->
               <li class="list-group-item">
                 <h4 class="card-title">Add an new {{category}}</h4>
                 {{ errors }}
+                <!-- test start -->
                 <form enctype="multipart/form-data" action="{% url 'add_product' %}" method="post">
                   {% csrf_token %}
                   {{ form.as_p }}
+                  <input type="hidden" name="current_category" value="{{ category }}">
                   <input type="submit" class="btn btn-primary" value="Submit">
                 </form>
+                <!-- test end -->
                 <form>
                   <div class="form-row">
                     <div class="form-group col-6">

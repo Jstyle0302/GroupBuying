@@ -36,6 +36,9 @@ class VendorInfo(models.Model):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
             ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
 
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+    vendor = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -44,12 +47,10 @@ class Product(models.Model):
     sellerId = models.CharField(max_length=10)  # Note: == vendor.id?
     isAvailable = models.BooleanField(default=True)
     saleVolume = models.IntegerField()
-    image = models.FileField(blank=False,
-                             upload_to='img/')  # Note: use ImageField?
-    vendor = models.ForeignKey(
-        User,
-        null=True,
-        on_delete=models.CASCADE)  # Note: use User instead?
+    image = models.FileField(blank=False, upload_to='img/') # Note: use ImageField?
+    content_type = models.CharField(max_length=50, default="")
+    vendor = models.ForeignKey(User, null=True, on_delete=models.CASCADE)  # Note: use User instead?
+    category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)  # Note: use User instead?
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',description=' + self.description +  \

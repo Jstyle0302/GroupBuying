@@ -1,5 +1,6 @@
 import json
 import operator
+import math
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,15 +16,19 @@ from django.utils import timezone
 from django.utils.timezone import is_aware, make_aware
 from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.core.cache import cache
 
 from groupbuying.forms import LoginForm, RegistrationForm, ProductForm, ImageUploadForm
-from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle
+from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle, Category
 from django.db.models import Q
 from django.db.models import Avg
 from functools import reduce
 
 # @ensure_csrf_cookie
 # @login_required
+
+def PAGESIZE_CONSTANT():
+    return 2
 
 
 def home_page(request):
@@ -63,6 +68,7 @@ def other_page(request):
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     return render(request, 'groupbuying/others.html', context)
 
+@login_required
 def shop_page(request):
     context = {}
     context['form'] = ProductForm()
@@ -95,32 +101,106 @@ def shop_page(request):
             }
         }
     }
+
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+    # context = {'categories': categories, 'products': products, 'errors': errors}
+
     return render(request, 'groupbuying/shop.html', context)
 
+@login_required
+def add_category(request):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+
+    # Adds the new item to the database if the request parameter is present
+    if 'new_category' not in request.POST or not request.POST['new_category']:
+        errors.append('You must enter text to add new category.')
+    else:
+        new_category = Category(name=request.POST['new_category'],
+                                vendor=request.user)
+        new_category.save()
+
+    context['categories'] = Category.objects.all()
+    context['products'] = None # empty page in the beginning
+    context['errors'] = errors
+    # context = {'categories': Category.objects.all(), 'products': Product.objects.all(), 'errors': errors}
+
+    return render(request, 'groupbuying/shop.html', context)
+
+
+@login_required
+def get_product_photo(request, product_id):
+    product = get_object_or_404(Product, pk=str(product_id))
+    if not product.image:
+        print("Cannot find photo")
+        raise Http404
+
+    return HttpResponse(product.image, content_type=product.content_type)
 
 @login_required
 def add_product(request):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
     form = None
-    print(request.POST)
-
-    # if 'product_name' not in request.POST or not request.POST['product_name'] or \
-    #     'product_price' not in request.POST or not request.POST['product_price']:
-    #     errors.append('You must have at least "name and price" for the product')
-    # else:
-    #     new_product = Product(name=str(request.POST['product_name']),
-    #                         description=str(request.POST['product_description']),
-    #                         price=float(request.POST['product_price']),
-    #                         sellerId=str(request.user.id),
-    #                         isAvailable=True,
-    #                         saleVolume=0,
-    #                         vendor=request.user)
 
     if 'name' not in request.POST or not request.POST['name'] or \
-            'price' not in request.POST or not request.POST['price']:
-        errors.append(
-            'You must have at least "name and price" for the product')
+        'price' not in request.POST or not request.POST['price']:
+        errors.append('You must have at least "name and price" for the product')
+    else:
+        new_product = Product(name=str(request.POST['name']),
+                              description=str(request.POST['description']),
+                              price=float(request.POST['price']),
+                              sellerId=str(request.user.id),
+                              isAvailable=True,
+                              saleVolume=0,
+                              vendor=request.user)
+                              #category=Category.objects.filter(name=str(request.POST['current_category']))[0])
+        
+        target_category = Category.objects.filter(name=str(request.POST['current_category']))
+        if (target_category):
+            print(target_category)
+            new_product.category = target_category[0]
+        else:
+            new_product.category = None
+            print("Cannot find the catrgory")
+
+
+        form = ProductForm(request.POST, request.FILES, instance=new_product)
+        # form = ImageUploadForm(request.POST, request.FILES)
+
+        if not form.is_valid():
+            form = ProductForm()
+        else:
+            if 'product_picture' in request.FILES:
+                new_product.image = form.cleaned_data['image']
+                new_product.content_type = form.cleaned_data['product_picture'].content_type
+                # new_product.image = form.cleaned_data['product_image']
+
+            # form.save()
+            context['message'] = 'Product #{0} saved.'.format(new_product.id)
+
+        new_product.save()
+    
+    print(request.POST['current_category'])
+    print(Product.objects.filter(category__name=request.POST['current_category']))
+    
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.filter(category__name=request.POST['current_category'], vendor__id=request.user.id)
+    context['errors'] = errors
+
+    return render(request, 'groupbuying/shop.html', context)
+    # return redirect(reverse('shop', kwargs=context))
+
+@login_required
+def update_profile(request):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+    form = None
+
+    if 'name' not in request.POST or not request.POST['name'] or \
+        'price' not in request.POST or not request.POST['price']:
+        errors.append('You must have at least "name and price" for the product')
     else:
         new_product = Product(name=str(request.POST['name']),
                               description=str(request.POST['description']),
@@ -152,17 +232,6 @@ def add_product(request):
     print(products)
 
     return render(request, 'groupbuying/shop.html', context)
-    # return redirect(reverse('shop', kwargs=context))
-
-
-@login_required
-def get_product_photo(request, id):
-    product = get_object_or_404(Product, id=str(id))
-    if not product.picture:
-        raise Http404
-
-    return HttpResponse(product.picture, content_type=product.content_type)
-
 
 def category_proc(obj):
     tag_tmp = (obj.tagList.split(','))
@@ -217,34 +286,90 @@ def get_all_tags():
 
     return all_tag
 
-def fill_restaurant_context_info(search_result, search_text):
+def fill_restaurant_context_info(search_result, search_text, page):
     context = {}
-    context['pages'] = range(1, 10)
-    context['current_page'] = 1
+
     context['restaurants'] = []
     context['categories'] = []
-    context['last_search_text'] = search_text
+    context['query_rules'] = []
     context['rating'] = []
+    context['last_search_text'] = search_text
     context['categories'] = get_all_tags()
 
+    page_size = PAGESIZE_CONSTANT()
+    result_num = len(search_result)
+    page_num = math.ceil(result_num/page_size) + 1
+
+    context['pages'] = range(1, page_num)
+    context['page_size'] = page_size
+    context['current_page'] = page
+
+    #search_result = search_result[(page-1)*PAGESIZE_CONSTANT():page*PAGESIZE_CONSTANT()]
     for obj in search_result:
         restaurant = fill_restaurant_info(obj)
         context['restaurants'].append(restaurant)
         context['rating'].append(restaurant['rating'])
 
+    if search_text != '':
+        context['query_rules'].append(search_text) 
+
+    cache.set('context',context)
+
+    
     return context
 
+def page(request, page):
+    context = {}
+    search_result = cache.get('search_result')
+    last_context = cache.get('context')
+    if not search_result or not last_context:
+        return render(request, 'groupbuying/search.html', context)
+
+    if ('last_search_text' not in last_context or not last_context['last_search_text']):
+        last_search_text = ''
+    else:
+        last_search_text = last_context['last_search_text']
+
+    context = last_context
+    context['current_page'] = page
+    context['restaurants'] = context['restaurants'][(page-1)*PAGESIZE_CONSTANT():page*PAGESIZE_CONSTANT()]                                      
+    return render(request, 'groupbuying/search.html', context)
+
+def fill_context_filter_query_rules(context, fitler_query):
+    if fitler_query.rating != '':
+        context['query_rules'].append(fitler_query.rating) 
+
+    for tag in fitler_query.tag:
+        context['query_rules'].append(tag) 
+    
+    cache.set('context',context)
+    
+    return context
 
 def filtering(request):
     context = {}
+    search_text = ''
+    fitler_query = lambda:0
+    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
+        search_text = ''
+    else:
+        search_text = request.POST['last_search_text']
 
-    result = VendorInfo.objects.all()
+    if ('filter_last' in request.POST):
+        result = search_text_proc(search_text)
+    else: 
+        result = VendorInfo.objects.all()
+        search_text = ''
+
     result = filter_by_price(request, result)
-    result = filter_by_rating(request, result)
-    result = filter_by_tag(request, result)
-
-    context = fill_restaurant_context_info(result, '')
-
+    result, fitler_query.rating = filter_by_rating(request, result)
+    result, fitler_query.tag = filter_by_tag(request, result)
+     
+    context = fill_restaurant_context_info(result, search_text, 1)
+    context = fill_context_filter_query_rules(context, fitler_query)
+    context['restaurants'] = context['restaurants'][(0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
+    cache.set('search_result', result)
+    #cache.set('context',context)
     return render(request, 'groupbuying/search.html', context)
 
 
@@ -257,19 +382,19 @@ def filter_by_price(request, prev_result):
 
 def filter_by_rating(request, prev_result):
     rating = -1
+    rating_query = ''
+    
+    if ('star' not in request.POST
+            or not request.POST['star']):
+        return prev_result, rating_query
 
-    if ('star0' in request.POST):
-        rating = 1
-    if ('star1' in request.POST):
-        rating = 2
-    if ('star2' in request.POST):
-        rating = 3
-    if ('star3' in request.POST):
-        rating = 4
-    if ('star4' in request.POST):
-        rating = 5
+    star = request.POST['star']
+
+    for i in range(0,5):
+        if (star == 'star' + str(i)):
+            rating = i + 1
     if (rating == -1):
-        return prev_result
+        return prev_result, rating_query
 
     avg_rating = Rating.objects.values('ratedTarget').annotate(
         avg_rating=Avg('rating')).order_by('ratedTarget')
@@ -277,7 +402,8 @@ def filter_by_rating(request, prev_result):
     result = prev_result.filter(
         id__in=avg_rating_filtered.values('ratedTarget'))
 
-    return result
+    rating_query = "rating >=" + str(rating)
+    return result, rating_query
 
 
 def filter_by_tag(request, prev_result):
@@ -292,83 +418,53 @@ def filter_by_tag(request, prev_result):
             fitler_tag.append(tag)
 
     if not fitler_tag:
-        return prev_result
+        return prev_result, fitler_tag
 
     query = reduce(operator.or_,
                    (Q(tagList__contains=item) for item in fitler_tag))
     result = prev_result.filter(query)
 
-    return result
+    return result, fitler_tag
 
 
 def sorting(request):
     context = {}
-    if ('last_search_text' not in request.POST
-            or not request.POST['last_search_text']):
+
+    search_result = cache.get('search_result')
+    last_context = cache.get('context')
+    if not search_result or not last_context:
         return render(request, 'groupbuying/search.html', context)
+
+    if ('last_search_text' not in last_context or not last_context['last_search_text']):
+        last_search_text = ''
+    else:
+        last_search_text = last_context['last_search_text']
+
 
     if ('sort_by_name' in request.POST):
-        context = sort_by_name(request)
-
-    if ('sort_by_rating' in request.POST):
-        context = sort_by_rating(request)
-
-    if ('sort_by_price' in request.POST):
-        context = sort_by_price(request)
-
-    return render(request, 'groupbuying/search.html', context)
-
-
-def sort_by_name(request):
-    context = {}
-    if ('last_search_text' not in request.POST
-            or not request.POST['last_search_text']):
-        return render(request, 'groupbuying/search.html', context)
-
-    search_result = search_text_proc(request.POST['last_search_text'])
-    #ordered = sorted(search_result, key = lambda w: w.name.lower())
-    context = fill_restaurant_context_info(search_result,
-                                           request.POST['last_search_text'])
-    context['restaurants'] = sorted(context['restaurants'],
+        print('name\n')
+        last_context['restaurants'] = sorted(last_context['restaurants'],
                                     key=lambda i: i['name'].lower())
 
-    return context
-
-
-def sort_by_rating(request):
-    context = {}
-    if ('last_search_text' not in request.POST
-            or not request.POST['last_search_text']):
-        return render(request, 'groupbuying/search.html', context)
-
-    search_result = search_text_proc(request.POST['last_search_text'])
-    context = fill_restaurant_context_info(search_result,
-                                           request.POST['last_search_text'])
-    context['restaurants'] = sorted(context['restaurants'],
+    if ('sort_by_rating' in request.POST):
+        print('rating\n')
+        last_context['restaurants'] = sorted(last_context['restaurants'],
                                     key=lambda i: i['rating'],
                                     reverse=True)
 
-    return context
+    if ('sort_by_price' in request.POST):
+        print('price\n')
+        last_context = last_context
 
+    cache.set('context', last_context)
+    last_context['restaurants'] = last_context['restaurants'][0:PAGESIZE_CONSTANT()]
 
-def sort_by_price(request):
-    context = {}
-    if ('last_search_text' not in request.POST
-            or not request.POST['last_search_text']):
-        return render(request, 'groupbuying/search.html', context)
-    # TBD
-    search_result = search_text_proc(request.POST['last_search_text'])
-    ordered = sorted(search_result, key=lambda w: w.name.lower())
-    context = fill_restaurant_context_info(ordered,
-                                           request.POST['last_search_text'])
-
-    return context
-
+    return render(request, 'groupbuying/search.html', last_context)
 
 def search_page(request):
     context = {}
     errors = []
-    context['query_rules'] = ['Five stars', 'Coffee', 'Contain: pandas']
+
     if request.method == 'GET':
         return render(request, 'groupbuying/search.html', context)
 
@@ -377,9 +473,13 @@ def search_page(request):
         return render(request, 'groupbuying/search.html', context)
 
     search_result = search_text_proc(request.POST['search_text'])
+    cache.set('search_result',search_result)
+    page = 1
     context = fill_restaurant_context_info(search_result,
-                                           request.POST['search_text'])
+                                           request.POST['search_text'], page)
 
+    context['restaurants'] = context['restaurants'][(0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
+    #cache.set('context',context)
     return render(request, 'groupbuying/search.html', context)
     '''
     context['pages'] = range(1,10)
