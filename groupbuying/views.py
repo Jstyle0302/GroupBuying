@@ -37,7 +37,7 @@ def home_page(request):
 
 def order_page(request):
     context = {}
-    context['order_number'] = '17614' 
+    context['order_id'] = '17614' 
     context['shop'] = 'Starbucks'
     context['founder'] = 'Shine'
     context['receipt'] = {
