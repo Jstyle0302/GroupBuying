@@ -26,11 +26,10 @@ from functools import reduce
 
 # @ensure_csrf_cookie
 # @login_required
-<<<<<<< HEAD
+
 def PAGESIZE_CONSTANT():
     return 2
-=======
->>>>>>> 77758e14c72dcef2190581da06e514a587ae4cff
+
 
 def home_page(request):
     context = {}
