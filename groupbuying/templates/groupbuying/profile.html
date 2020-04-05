@@ -9,15 +9,25 @@ Profile
 {% block content %}
 <div class="row">
     <div class="col-3">
+        <div class="card mb-3">
+            <div class="card-header"><strong>Your Recently Orders</strong></div>
+            {% if orders %}
+            <ul class="list-group list-group-flush">
+                {% for order in orders %}
+                <li class="list-group-item"><a id="id_profile_link_{{follower.username}}" href="/">{{order}}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
         <div class="card">
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <h4 class="text-uppercase font-italic text-muted">Subscribes</h4>
-                    {% for subcribe in subcribes%}
-                    <li class="list-group-item"><a href="/{{subcribe}}">{{subcribe}}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
+            <div class="card-header"><strong>Subscribes</strong></div>
+            {% if subcribes %}
+            <ul class="list-group list-group-flush">
+                {% for subcribe in subcribes%}
+                <li class="list-group-item"><a href="/{{subcribe}}">{{subcribe}}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
         </div>
     </div>
     <div class="col-9">
@@ -50,7 +60,7 @@ Profile
                 </div>
             </div>
         </div>
-        <div class="card">
+        <div class="card mt-3">
             <div class="card-header"><strong>You are following</strong></div>
             {% if followers %}
             <ul class="list-group list-group-flush">
