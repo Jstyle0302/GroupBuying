@@ -248,6 +248,7 @@ def filtering(request):
         result = search_text_proc(search_text)
     else: 
         result = VendorInfo.objects.all()
+        search_text = ''
 
     result = filter_by_price(request, result)
     result, fitler_query.rating = filter_by_rating(request, result)
