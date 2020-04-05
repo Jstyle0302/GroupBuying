@@ -226,10 +226,19 @@ def fill_restaurant_context_info(search_result, search_text):
 
     return context
 
+def fill_context_filter_query_rules(context, fitler_query):
+    if fitler_query.rating != '':
+        context['query_rules'].append(fitler_query.rating) 
+
+    for tag in fitler_query.tag:
+        context['query_rules'].append(tag) 
+    
+    return context
 
 def filtering(request):
     context = {}
     search_text = ''
+    fitler_query = lambda:0
     if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
         search_text = ''
     else:
@@ -241,14 +250,12 @@ def filtering(request):
         result = VendorInfo.objects.all()
 
     result = filter_by_price(request, result)
-    result, rating_query = filter_by_rating(request, result)
-    result = filter_by_tag(request, result)
-
-            
+    result, fitler_query.rating = filter_by_rating(request, result)
+    result, fitler_query.tag = filter_by_tag(request, result)
+     
     context = fill_restaurant_context_info(result, search_text)
-    
-    if rating_query != '':
-        context['query_rules'].append(rating_query) 
+    context = fill_context_filter_query_rules(context, fitler_query)
+
 
     return render(request, 'groupbuying/search.html', context)
 
@@ -298,13 +305,13 @@ def filter_by_tag(request, prev_result):
             fitler_tag.append(tag)
 
     if not fitler_tag:
-        return prev_result
+        return prev_result, fitler_tag
 
     query = reduce(operator.or_,
                    (Q(tagList__contains=item) for item in fitler_tag))
     result = prev_result.filter(query)
 
-    return result
+    return result, fitler_tag
 
 
 def sorting(request):
