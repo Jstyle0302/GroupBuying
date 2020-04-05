@@ -1,0 +1,98 @@
+{% extends "groupbuying/base.html" %}
+
+{% block pageName %}
+Profile
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'search' %}">Search</a></li>
+        <li class="breadcrumb-item active" aria-current="order">Order</li>
+    </ol>
+</nav>
+<div class="row justify-content-center">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                Order Number: {{order_number}}, Order shop: {{shop}}, Order founder: {{founder}}
+            </div>
+            {{ receipt }}
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <h5 class="card-title">Charles</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Count</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>Cold brew</td>
+                                <td>1</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>Cake</td>
+                                <td>1</td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Total</th>
+                                <td></td>
+                                <td></td>
+                                <td>11</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <h5 class="card-title">Summary</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Count</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Cold brew</td>
+                            <td>1</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Cake</td>
+                            <td>1</td>
+                            <td>6</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total</th>
+                            <td></td>
+                            <td>2</td>
+                            <td>11</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a href="#" class="btn btn-primary float-left">Checkout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
