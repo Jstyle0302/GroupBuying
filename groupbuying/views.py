@@ -30,6 +30,19 @@ def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
 
+def order_page(request):
+    context = {}
+    context['order_number'] = '17614' 
+    context['shop'] = 'Starbucks'
+    context['founder'] = 'Shine'
+    context['receipt'] = {
+        'orders' : [{
+            'username': 'Charles',
+            'order': ['cake','coffee']
+        }]
+    }
+    return render(request, 'groupbuying/order.html', context)
+
 def profile_page(request):
     context = {}
     context['username'] = 'Jeff'
