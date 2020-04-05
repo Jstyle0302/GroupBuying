@@ -245,16 +245,14 @@ def filter_by_price(request, prev_result):
 def filter_by_rating(request, prev_result):
     rating = -1
 
-    if ('star0' in request.POST):
-        rating = 1
-    if ('star1' in request.POST):
-        rating = 2
-    if ('star2' in request.POST):
-        rating = 3
-    if ('star3' in request.POST):
-        rating = 4
-    if ('star4' in request.POST):
-        rating = 5
+    if ('star' not in request.POST
+            or not request.POST['star']):
+        return prev_result    
+    star = request.POST['star']
+
+    for i in range(0,5):
+        if (star == 'star' + str(i)):
+            rating = i + 1
     if (rating == -1):
         return prev_result
 
