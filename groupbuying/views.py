@@ -35,8 +35,31 @@ def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
 
+def share_page(request):
+    context = {}
+    context['isFounder'] = False
+    context['order_id'] = '17614' 
+    context['shop'] = 'Starbucks'
+    context['founder'] = 'Shine'
+    context['receipt'] = {
+        'summary': {
+            'order': [{
+                'product': 'Cold Brew',
+                'count': 1,
+                'price': 5
+            },{
+                'product': 'Cheese Cake',
+                'count': 1,
+                'price': 6
+            }],
+            'total': 24
+        }
+    }
+    return render(request, 'groupbuying/order.html', context)
+
 def order_page(request):
     context = {}
+    context['isFounder'] = True
     context['order_id'] = '17614' 
     context['shop'] = 'Starbucks'
     context['founder'] = 'Shine'

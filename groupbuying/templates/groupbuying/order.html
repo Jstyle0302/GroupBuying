@@ -19,8 +19,9 @@ Profile
         <div class="card">
             <div class="card-header">
                 Order Number: {{order_id}}, Order shop: {{shop}}, Order founder: {{founder}}
-                <h6 class="card-subtitle mb-2 text-muted">Want to group others? Forward this link for them:<a href="google.com">groupbuying.com?order={{order_id}}</a></h6>
+                <h6 class="card-subtitle mb-2 text-muted">Want to group others? Forward this link for them:<a href="{% url 'share' %}?_id={{order_id}}">groupbuying.com?order={{order_id}}</a></h6>
             </div>
+            {% if isFounder %}
             {% for order in receipt.orders %}
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -54,6 +55,7 @@ Profile
                 </li>
             </ul>
             {% endfor %}
+            {% endif %}
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                     <h3 class="card-title">Summary</h3>
@@ -83,7 +85,11 @@ Profile
                         </tr>
                     </tbody>
                 </table>
+                {% if isFounder %}
                 <a href="#" class="btn btn-primary float-left">Checkout</a>
+                {% else %}
+                <a href="#" class="btn btn-primary float-left">Submit to Founder</a>
+                {% endif %}
                 </li>
             </ul>
         </div>
