@@ -220,8 +220,8 @@ def fill_restaurant_context_info(search_result, search_text):
         context['restaurants'].append(restaurant)
         context['rating'].append(restaurant['rating'])
 
-    print(search_text)
-    context['query_rules'].append(search_text) 
+    if search_text != '':
+        context['query_rules'].append(search_text) 
     
 
     return context
@@ -235,14 +235,20 @@ def filtering(request):
     else:
         search_text = request.POST['last_search_text']
 
-    result = search_text_proc(search_text)
-    #result = VendorInfo.objects.all()
+    if ('filter_last' in request.POST):
+        result = search_text_proc(search_text)
+    else: 
+        result = VendorInfo.objects.all()
+
     result = filter_by_price(request, result)
-    result = filter_by_rating(request, result)
+    result, rating_query = filter_by_rating(request, result)
     result = filter_by_tag(request, result)
 
             
     context = fill_restaurant_context_info(result, search_text)
+    
+    if rating_query != '':
+        context['query_rules'].append(rating_query) 
 
     return render(request, 'groupbuying/search.html', context)
 
@@ -256,17 +262,19 @@ def filter_by_price(request, prev_result):
 
 def filter_by_rating(request, prev_result):
     rating = -1
-
+    rating_query = ''
+    
     if ('star' not in request.POST
             or not request.POST['star']):
-        return prev_result    
+        return prev_result, rating_query
+
     star = request.POST['star']
 
     for i in range(0,5):
         if (star == 'star' + str(i)):
             rating = i + 1
     if (rating == -1):
-        return prev_result
+        return prev_result, rating_query
 
     avg_rating = Rating.objects.values('ratedTarget').annotate(
         avg_rating=Avg('rating')).order_by('ratedTarget')
@@ -274,7 +282,8 @@ def filter_by_rating(request, prev_result):
     result = prev_result.filter(
         id__in=avg_rating_filtered.values('ratedTarget'))
 
-    return result
+    rating_query = "rating >=" + str(rating)
+    return result, rating_query
 
 
 def filter_by_tag(request, prev_result):

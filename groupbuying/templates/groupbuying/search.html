@@ -61,7 +61,8 @@ Shops
             {% endfor %}
           </li>
           <input type="hidden" name="last_search_text" value={{ last_search_text }}>
-		  <input  type="submit" name="filter">
+          <input  type="submit" name="filter_last" value = "Query with last search text">
+          <input  type="submit" name="filter_all" value = "Query with all">
 		  {% csrf_token %}
 		  </form>
         </ul>
