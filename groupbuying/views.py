@@ -30,6 +30,12 @@ def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
 
+def profile_page(request):
+    context = {}
+    context['followers'] = ['Shine','Charles','Ari','En-ting','Ting']
+    context['subcribes'] = ['Starbucks','Pandas','Subway']
+    context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+    return render(request, 'groupbuying/profile.html', context)
 
 def shop_page(request):
     context = {}
