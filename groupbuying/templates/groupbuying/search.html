@@ -60,6 +60,7 @@ Shops
             </div>
             {% endfor %}
           </li>
+          <input type="hidden" name="last_search_text" value={{ last_search_text }}>
 		  <input  type="submit" name="filter">
 		  {% csrf_token %}
 		  </form>

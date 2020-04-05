@@ -210,6 +210,7 @@ def fill_restaurant_context_info(search_result, search_text):
     context['current_page'] = 1
     context['restaurants'] = []
     context['categories'] = []
+    context['query_rules'] = []
     context['last_search_text'] = search_text
     context['rating'] = []
     context['categories'] = get_all_tags()
@@ -219,18 +220,29 @@ def fill_restaurant_context_info(search_result, search_text):
         context['restaurants'].append(restaurant)
         context['rating'].append(restaurant['rating'])
 
+    print(search_text)
+    context['query_rules'].append(search_text) 
+    
+
     return context
 
 
 def filtering(request):
     context = {}
+    search_text = ''
+    if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
+        search_text = ''
+    else:
+        search_text = request.POST['last_search_text']
 
-    result = VendorInfo.objects.all()
+    result = search_text_proc(search_text)
+    #result = VendorInfo.objects.all()
     result = filter_by_price(request, result)
     result = filter_by_rating(request, result)
     result = filter_by_tag(request, result)
 
-    context = fill_restaurant_context_info(result, '')
+            
+    context = fill_restaurant_context_info(result, search_text)
 
     return render(request, 'groupbuying/search.html', context)
 
@@ -353,7 +365,7 @@ def sort_by_price(request):
 def search_page(request):
     context = {}
     errors = []
-    context['query_rules'] = ['Five stars', 'Coffee', 'Contain: pandas']
+
     if request.method == 'GET':
         return render(request, 'groupbuying/search.html', context)
 
@@ -365,6 +377,7 @@ def search_page(request):
     context = fill_restaurant_context_info(search_result,
                                            request.POST['search_text'])
 
+    
     return render(request, 'groupbuying/search.html', context)
     '''
     context['pages'] = range(1,10)
