@@ -16,6 +16,7 @@ urlpatterns = [
     path('page/<int:page>', views.page, name='page'),
     # seller features
     path('shop', views.shop_page, name='shop'),
+    path('add_category', views.add_category, name='add_category'),
     path('add_product', views.add_product, name='add_product'),
     path('profile', views.profile_page, name='profile'),
     path('other', views.other_page, name='other')
