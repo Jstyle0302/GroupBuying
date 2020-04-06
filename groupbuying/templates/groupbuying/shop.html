@@ -240,6 +240,13 @@ Shops
   <div class="modal-content">
     <p><span class="close">&times;</span></p>
     <div id="context"></div>
+    <!-- test start -->
+    <form enctype="multipart/form-data" action="{% url 'update_product' 1 %}" method="post">
+      {% csrf_token %}
+      {{ productForm.as_p }}
+      <input type="submit" class="btn btn-primary" value="Submit">
+    </form>
+    <!-- test end -->
   </div>
 </div>
 {% load static %}

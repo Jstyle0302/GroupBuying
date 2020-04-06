@@ -28,6 +28,15 @@ from functools import reduce
 def PAGESIZE_CONSTANT():
     return 2
 
+def get_shopPage_context():
+    context = {}
+    context['productForm'] = ProductForm()
+    context['vendorForm'] = VendorInfoForm()
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+
+    return context
+
 def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
@@ -251,6 +260,36 @@ def add_product(request):
     return render(request, 'groupbuying/shop.html', context)
 
 @login_required
+def update_product(request, product_id):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+
+    if 'name' not in request.POST or not request.POST['name'] or \
+        'price' not in request.POST or not request.POST['price']:
+        errors.append('You must have at least "name and price" for the product')
+    else:
+        cur_product = Product.objects.filter(pk=str(product_id))[0] # Note: remember index for filter
+        form = ProductForm(request.POST, request.FILES, instance=cur_product)
+        if form.is_valid():
+            cur_product.name = str(request.POST['name'])
+            cur_product.price = float(request.POST['price'])
+            cur_product.description = str(request.POST['description'])
+            if 'image' in request.FILES:
+                cur_product.image = form.cleaned_data['image']
+                cur_product.content_type = form.cleaned_data['image'].content_type
+            form.save()
+        else:
+            print("FAIL: ProductForm is NOT valid")
+
+    context['productForm'] = ProductForm()
+    # context['vendorInfo'] = cur_vendor_info
+    context['vendorForm'] = VendorInfoForm()
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+
+    return render(request, 'groupbuying/shop.html', context)
+
+@login_required
 def update_vendor_info(request):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
@@ -259,7 +298,7 @@ def update_vendor_info(request):
 
     if 'description' not in request.POST or not request.POST['description'] or \
         'image' not in request.FILES or not request.FILES['image']:
-        errors.append('You must have at least "name and price" for the product')
+        errors.append('You must have at least "description and image" for the vendor info')
     else:
         # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check 
         form = VendorInfoForm(request.POST, request.FILES, instance=cur_vendor_info)

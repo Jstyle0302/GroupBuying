@@ -21,6 +21,7 @@ urlpatterns = [
     path('update_vendor_info', views.update_vendor_info, name='update_vendor_info'),
     path('add_category', views.add_category, name='add_category'),
     path('add_product', views.add_product, name='add_product'),
+    path('update_product/<int:product_id>', views.update_product, name='update_product'),
     path('get_product_photo/<int:product_id>', views.get_product_photo, name='get_product_photo'),
     # customer features
     path('profile', views.profile_page, name='profile'),
