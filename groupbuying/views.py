@@ -48,22 +48,17 @@ def home_page(request):
 
 def orderList_page(request):
     context = {}
-    context['orders'] = [{
-        'order_id': 17614,
-        'name': 'Starbucks',
-        'description': 'Starbucks was established in 1971 by three local businessmen to sell high quality whole beans coffee. In 1981 when Howard Schultz visited the store he plan to build a strong company and expand high quality coffee business with the name of Starbucks.',
-        'image': "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
-    }, {
-        'order_id': 18613,
-        'name': 'Pandas Express',
-        'description': 'Panda Express is a fast food restaurant chain which serves American Chinese cuisine. With over 2,200 locations, it is the largest Asian segment restaurant chain in the United States, where it was founded and is mainly located (in addition to other countries and territories in North America and Asia).',
-        'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png",
-    }, {
-        'order_id': 10661,
-        'name': 'Mcdonald',
-        'description': 'McDonalds.com is your hub for everything McDonald\'s. Find out more about our menu items and promotions today!',
-        'image': "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/McDonald%27s_Golden_Arches.svg/1200px-McDonald%27s_Golden_Arches.svg.png",
-    }]
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
+    orderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
+    context['orders'] = []
+    for orderUnit in orderUnits:
+        order = {
+            'order_id': orderUnit.orderbundle.id,
+            'name': orderUnit.orderbundle.vendor.name,
+            'description': orderUnit.orderbundle.vendor.description,
+            'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
+            }
+        context['orders'].append(order)    
 
     return render(request, 'groupbuying/orderList.html', context)
 
