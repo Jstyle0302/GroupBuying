@@ -18,7 +18,8 @@ class CustomerInfo(models.Model):
     description = models.CharField(max_length=500)
     address = models.CharField(max_length=100)
     phoneNum = models.CharField(max_length=16)
-    picture = models.FileField(blank=False)
+    image = models.ImageField(blank=False, null=True, upload_to='img/')
+    content_type = models.CharField(max_length=50, default="")
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \

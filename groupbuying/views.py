@@ -19,7 +19,7 @@ from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.cache import cache
 
-from groupbuying.forms import LoginForm, RegistrationForm, ProductForm, VendorInfoForm
+from groupbuying.forms import LoginForm, RegistrationForm, ProductForm, VendorInfoForm, CustomerInfoForm
 from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle, Category
 from django.db.models import Q
 from django.db.models import Avg
@@ -323,6 +323,47 @@ def update_vendor_info(request):
     context['products'] = Product.objects.all()
 
     return render(request, 'groupbuying/shop.html', context)
+
+@login_required
+def update_customer_info(request, user_id):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+    #cur_customer_info = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
+    cur_customer_info = CustomerInfo.objects.filter(id=str(user_id)).first()
+    print(cur_customer_info)
+    print(request.POST['description'])
+    if 'description' not in request.POST or not request.POST['description'] or \
+        'image' not in request.FILES or not request.FILES['image']:
+        errors.append('You must have at least "description and image" for the customer info')
+        print("test2")
+    else:
+        # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check 
+        form = CustomerInfoForm(request.POST, request.FILES, instance=cur_customer_info)
+        print("test")
+        if not form.is_valid():
+            print("form is NOT valid")
+        else:
+            print("form is valid")
+            cur_customer_info.description = request.POST['description']
+            if 'image' in request.FILES:
+                cur_customer_info.image = form.cleaned_data['image']
+                cur_customer_info.content_type = form.cleaned_data['image'].content_type
+            form.save()
+
+    context['username'] = cur_customer_info.name
+    context['description'] = cur_customer_info.description
+    context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
+    context['followers'] = ['Shine','Charles','Ari','En-ting','Ting']
+    context['subcribes'] = ['Starbucks','Pandas','Subway']
+
+    #context['productForm'] = ProductForm()
+    context['customerInfo'] = cur_customer_info
+    print(cur_customer_info.image.url)
+    #context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+    #context['categories'] = Category.objects.all()
+    #context['products'] = Product.objects.all()
+    #context['photo'] = cur_customer_info.image.url
+    return render(request, 'groupbuying/profile.html', context)
 
 def category_proc(obj):
     tag_tmp = (obj.tagList.split(','))

@@ -4,6 +4,7 @@ migrations
 *.pyc
 *.jpg
 *.jpeg
+*.png
 *.cpython-37.pyc
 */*/*/__pycache__/
 */*/__pycache__/

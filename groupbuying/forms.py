@@ -27,7 +27,7 @@ class ProductForm(forms.ModelForm):
 
 class VendorInfoForm(forms.ModelForm):
     class Meta:
-        model = Product
+        model = Product   #!!!!wrong form?
         fields = ['description', 'image']
         widgets = {
             'description': forms.Textarea(attrs={'cols': 70, 'rows': 5})}
@@ -44,6 +44,24 @@ class VendorInfoForm(forms.ModelForm):
                 'File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
         return image
 
+class CustomerInfoForm(forms.ModelForm):
+    class Meta:
+        model = CustomerInfo
+        fields = ['description', 'image']
+        widgets = {
+            'description': forms.Textarea(attrs={'cols': 70, 'rows': 5})}
+
+    def clean_picture(self):
+        image = self.cleaned_data['image']
+        if not image:
+            raise forms.ValidationError('You must upload a image')
+        if not image.content_type or not image.content_type.startswith(
+                'image'):
+            raise forms.ValidationError('File type is not image')
+        if image.size > MAX_UPLOAD_SIZE:
+            raise forms.ValidationError(
+                'File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
+        return image
 
 class LoginForm(forms.Form):
     username = forms.CharField(
