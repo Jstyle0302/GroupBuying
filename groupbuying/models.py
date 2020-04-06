@@ -24,7 +24,6 @@ class CustomerInfo(models.Model):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
             ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
 
-
 class VendorInfo(models.Model):
     # VendorInfo.name is different from UserProefile.firstName or
     # UserProefile.lastName, can be user name or vendor name
@@ -34,6 +33,8 @@ class VendorInfo(models.Model):
     address = models.CharField(max_length=100)
     phoneNum = models.CharField(max_length=16)
     tagList = models.CharField(max_length=200)
+    image = models.ImageField(blank=False, null=True, upload_to='img/') # Note: use ImageField?
+    content_type = models.CharField(max_length=50, default="")
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
@@ -50,7 +51,7 @@ class Product(models.Model):
     sellerId = models.CharField(max_length=10)  # Note: == vendor.id?
     isAvailable = models.BooleanField(default=True)
     saleVolume = models.IntegerField()
-    image = models.FileField(blank=False, upload_to='img/') # Note: use ImageField?
+    image = models.ImageField(blank=False, upload_to='img/') # Note: use ImageField?
     content_type = models.CharField(max_length=50, default="")
     vendor = models.ForeignKey(User, null=True, on_delete=models.CASCADE)  # Note: use User instead?
     category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)  # Note: use User instead?
@@ -67,7 +68,7 @@ class Rating(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.ForeignKey(User, default=None, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, default=None, on_delete=models.PROTECT) # Note: one-to-one ?
     CustomerInfo = models.OneToOneField(CustomerInfo, on_delete=models.CASCADE)
     VendorInfo = models.OneToOneField(VendorInfo, on_delete=models.CASCADE)
 

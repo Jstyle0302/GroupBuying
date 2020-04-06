@@ -19,24 +19,101 @@ from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.cache import cache
 
-from groupbuying.forms import LoginForm, RegistrationForm, ProductForm, ImageUploadForm
+from groupbuying.forms import LoginForm, RegistrationForm, ProductForm, VendorInfoForm
 from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle, Category
 from django.db.models import Q
 from django.db.models import Avg
 from functools import reduce
 
 
-# @ensure_csrf_cookie
-# @login_required
-
 def PAGESIZE_CONSTANT():
     return 2
 
+def get_shopPage_context():
+    context = {}
+    context['productForm'] = ProductForm()
+    context['vendorForm'] = VendorInfoForm()
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+
+    return context
 
 def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
 
+def share_page(request):
+    context = {}
+    context['isFounder'] = False
+    context['order_id'] = '17614' 
+    context['shop'] = 'Starbucks'
+    context['founder'] = 'Shine'
+    context['receipt'] = {
+        'summary': {
+            'order': [{
+                'product': 'Cold Brew',
+                'count': 1,
+                'price': 5
+            },{
+                'product': 'Cheese Cake',
+                'count': 1,
+                'price': 6
+            }],
+            'total': 24
+        }
+    }
+    return render(request, 'groupbuying/order.html', context)
+
+def order_page(request):
+    context = {}
+    context['isFounder'] = True
+    context['order_id'] = '17614' 
+    context['shop'] = 'Starbucks'
+    context['founder'] = 'Shine'
+    context['receipt'] = {
+        'orders' : [{
+            'username': 'Charles',
+            'order': [{
+                'product': 'Cold Brew',
+                'count': 1,
+                'price': 5
+            },{
+                'product': 'Cheese Cake',
+                'count': 1,
+                'price': 6
+            }],
+            'total': 11
+        },{
+            'username': 'Shine',
+            'order': [{
+                'product': 'Milk Tea',
+                'count': 1,
+                'price': 7
+            },{
+                'product': 'Cheese Cake',
+                'count': 1,
+                'price': 6
+            }],
+            'total': 13
+        }],
+        'summary': {
+            'order': [{
+                'product': 'Cold Brew',
+                'count': 1,
+                'price': 5
+            },{
+                'product': 'Cheese Cake',
+                'count': 2,
+                'price': 12
+            },{
+                'product': 'Milk Tea',
+                'count': 1,
+                'price': 7
+            }],
+            'total': 24
+        }
+    }
+    return render(request, 'groupbuying/order.html', context)
 
 def profile_page(request, user_id):
     context = {}
@@ -63,7 +140,6 @@ def other_page(request):
 @login_required
 def shop_page(request):
     context = {}
-    context['form'] = ProductForm()
     context['shop_name'] = "Starbucks"
     context['description'] = "Very expensive and unhealthy food."
     context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
@@ -93,9 +169,12 @@ def shop_page(request):
             }
         }
     }
-
+    
+    context['productForm'] = ProductForm()
+    context['vendorForm'] = VendorInfoForm()
     context['categories'] = Category.objects.all()
     context['products'] = Product.objects.all()
+    # context['vendorInfo'] = VendorInfo.objects.all() # TODO: delte lated
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)
@@ -113,10 +192,11 @@ def add_category(request):
                                 vendor=request.user)
         new_category.save()
 
+    context['productForm'] = ProductForm()
+    context['vendorForm'] = VendorInfoForm()
     context['categories'] = Category.objects.all()
-    context['products'] = None # empty page in the beginning
+    context['products'] = Product.objects.all() # Note: empty page in the beginning?
     context['errors'] = errors
-    # context = {'categories': Category.objects.all(), 'products': Product.objects.all(), 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)
 
@@ -134,7 +214,8 @@ def get_product_photo(request, product_id):
 def add_product(request):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    form = None
+    # print(request.POST)
+    # print(request.FILES)
 
     if 'name' not in request.POST or not request.POST['name'] or \
         'price' not in request.POST or not request.POST['price']:
@@ -151,77 +232,95 @@ def add_product(request):
         
         target_category = Category.objects.filter(name=str(request.POST['current_category']))
         if (target_category):
-            print(target_category)
             new_product.category = target_category[0]
         else:
             new_product.category = None
-            print("Cannot find the catrgory")
-
 
         form = ProductForm(request.POST, request.FILES, instance=new_product)
         # form = ImageUploadForm(request.POST, request.FILES)
 
-        if not form.is_valid():
-            form = ProductForm()
-        else:
-            if 'product_picture' in request.FILES:
+        # if not form.is_valid():
+        #     form = ProductForm()
+        # else:
+        if form.is_valid():
+            if 'image' in request.FILES:
                 new_product.image = form.cleaned_data['image']
-                new_product.content_type = form.cleaned_data['product_picture'].content_type
-                # new_product.image = form.cleaned_data['product_image']
-
-            # form.save()
+                new_product.content_type = form.cleaned_data['image'].content_type
             context['message'] = 'Product #{0} saved.'.format(new_product.id)
-
-        new_product.save()
+            form.save()
+            #new_product.save()
     
-    print(request.POST['current_category'])
-    print(Product.objects.filter(category__name=request.POST['current_category']))
+    # print(request.POST['current_category'])
+    # print(Product.objects.filter(category__name=request.POST['current_category']))
     
+    context['productForm'] = ProductForm()
+    context['vendorForm'] = VendorInfoForm()
     context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.filter(category__name=request.POST['current_category'], vendor__id=request.user.id)
+    context['products'] = Product.objects.all()
+    # context['products'] = Product.objects.filter(category__name=request.POST['current_category'], vendor__id=request.user.id)
     context['errors'] = errors
 
     return render(request, 'groupbuying/shop.html', context)
-    # return redirect(reverse('shop', kwargs=context))
 
 @login_required
-def update_profile(request):
+def update_product(request, product_id):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    form = None
 
     if 'name' not in request.POST or not request.POST['name'] or \
         'price' not in request.POST or not request.POST['price']:
         errors.append('You must have at least "name and price" for the product')
     else:
-        new_product = Product(name=str(request.POST['name']),
-                              description=str(request.POST['description']),
-                              price=float(request.POST['price']),
-                              sellerId=str(request.user.id),
-                              isAvailable=True,
-                              saleVolume=0,
-                              vendor=request.user)
+        cur_product = Product.objects.filter(pk=str(product_id))[0] # Note: remember index for filter
+        form = ProductForm(request.POST, request.FILES, instance=cur_product)
+        if form.is_valid():
+            cur_product.name = str(request.POST['name'])
+            cur_product.price = float(request.POST['price'])
+            cur_product.description = str(request.POST['description'])
+            if 'image' in request.FILES:
+                cur_product.image = form.cleaned_data['image']
+                cur_product.content_type = form.cleaned_data['image'].content_type
+            form.save()
+        else:
+            print("FAIL: ProductForm is NOT valid")
 
-        form = ProductForm(request.POST, request.FILES, instance=new_product)
-        # form = ImageUploadForm(request.POST, request.FILES)
+    context['productForm'] = ProductForm()
+    # context['vendorInfo'] = cur_vendor_info
+    context['vendorForm'] = VendorInfoForm()
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+
+    return render(request, 'groupbuying/shop.html', context)
+
+@login_required
+def update_vendor_info(request):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+    cur_vendor_info = VendorInfo(name="test",
+                                 description = "test") # TODO: need to get the correct vendor_info
+
+    if 'description' not in request.POST or not request.POST['description'] or \
+        'image' not in request.FILES or not request.FILES['image']:
+        errors.append('You must have at least "description and image" for the vendor info')
+    else:
+        # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check 
+        form = VendorInfoForm(request.POST, request.FILES, instance=cur_vendor_info)
 
         if not form.is_valid():
             print("form is NOT valid")
-            form = ProductForm()
         else:
             print("form is valid")
-            if 'product_picture' in request.FILES:
-                new_product.image = form.cleaned_data['image']
-                # new_product.image = form.cleaned_data['product_image']
-                # new_product.content_type = form.cleaned_data['product_picture'].content_type
-            # form.save()
-            context['message'] = 'Product #{0} saved.'.format(new_product.id)
+            cur_vendor_info.description = request.POST['description']
+            if 'image' in request.FILES:
+                cur_vendor_info.image = form.cleaned_data['image']
+                cur_vendor_info.content_type = form.cleaned_data['image'].content_type
+            form.save()
 
-        new_product.save()
-
-    products = Product.objects.all()
-    context = {'products': products, 'form': form, 'errors': errors}
-    print(products)
+    context['productForm'] = ProductForm()
+    context['vendorInfo'] = cur_vendor_info
+    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
 
     return render(request, 'groupbuying/shop.html', context)
 
@@ -590,15 +689,6 @@ def register_action(request):
 
     new_user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
-
-    # new_item = UserItem(user_id=new_user.id,
-    #                     user_name=form.cleaned_data['username'],
-    #                     email=form.cleaned_data['email'],
-    #                     first_name=form.cleaned_data['first_name'],
-    #                     last_name=form.cleaned_data['last_name'],
-    #                     cell_phone=form.cleaned_data['cell_phone'],
-    #                     address=form.cleaned_data['address'])
-    # new_item.save()
 
     login(request, new_user)
 

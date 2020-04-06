@@ -35,7 +35,7 @@
 							<input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name = "search_text">
 							{% csrf_token %}
 						</form>
-						<a class="nav-link" href="#"><i class="fas fa-shopping-cart fa-lg"></i></a>
+						<a class="nav-link" href="{% url 'order' %}"><i class="fas fa-shopping-cart fa-lg"></i></a>
 						<li class="nav-item dropdown">
 							<a id="id_show_nav_button" class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								Signed In As <span id="id_logged_in_user_name">{{user.first_name}} {{user.last_name}}</span>
