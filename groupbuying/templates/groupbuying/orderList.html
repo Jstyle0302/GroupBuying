@@ -14,85 +14,20 @@ Profile
         <li class="breadcrumb-item active" aria-current="order">Order</li>
     </ol>
 </nav>
-<div class="row justify-content-center">
-    <div class="col">
+<div class="row">
+    {% for order in orders %}
+    <div class="col-3">
         <div class="card">
             <div class="card-header">
-                Order Number: {{order_id}}, Order shop: {{shop}}, Order founder: {{founder}}
-                <h6 class="card-subtitle mb-2 text-muted">Want to group others? Forward this link for them:<a href="{% url 'share' %}?_id={{order_id}}">groupbuying.com?order={{order_id}}</a></h6>
+                Order Number: {{order.order_id}}
             </div>
-            {% if isFounder %}
-            {% for order in receipt.orders %}
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    <h5 class="card-title">{{order.username}}</h5>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Product</th>
-                                <th scope="col">Count</th>
-                                <th scope="col">Price</th>
-                            </tr>
-                            <tbody>
-                                {% for item in order.order %}
-                                <tr>
-                                    <th scope="row">{{forloop.counter}}</th>
-                                    <td>{{item.product}}</td>
-                                    <td>{{item.count}}</td>
-                                    <td>{{item.price}}</td>
-                                </tr>
-                                {% endfor %}
-                                <tr>
-                                    <th scope="row">Total</th>
-                                    <td></td>
-                                    <td></td>
-                                    <td>{{order.total}}</td>
-                                </tr>
-                            </tbody>
-                        </thead>
-                    </table>
-                </li>
-            </ul>
-            {% endfor %}
-            {% endif %}
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    <h3 class="card-title">Summary</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Product</th>
-                            <th scope="col">Count</th>
-                            <th scope="col">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in receipt.summary.order %}
-                        <tr>
-                            <th scope="row">{{forloop.counter}}</th>
-                            <td>{{item.product}}</td>
-                            <td>{{item.count}}</td>
-                            <td>{{item.price}}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr>
-                            <th scope="row">Total</th>
-                            <td></td>
-                            <td></td>
-                            <td class="bg-warning text-dark">{{receipt.summary.total}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                {% if isFounder %}
-                <a href="#" class="btn btn-primary float-left">Checkout</a>
-                {% else %}
-                <a href="#" class="btn btn-primary float-left">Submit to Founder</a>
-                {% endif %}
-                </li>
-            </ul>
+            <img class="card-img-top" src="{{order.image}}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">{{order.name}}</h5>
+                <a class="btn btn-primary" href="{% url 'order' %}">To Checkout</a>
+            </div>
         </div>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}
