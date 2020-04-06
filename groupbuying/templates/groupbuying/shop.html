@@ -158,13 +158,15 @@ Shops
                         <h6>$ {{product.price}}</h6>
                       </span></h4>
                     <p class="card-text">{{ product.description }}</p>
-                    <form>
+                    <form method="post" action="{% url 'order' %}">
+                      <input type="hidden" name="product_id" value={{ product.id }}>
                       <div class="form-row">
                         <i class="fas fa-minus-circle btn btn-default"></i>
-                        <input type="number" name="" value="1" class="form-control-sm">
+                        <input type="number" name="product_number" value="1" class="form-control-sm">
                         <i class="fas fa-plus-circle btn btn-default"></i>
                         <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
                       </div>
+                      {% csrf_token %}
                     </form>
                   </div>
                 </div>

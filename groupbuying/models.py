@@ -97,7 +97,7 @@ class OrderBundle(models.Model):
 
 class OrderUnit(models.Model):
     buyer = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.CharField(max_length=10)
     comment = models.CharField(max_length=100)
     orderTime = models.TimeField()

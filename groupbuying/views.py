@@ -1,6 +1,7 @@
 import json
 import operator
 import math
+import datetime
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
@@ -92,53 +93,54 @@ def share_page(request):
 
 def order_page(request):
     context = {}
+    if 'product_id' not in request.POST or not request.POST['product_id'] or \
+            'product_number' not in request.POST or not request.POST['product_number']:
+        return render(request, 'groupbuying/order.html', context)
+
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
+    product =  Product.objects.filter(Q(id=str(request.POST['product_id'])))[0]
+    vendorInfo = VendorInfo.objects.filter(Q(id=str(product.vendor.id)))[0]
+    new_orderbundle = OrderBundle(holder=customerInfo,
+                                    vendor=vendorInfo)
+    new_orderbundle.save()
+    new_orderUnit = OrderUnit(
+                    buyer=customerInfo,
+                    product=product,
+                    quantity=int(request.POST['product_number']),
+                    comment='omg',
+                    orderTime=datetime.datetime.now(),
+                    orderDate=datetime.datetime.now(),
+                    deliverTime=datetime.datetime.now(),
+                    deliverDate=datetime.datetime.now(),
+                    isPaid=False,
+                    orderbundle=new_orderbundle
+                    )
+    new_orderUnit.save()
+
     context['isFounder'] = True
-    context['order_id'] = '17614'
-    context['shop'] = 'Starbucks'
-    context['founder'] = 'Shine'
+    context['order_id'] = new_orderbundle.id
+    context['shop'] = vendorInfo.name
+    context['founder'] = new_orderbundle.holder.name
     context['receipt'] = {
         'orders': [{
-            'username': 'Charles',
+            'username': new_orderUnit.buyer.name,
             'order': [{
-                'product': 'Cold Brew',
-                'count': 1,
-                'price': 5
-            }, {
-                'product': 'Cheese Cake',
-                'count': 1,
-                'price': 6
+                'product': product.name,
+                'count': request.POST['product_number'],
+                'price': product.price
             }],
-            'total': 11
-        }, {
-            'username': 'Shine',
-            'order': [{
-                'product': 'Milk Tea',
-                'count': 1,
-                'price': 7
-            }, {
-                'product': 'Cheese Cake',
-                'count': 1,
-                'price': 6
-            }],
-            'total': 13
+            'total': int(request.POST['product_number']) * int(product.price)
         }],
         'summary': {
             'order': [{
-                'product': 'Cold Brew',
-                'count': 1,
-                'price': 5
-            }, {
-                'product': 'Cheese Cake',
-                'count': 2,
-                'price': 12
-            }, {
-                'product': 'Milk Tea',
-                'count': 1,
-                'price': 7
+                'product': product.name,
+                'count': request.POST['product_number'],
+                'price': product.price
             }],
-            'total': 24
+            'total': int(request.POST['product_number']) * int(product.price)
         }
     }
+    
     return render(request, 'groupbuying/order.html', context)
 
 
