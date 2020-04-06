@@ -20,6 +20,10 @@ Shops
             href="#list-profile" role="tab" aria-controls="profile">
             <h5>Profile</h5>
           </a>
+          <a class="list-group-item list-group-item-action" id="list-statistics-list" data-toggle="tab"
+            href="#list-statistics" role="tab" aria-controls="statistics">
+            <h5>Statistics</h5>
+          </a>
           <h4 class="text-uppercase font-italic text-muted mt-5">Menu</h4>
           {% for category in menu %}
           {% if forloop.counter == 1 %}
@@ -41,6 +45,14 @@ Shops
             <h5>{{category.name}}</h5>
           </a>
           {% endfor %}
+          <!-- test -->
+          <br></br>
+          <form action="{% url 'add_category' %}" method="POST">
+            <input type="text" name="new_category" class="form-control text-center mb-1" placeholder="New Category">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-block">Add</button>    
+          </form>
+          <!-- test end -->
         </div>
       </div>
     </div>
@@ -52,7 +64,7 @@ Shops
           <div class="col-6">
             <div class="mx-auto text-center">
               <h4 class="border-bottom"><em>Profile</em></h4>
-              <h2>{{shop_name}}</h2>
+              <h2>{{shop_name}}&nbsp;<i class="far fa-edit btn"></i></h2>
             </div>
           </div>
         </div>
@@ -67,11 +79,35 @@ Shops
                   <h4 class="card-title">
                       <span>About Us</span>
                   </h4>
-                  <textarea name="description" cols="70" rows="5" readonly id="id_description" class="card-text col mb-2 form-control form-control-lg">{{description}}</textarea>
+                  <form action="{% url 'update_vendor_info' %}" method="POST" class="form-group" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      {{ vendorForm.as_p }}
+                      <div class="text-right">
+                          <button class="btn btn-sm btn-primary mt-2" id="id_update_profile_button">
+                              Submit
+                          </button>
+                      </div>
+                  </form>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="tab-pane fade" id="list-statistics" role="tabpanel" aria-labelledby="list-statistics-list">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <h5>Company Performance</h5>
+            <div id="statistics_line"></div>
+          </li>
+          <li class="list-group-item">
+            <h5>Sales Performance</h5>
+            <div class="card-body" id="statistics_bar"></div>
+          </li>
+          <li class="list-group-item">
+            <h5>Target Customers</h5>
+            <div id="statistics_pie"></div>
+          </li>
+        </ul>
       </div>
       {% for category,dishes in menu.items %}
       <div class="tab-pane fade" id="list-{{category}}" role="tabpanel" aria-labelledby="list-{{category}}-list">
@@ -79,7 +115,7 @@ Shops
           <div class="col-6">
             <div class="mx-auto text-center">
               <h4 class="border-bottom"><em>Menu</em></h4>
-              <h2>{{category}}</h2>
+              <h2>{{category}}&nbsp;<i class="far fa-edit btn"></i></h2>
             </div>
           </div>
         </div>
@@ -93,18 +129,10 @@ Shops
                     <img src="{{dish_info.image}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
                   </div>
                   <div class="col-9">
-                    <h4 class="card-title">{{ dish }}<span class="float-right">
+                    <h4 class="card-title">{{ dish }}&nbsp;<i class="far fa-edit btn"></i><span class="float-right">
                         <h6>$ {{dish_info.price}}</h6>
                       </span></h4>
                     <p class="card-text">{{ dish_info.description }}</p>
-                    <form>
-                      <div class="form-row">
-                        <i class="fas fa-minus-circle btn btn-default"></i>
-                        <input type="number" name="" value="1" class="form-control-sm">
-                        <i class="fas fa-plus-circle btn btn-default"></i>
-                        <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
-                      </div>
-                    </form>
                   </div>
                 </div>
               </li>
@@ -136,6 +164,38 @@ Shops
                 </div>
               </li>
               {% endfor %}
+              <!-- test end -->
+              <li class="list-group-item">
+                <h4 class="card-title">Add an new {{category}}</h4>
+                {{ errors }}
+                <form enctype="multipart/form-data" action="{% url 'add_product' %}" method="post">
+                  {% csrf_token %}
+                  <div class="form-row">
+                    <div class="form-group col-6">
+                      {{ productForm.name }}
+                      <!-- <label for="name">Name</label>
+                      <input type="text" class="form-control" id="name" placeholder="Name" name="product_name"> -->
+                    </div>
+                    <div class="form-group col-6">
+                      {{ productForm.price }}
+                      <!-- <label for="price">Price</label>
+                      <input type="text" class="form-control" id="price" placeholder="Price" name="product_price"> -->
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    {{ productForm.description }}
+                    <!-- <label for="description">Description</label>
+                    <textarea class="form-control" id="description" rows="3" name="product_description"></textarea> -->
+                  </div>
+                  <div class="form-group">
+                    {{ productForm.image }}
+                    <!-- <label for="image">Image</label>
+                    <input type="file" class="form-control-file" id="image" name="product_image"> -->
+                  </div>
+                  <input type="hidden" name="current_category" value="{{ category }}">
+                  <input type="submit" class="btn btn-primary" value="Submit">
+                </form>
+              </li>
             </ul>
           </div>
         </div>
@@ -148,4 +208,22 @@ Shops
 
 
 {% block footer %}
+<!-- The Modal -->
+<div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <p><span class="close">&times;</span></p>
+    <div id="context"></div>
+    <!-- test start -->
+    <form enctype="multipart/form-data" action="{% url 'update_product' 1 %}" method="post">
+      {% csrf_token %}
+      {{ productForm.as_p }}
+      <input type="submit" class="btn btn-primary" value="Submit">
+    </form>
+    <!-- test end -->
+  </div>
+</div>
+{% load static %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="{% static 'groupbuying/shop.js' %}" type="text/javascript"></script>
 {% endblock %}
