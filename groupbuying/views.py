@@ -42,6 +42,10 @@ def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
 
+def orderList_page(request):
+    context = {}
+    return render(request, 'groupbuying/orderList.html', context)
+
 def share_page(request):
     context = {}
     context['isFounder'] = False
@@ -139,7 +143,7 @@ def other_page(request):
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     return render(request, 'groupbuying/others.html', context)
 
-@login_required
+# @login_required
 def shop_page(request):
     context = {}
     context['shop_name'] = "Starbucks"

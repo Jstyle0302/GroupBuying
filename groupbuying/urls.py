@@ -28,5 +28,6 @@ urlpatterns = [
     path('update_customer_info/<str:user_id>', views.update_customer_info, name='update_customer_info'),
     path('other', views.other_page, name='other'),
     path('order', views.order_page, name='order'),
+    path('orderList', views.orderList_page, name='order'),
     path('share', views.share_page, name='share'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
