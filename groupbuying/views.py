@@ -29,6 +29,7 @@ from functools import reduce
 def PAGESIZE_CONSTANT():
     return 2
 
+
 def get_shopPage_context():
     context = {}
     context['productForm'] = ProductForm()
@@ -38,9 +39,11 @@ def get_shopPage_context():
 
     return context
 
+
 def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
+
 
 def orderList_page(request):
     context = {}
@@ -49,24 +52,25 @@ def orderList_page(request):
         'name': 'Starbucks',
         'description': 'Starbucks was established in 1971 by three local businessmen to sell high quality whole beans coffee. In 1981 when Howard Schultz visited the store he plan to build a strong company and expand high quality coffee business with the name of Starbucks.',
         'image': "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
-    },{
+    }, {
         'order_id': 18613,
         'name': 'Pandas Express',
         'description': 'Panda Express is a fast food restaurant chain which serves American Chinese cuisine. With over 2,200 locations, it is the largest Asian segment restaurant chain in the United States, where it was founded and is mainly located (in addition to other countries and territories in North America and Asia).',
         'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png",
-    },{
+    }, {
         'order_id': 10661,
         'name': 'Mcdonald',
         'description': 'McDonalds.com is your hub for everything McDonald\'s. Find out more about our menu items and promotions today!',
         'image': "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/McDonald%27s_Golden_Arches.svg/1200px-McDonald%27s_Golden_Arches.svg.png",
     }]
-    
+
     return render(request, 'groupbuying/orderList.html', context)
+
 
 def share_page(request):
     context = {}
     context['isFounder'] = False
-    context['order_id'] = '17614' 
+    context['order_id'] = '17614'
     context['shop'] = 'Starbucks'
     context['founder'] = 'Shine'
     context['receipt'] = {
@@ -75,7 +79,7 @@ def share_page(request):
                 'product': 'Cold Brew',
                 'count': 1,
                 'price': 5
-            },{
+            }, {
                 'product': 'Cheese Cake',
                 'count': 1,
                 'price': 6
@@ -85,32 +89,33 @@ def share_page(request):
     }
     return render(request, 'groupbuying/order.html', context)
 
+
 def order_page(request):
     context = {}
     context['isFounder'] = True
-    context['order_id'] = '17614' 
+    context['order_id'] = '17614'
     context['shop'] = 'Starbucks'
     context['founder'] = 'Shine'
     context['receipt'] = {
-        'orders' : [{
+        'orders': [{
             'username': 'Charles',
             'order': [{
                 'product': 'Cold Brew',
                 'count': 1,
                 'price': 5
-            },{
+            }, {
                 'product': 'Cheese Cake',
                 'count': 1,
                 'price': 6
             }],
             'total': 11
-        },{
+        }, {
             'username': 'Shine',
             'order': [{
                 'product': 'Milk Tea',
                 'count': 1,
                 'price': 7
-            },{
+            }, {
                 'product': 'Cheese Cake',
                 'count': 1,
                 'price': 6
@@ -122,11 +127,11 @@ def order_page(request):
                 'product': 'Cold Brew',
                 'count': 1,
                 'price': 5
-            },{
+            }, {
                 'product': 'Cheese Cake',
                 'count': 2,
                 'price': 12
-            },{
+            }, {
                 'product': 'Milk Tea',
                 'count': 1,
                 'price': 7
@@ -136,14 +141,15 @@ def order_page(request):
     }
     return render(request, 'groupbuying/order.html', context)
 
+
 def profile_page(request, user_id):
     context = {}
-    customerInfo =  CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
     context['username'] = customerInfo.name
     context['description'] = customerInfo.description
     context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
-    context['followers'] = ['Shine','Charles','Ari','En-ting','Ting']
-    context['subcribes'] = ['Starbucks','Pandas','Subway']
+    context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
+    context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     context['customerInfo'] = customerInfo
 
@@ -155,12 +161,14 @@ def other_page(request):
     context['username'] = 'Jeff'
     context['description'] = 'Amazing!'
     context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
-    context['followers'] = ['Shine','Charles','Ari','En-ting','Ting']
-    context['subcribes'] = ['Starbucks','Pandas','Subway']
+    context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
+    context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     return render(request, 'groupbuying/others.html', context)
 
 # @login_required
+
+
 def shop_page(request):
     context = {}
     context['shop_name'] = "Starbucks"
@@ -192,7 +200,7 @@ def shop_page(request):
             }
         }
     }
-    
+
     context['productForm'] = ProductForm()
     context['vendorForm'] = VendorInfoForm()
     context['categories'] = Category.objects.all()
@@ -201,6 +209,7 @@ def shop_page(request):
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)
+
 
 @login_required
 def add_category(request):
@@ -218,7 +227,8 @@ def add_category(request):
     context['productForm'] = ProductForm()
     context['vendorForm'] = VendorInfoForm()
     context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all() # Note: empty page in the beginning?
+    # Note: empty page in the beginning?
+    context['products'] = Product.objects.all()
     context['errors'] = errors
 
     return render(request, 'groupbuying/shop.html', context)
@@ -233,6 +243,7 @@ def get_product_photo(request, product_id):
 
     return HttpResponse(product.image, content_type=product.content_type)
 
+
 @login_required
 def add_product(request):
     context = {}
@@ -241,8 +252,9 @@ def add_product(request):
     # print(request.FILES)
 
     if 'name' not in request.POST or not request.POST['name'] or \
-        'price' not in request.POST or not request.POST['price']:
-        errors.append('You must have at least "name and price" for the product')
+            'price' not in request.POST or not request.POST['price']:
+        errors.append(
+            'You must have at least "name and price" for the product')
     else:
         new_product = Product(name=str(request.POST['name']),
                               description=str(request.POST['description']),
@@ -251,9 +263,10 @@ def add_product(request):
                               isAvailable=True,
                               saleVolume=0,
                               vendor=request.user)
-                              #category=Category.objects.filter(name=str(request.POST['current_category']))[0])
-        
-        target_category = Category.objects.filter(name=str(request.POST['current_category']))
+        # category=Category.objects.filter(name=str(request.POST['current_category']))[0])
+
+        target_category = Category.objects.filter(
+            name=str(request.POST['current_category']))
         if (target_category):
             new_product.category = target_category[0]
         else:
@@ -271,11 +284,11 @@ def add_product(request):
                 new_product.content_type = form.cleaned_data['image'].content_type
             context['message'] = 'Product #{0} saved.'.format(new_product.id)
             form.save()
-            #new_product.save()
-    
+            # new_product.save()
+
     # print(request.POST['current_category'])
     # print(Product.objects.filter(category__name=request.POST['current_category']))
-    
+
     context['productForm'] = ProductForm()
     context['vendorForm'] = VendorInfoForm()
     context['categories'] = Category.objects.all()
@@ -285,16 +298,19 @@ def add_product(request):
 
     return render(request, 'groupbuying/shop.html', context)
 
+
 @login_required
 def update_product(request, product_id):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
 
     if 'name' not in request.POST or not request.POST['name'] or \
-        'price' not in request.POST or not request.POST['price']:
-        errors.append('You must have at least "name and price" for the product')
+            'price' not in request.POST or not request.POST['price']:
+        errors.append(
+            'You must have at least "name and price" for the product')
     else:
-        cur_product = Product.objects.filter(pk=str(product_id))[0] # Note: remember index for filter
+        cur_product = Product.objects.get(pk=str(product_id))
+        # cur_product = Product.objects.filter(pk=str(product_id))[0] # Note: remember index for filter
         form = ProductForm(request.POST, request.FILES, instance=cur_product)
         if form.is_valid():
             cur_product.name = str(request.POST['name'])
@@ -315,19 +331,22 @@ def update_product(request, product_id):
 
     return render(request, 'groupbuying/shop.html', context)
 
+
 @login_required
 def update_vendor_info(request):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = VendorInfo(name="test",
-                                 description = "test") # TODO: need to get the correct vendor_info
+                                 description="test")  # TODO: need to get the correct vendor_info
 
     if 'description' not in request.POST or not request.POST['description'] or \
-        'image' not in request.FILES or not request.FILES['image']:
-        errors.append('You must have at least "description and image" for the vendor info')
+            'image' not in request.FILES or not request.FILES['image']:
+        errors.append(
+            'You must have at least "description and image" for the vendor info')
     else:
-        # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check 
-        form = VendorInfoForm(request.POST, request.FILES, instance=cur_vendor_info)
+        # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check
+        form = VendorInfoForm(request.POST, request.FILES,
+                              instance=cur_vendor_info)
 
         if not form.is_valid():
             print("form is NOT valid")
@@ -341,11 +360,13 @@ def update_vendor_info(request):
 
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
-    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+    context['vendorForm'] = VendorInfoForm(
+        initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
     context['categories'] = Category.objects.all()
     context['products'] = Product.objects.all()
 
     return render(request, 'groupbuying/shop.html', context)
+
 
 @login_required
 def update_customer_info(request, user_id):
@@ -354,14 +375,16 @@ def update_customer_info(request, user_id):
     #cur_customer_info = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
     cur_customer_info = CustomerInfo.objects.filter(id=str(user_id)).first()
 
-    if 'description'  in request.POST and request.POST['description']:
+    if 'description' in request.POST and request.POST['description']:
         cur_customer_info.description = request.POST['description']
-        form = CustomerInfoForm(request.POST, request.FILES, instance=cur_customer_info)
+        form = CustomerInfoForm(
+            request.POST, request.FILES, instance=cur_customer_info)
         if form.is_valid():
             form.save()
 
     if 'image' in request.FILES and request.FILES['image']:
-        form = CustomerInfoForm(request.POST, request.FILES, instance=cur_customer_info)
+        form = CustomerInfoForm(
+            request.POST, request.FILES, instance=cur_customer_info)
         if not form.is_valid():
             print("form is NOT valid")
         else:
@@ -374,10 +397,11 @@ def update_customer_info(request, user_id):
     context['username'] = cur_customer_info.name
     context['description'] = cur_customer_info.description
     context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
-    context['followers'] = ['Shine','Charles','Ari','En-ting','Ting']
-    context['subcribes'] = ['Starbucks','Pandas','Subway']
+    context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
+    context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
     context['customerInfo'] = cur_customer_info
     return render(request, 'groupbuying/profile.html', context)
+
 
 def category_proc(obj):
     tag_tmp = (obj.tagList.split(','))
@@ -421,6 +445,7 @@ def fill_restaurant_info(obj):
 
     return restaurant
 
+
 def get_all_tags():
     all_tag = []
 
@@ -431,6 +456,7 @@ def get_all_tags():
     all_tag = sorted(all_tag)
 
     return all_tag
+
 
 def fill_restaurant_context_info(search_result, search_text, page):
     context = {}
@@ -457,12 +483,12 @@ def fill_restaurant_context_info(search_result, search_text, page):
         context['rating'].append(restaurant['rating'])
 
     if search_text != '':
-        context['query_rules'].append(search_text) 
+        context['query_rules'].append(search_text)
 
-    cache.set('context',context)
+    cache.set('context', context)
 
-    
     return context
+
 
 def page(request, page):
     context = {}
@@ -478,24 +504,27 @@ def page(request, page):
 
     context = last_context
     context['current_page'] = page
-    context['restaurants'] = context['restaurants'][(page-1)*PAGESIZE_CONSTANT():page*PAGESIZE_CONSTANT()]                                      
+    context['restaurants'] = context['restaurants'][(
+        page-1)*PAGESIZE_CONSTANT():page*PAGESIZE_CONSTANT()]
     return render(request, 'groupbuying/search.html', context)
+
 
 def fill_context_filter_query_rules(context, fitler_query):
     if fitler_query.rating != '':
-        context['query_rules'].append(fitler_query.rating) 
+        context['query_rules'].append(fitler_query.rating)
 
     for tag in fitler_query.tag:
-        context['query_rules'].append(tag) 
-    
-    cache.set('context',context)
+        context['query_rules'].append(tag)
+
+    cache.set('context', context)
 
     return context
+
 
 def filtering(request):
     context = {}
     search_text = ''
-    fitler_query = lambda:0
+    def fitler_query(): return 0
     if ('last_search_text' not in request.POST or not request.POST['last_search_text']):
         search_text = ''
     else:
@@ -503,19 +532,20 @@ def filtering(request):
 
     if ('filter_last' in request.POST):
         result = search_text_proc(search_text)
-    else: 
+    else:
         result = VendorInfo.objects.all()
         search_text = ''
 
     result = filter_by_price(request, result)
     result, fitler_query.rating = filter_by_rating(request, result)
     result, fitler_query.tag = filter_by_tag(request, result)
-     
+
     context = fill_restaurant_context_info(result, search_text, 1)
     context = fill_context_filter_query_rules(context, fitler_query)
-    context['restaurants'] = context['restaurants'][(0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
+    context['restaurants'] = context['restaurants'][(
+        0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
     cache.set('search_result', result)
-    #cache.set('context',context)
+    # cache.set('context',context)
     return render(request, 'groupbuying/search.html', context)
 
 
@@ -529,14 +559,14 @@ def filter_by_price(request, prev_result):
 def filter_by_rating(request, prev_result):
     rating = -1
     rating_query = ''
-    
+
     if ('star' not in request.POST
             or not request.POST['star']):
         return prev_result, rating_query
 
     star = request.POST['star']
 
-    for i in range(0,5):
+    for i in range(0, 5):
         if (star == 'star' + str(i)):
             rating = i + 1
     if (rating == -1):
@@ -586,17 +616,16 @@ def sorting(request):
     else:
         last_search_text = last_context['last_search_text']
 
-
     if ('sort_by_name' in request.POST):
         print('name\n')
         last_context['restaurants'] = sorted(last_context['restaurants'],
-                                    key=lambda i: i['name'].lower())
+                                             key=lambda i: i['name'].lower())
 
     if ('sort_by_rating' in request.POST):
         print('rating\n')
         last_context['restaurants'] = sorted(last_context['restaurants'],
-                                    key=lambda i: i['rating'],
-                                    reverse=True)
+                                             key=lambda i: i['rating'],
+                                             reverse=True)
 
     if ('sort_by_price' in request.POST):
         print('price\n')
@@ -606,6 +635,7 @@ def sorting(request):
     last_context['restaurants'] = last_context['restaurants'][0:PAGESIZE_CONSTANT()]
 
     return render(request, 'groupbuying/search.html', last_context)
+
 
 def search_page(request):
     context = {}
@@ -619,13 +649,14 @@ def search_page(request):
         return render(request, 'groupbuying/search.html', context)
 
     search_result = search_text_proc(request.POST['search_text'])
-    cache.set('search_result',search_result)
+    cache.set('search_result', search_result)
     page = 1
     context = fill_restaurant_context_info(search_result,
                                            request.POST['search_text'], page)
 
-    context['restaurants'] = context['restaurants'][(0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
-    #cache.set('context',context)
+    context['restaurants'] = context['restaurants'][(
+        0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
+    # cache.set('context',context)
     return render(request, 'groupbuying/search.html', context)
     '''
     context['pages'] = range(1,10)
@@ -722,25 +753,23 @@ def register_action(request):
     new_user.save()
 
     new_customerInfo = CustomerInfo(name=form.cleaned_data['username'],
-                        email=form.cleaned_data['email'],
-                        description = "Why nunu why",
-                        address = form.cleaned_data['address'],
-                        phoneNum = form.cleaned_data['cell_phone'])
+                                    email=form.cleaned_data['email'],
+                                    description="Why nunu why",
+                                    address=form.cleaned_data['address'],
+                                    phoneNum=form.cleaned_data['cell_phone'])
     new_customerInfo.save()
 
     new_vendorInfo = VendorInfo(name=form.cleaned_data['username'],
-                        email=form.cleaned_data['email'],
-                        description = "test",
-                        address = form.cleaned_data['address'],
-                        phoneNum = form.cleaned_data['cell_phone'])
+                                email=form.cleaned_data['email'],
+                                description="test",
+                                address=form.cleaned_data['address'],
+                                phoneNum=form.cleaned_data['cell_phone'])
     new_vendorInfo.save()
 
-
     new_userProfile = UserProfile(user=new_user,
-                        CustomerInfo= new_customerInfo,
-                        VendorInfo=new_vendorInfo)
+                                  CustomerInfo=new_customerInfo,
+                                  VendorInfo=new_vendorInfo)
     new_userProfile.save()
-
 
     new_user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])

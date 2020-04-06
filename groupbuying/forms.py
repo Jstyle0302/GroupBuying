@@ -6,16 +6,17 @@ from groupbuying.models import Product, CustomerInfo
 
 MAX_UPLOAD_SIZE = 2500000
 
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'price', 'description', 'image']
         widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'name', 'class':'form-control', 'id':'id_product'}),
-            'price': forms.NumberInput(attrs={'placeholder': 'Price', 'class':'form-control', 'id':'id_product_price'}),
-            'description': forms.Textarea(attrs={'cols': 70, 'rows': 5, 'placeholder': 'Write something about your product!', 'class':'form-control'}),
-            'image': forms.FileInput(attrs={'class':'form-control-file','id':'id_product_picture'})
-            }
+            'name': forms.TextInput(attrs={'placeholder': 'name', 'class': 'form-control', 'id': 'id_product'}),
+            'price': forms.NumberInput(attrs={'placeholder': 'Price', 'class': 'form-control', 'id': 'id_product_price'}),
+            'description': forms.Textarea(attrs={'cols': 70, 'rows': 5, 'placeholder': 'Write something about your product!', 'class': 'form-control'}),
+            'image': forms.FileInput(attrs={'class': 'form-control-file', 'id': 'id_product_picture'})
+        }
         labels = {
             'name': "",
             'price': "",
@@ -25,6 +26,7 @@ class ProductForm(forms.ModelForm):
         # widgets = {
         #     'description': Textarea(attrs={'cols': 80, 'rows': 20}),
         # }
+
     def clean_picture(self):
         image = self.cleaned_data['image']
         if not image:
@@ -37,14 +39,15 @@ class ProductForm(forms.ModelForm):
                 'File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
         return image
 
+
 class VendorInfoForm(forms.ModelForm):
     class Meta:
-        model = Product   #!!!!wrong form?
+        model = Product  # !!!!wrong form?
         fields = ['description', 'image']
         widgets = {
-            'description': forms.Textarea(attrs={'cols': 70, 'rows': 5, 'placeholder': 'Write something about your shop!', 'class':'form-control'}),
-            'image': forms.FileInput(attrs={'class':'form-control-file','id':'id_vender_picture'})
-            }
+            'description': forms.Textarea(attrs={'cols': 70, 'rows': 5, 'placeholder': 'Write something about your shop!', 'class': 'form-control'}),
+            'image': forms.FileInput(attrs={'class': 'form-control-file', 'id': 'id_vender_picture'})
+        }
         labels = {
             'description': "",
             'image': "Upload Logo"
@@ -61,6 +64,7 @@ class VendorInfoForm(forms.ModelForm):
             raise forms.ValidationError(
                 'File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
         return image
+
 
 class CustomerInfoForm(forms.ModelForm):
     class Meta:
@@ -80,6 +84,7 @@ class CustomerInfoForm(forms.ModelForm):
             raise forms.ValidationError(
                 'File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
         return image
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(
