@@ -19,9 +19,11 @@ urlpatterns = [
     path('add_category', views.add_category, name='add_category'),
     path('add_product', views.add_product, name='add_product'),
     path('get_product_photo/<int:product_id>', views.get_product_photo, name='get_product_photo'),
-    path('profile', views.profile_page, name='profile'),
-    path('other', views.other_page, name='other')
-    
+
+    # profile features
+    path('profile/<str:user_id>', views.profile_page, name='profile'),
+    path('other', views.other_page, name='other'),
+
     # path('follower', views.follower_stream, name='follower'),
     # path('follow_user/<int:follower_id>', views.follow_user, name='follow_user'),
     # path('unfollow_user/<int:follower_id>', views.unfollow_user, name='unfollow_user'),

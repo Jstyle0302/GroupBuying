@@ -2,10 +2,9 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
-from groupbuying.models import Product
+from groupbuying.models import Product, CustomerInfo
 
 MAX_UPLOAD_SIZE = 2500000
-
 
 class ProductForm(forms.ModelForm):
     class Meta:

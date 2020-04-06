@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.urls import reverse
 from django.http import HttpResponse, Http404
+from django.http import HttpResponseForbidden
 from django.conf import settings
 
 from django.contrib.auth.decorators import login_required
@@ -24,6 +25,7 @@ from django.db.models import Q
 from django.db.models import Avg
 from functools import reduce
 
+
 # @ensure_csrf_cookie
 # @login_required
 
@@ -35,15 +37,18 @@ def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
 
-def profile_page(request):
+
+def profile_page(request, user_id):
     context = {}
-    context['username'] = 'Jeff'
-    context['description'] = 'Amazing!'
+    customerInfo =  CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
+    context['username'] = customerInfo.name
+    context['description'] = customerInfo.description
     context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
     context['followers'] = ['Shine','Charles','Ari','En-ting','Ting']
     context['subcribes'] = ['Starbucks','Pandas','Subway']
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     return render(request, 'groupbuying/profile.html', context)
+
 
 def other_page(request):
     context = {}
@@ -330,7 +335,7 @@ def fill_context_filter_query_rules(context, fitler_query):
         context['query_rules'].append(tag) 
     
     cache.set('context',context)
-    
+
     return context
 
 def filtering(request):
@@ -561,6 +566,27 @@ def register_action(request):
         first_name=form.cleaned_data['first_name'],
         last_name=form.cleaned_data['last_name'])
     new_user.save()
+
+    new_customerInfo = CustomerInfo(name=form.cleaned_data['username'],
+                        email=form.cleaned_data['email'],
+                        description = "Why nunu why",
+                        address = form.cleaned_data['address'],
+                        phoneNum = form.cleaned_data['cell_phone'])
+    new_customerInfo.save()
+
+    new_vendorInfo = VendorInfo(name=form.cleaned_data['username'],
+                        email=form.cleaned_data['email'],
+                        description = "test",
+                        address = form.cleaned_data['address'],
+                        phoneNum = form.cleaned_data['cell_phone'])
+    new_vendorInfo.save()
+
+
+    new_userProfile = UserProfile(user=new_user,
+                        CustomerInfo= new_customerInfo,
+                        VendorInfo=new_vendorInfo)
+    new_userProfile.save()
+
 
     new_user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
