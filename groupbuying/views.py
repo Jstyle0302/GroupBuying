@@ -68,26 +68,39 @@ def orderList_page(request):
     return render(request, 'groupbuying/orderList.html', context)
 
 
-def share_page(request):
+def share_page(request, order_id):
     context = {}
+
+
+    orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
     context['isFounder'] = False
-    context['order_id'] = '17614'
-    context['shop'] = 'Starbucks'
-    context['founder'] = 'Shine'
+    context['order_id'] = orderbundle.id
+    context['shop'] = orderbundle.vendor.name
+    context['founder'] = orderbundle.holder.name
+
+    orderUnit = OrderUnit.objects.filter(Q(orderbundle=orderbundle))[0]
+
+
     context['receipt'] = {
+        'orders': [{
+            'username': orderUnit.buyer.name,
+            'order': [{
+                'product': orderUnit.product.name,
+                'count': orderUnit.quantity,
+                'price': orderUnit.product.price
+            }],
+            'total': int(orderUnit.quantity) * int(orderUnit.product.price)
+        }],
         'summary': {
             'order': [{
-                'product': 'Cold Brew',
-                'count': 1,
-                'price': 5
-            }, {
-                'product': 'Cheese Cake',
-                'count': 1,
-                'price': 6
+                'product': orderUnit.product.name,
+                'count': orderUnit.quantity,
+                'price': orderUnit.product.price
             }],
-            'total': 24
+            'total': int(orderUnit.quantity) * int(orderUnit.product.price)
         }
     }
+
     return render(request, 'groupbuying/order.html', context)
 
 

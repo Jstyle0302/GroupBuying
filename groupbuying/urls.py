@@ -32,5 +32,5 @@ urlpatterns = [
     path('other', views.other_page, name='other'),
     path('order', views.order_page, name='order'),
     path('orderList', views.orderList_page, name='orderList'),
-    path('share', views.share_page, name='share'),
+    path('share/<str:order_id>', views.share_page, name='share'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

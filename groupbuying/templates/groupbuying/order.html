@@ -19,7 +19,7 @@ Profile
         <div class="card">
             <div class="card-header">
                 Order Number: {{order_id}}, Order shop: {{shop}}, Order founder: {{founder}}
-                <h6 class="card-subtitle mb-2 text-muted">Want to group others? Forward this link for them:<a href="{% url 'share' %}?_id={{order_id}}">groupbuying.com?order={{order_id}}</a></h6>
+                <h6 class="card-subtitle mb-2 text-muted">Want to group others? Forward this link for them:<a href="{% url 'share' order_id %}?_id={{order_id}}">groupbuying.com?order={{order_id}}</a></h6>
             </div>
             {% if isFounder %}
             {% for order in receipt.orders %}
