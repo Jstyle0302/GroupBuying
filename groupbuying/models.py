@@ -17,7 +17,7 @@ class CustomerInfo(models.Model):
     description = models.CharField(max_length=500)
     address = models.CharField(max_length=100)
     phoneNum = models.CharField(max_length=16)
-    image = models.ImageField(blank=False, null=True, upload_to='img/')
+    image = models.ImageField(blank=False, null=True, upload_to='img/', default='default.jpeg')
     content_type = models.CharField(max_length=50, default="")
 
     def __str__(self):
@@ -87,6 +87,13 @@ class UserProfile(models.Model):
             ', first_name="' + self.user.first_name + '"' \
             ', last_name="' + self.user.last_name + '"'
 
+class OrderBundle(models.Model):
+    holder = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
+            ',num=' + self.num + ',comment=' + str(self.comment)
 
 class OrderUnit(models.Model):
     buyer = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
@@ -98,7 +105,7 @@ class OrderUnit(models.Model):
     deliverTime = models.TimeField()
     deliverDate = models.DateField()
     isPaid = models.BooleanField(default=False)
-    orderbundle = models.ForeignKey('OrderBundle',
+    orderbundle = models.ForeignKey(OrderBundle,
                                     related_name='order_Unit',
                                     on_delete=models.CASCADE)
 
@@ -107,13 +114,7 @@ class OrderUnit(models.Model):
             ',num=' + self.num + ',comment=' + str(self.comment)
 
 
-class OrderBundle(models.Model):
-    holder = models.ForeignKey('CustomerInfo', on_delete=models.CASCADE)
-    vendor = models.ForeignKey('VendorInfo', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
-            ',num=' + self.num + ',comment=' + str(self.comment)
 
 # class UserItem(models.Model):
 #     text = models.CharField(max_length=200)
