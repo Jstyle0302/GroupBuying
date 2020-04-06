@@ -166,3 +166,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'groupbuying/img/')
+MEDIA_URL = 'groupbuying/img/'
