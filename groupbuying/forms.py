@@ -10,6 +10,18 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'price', 'description', 'image']
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'name', 'class':'form-control', 'id':'id_product'}),
+            'price': forms.NumberInput(attrs={'placeholder': 'Price', 'class':'form-control', 'id':'id_product_price'}),
+            'description': forms.Textarea(attrs={'cols': 70, 'rows': 5, 'placeholder': 'Write something about your product!', 'class':'form-control'}),
+            'image': forms.FileInput(attrs={'class':'form-control-file','id':'id_product_picture'})
+            }
+        labels = {
+            'name': "",
+            'price': "",
+            'description': "",
+            'image': "Upload product picture"
+        }
         # widgets = {
         #     'description': Textarea(attrs={'cols': 80, 'rows': 20}),
         # }
