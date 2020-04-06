@@ -21,7 +21,6 @@ class CustomerInfo(models.Model):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
             ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
 
-
 class VendorInfo(models.Model):
     # VendorInfo.name is different from UserProefile.firstName or
     # UserProefile.lastName, can be user name or vendor name

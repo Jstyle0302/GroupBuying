@@ -157,10 +157,12 @@ def shop_page(request):
             }
         }
     }
+    
     context['productForm'] = ProductForm()
     context['vendorForm'] = VendorInfoForm()
     context['categories'] = Category.objects.all()
     context['products'] = Product.objects.all()
+    # context['vendorInfo'] = VendorInfo.objects.all() # TODO: delte lated
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)
@@ -260,7 +262,7 @@ def update_vendor_info(request):
         errors.append('You must have at least "name and price" for the product')
     else:
         # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check 
-        form = ProductForm(request.POST, request.FILES, instance=cur_vendor_info)
+        form = VendorInfoForm(request.POST, request.FILES, instance=cur_vendor_info)
 
         if not form.is_valid():
             print("form is NOT valid")
@@ -271,8 +273,7 @@ def update_vendor_info(request):
                 cur_vendor_info.image = form.cleaned_data['image']
                 cur_vendor_info.content_type = form.cleaned_data['image'].content_type
             form.save()
-    
-    print(cur_vendor_info.description)
+
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
     context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)

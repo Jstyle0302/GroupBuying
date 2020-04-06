@@ -28,6 +28,3 @@ urlpatterns = [
     path('order', views.order_page, name='order'),
     path('share', views.share_page, name='share'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-# if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
