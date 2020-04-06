@@ -70,27 +70,18 @@ Shops
         </div>
         <div class="card">
           <div class="row">
-            <div class="col-3 align-self-center">
-              <img id="id_user_picture" class="card-img img-thumbnail" src="{{logo}}"
+            <div class="col-4 align-self-center">
+              <img id="id_user_picture" class="card-img img-thumbnail" src="{{vendorInfo.image.url}}"
                    alt="Default image" onerror="this.onerror=null;this.src='https://i.stack.imgur.com/l60Hf.png';">
-              <!-- test start -->
-              <img src="{{ vendorInfo.image.url }}" class="card-img img-thumbnail" >
-              <!-- test end -->
             </div>
-            <div class="col-9 align-self-center">
+            <div class="col-8 align-self-center">
               <div class="card-body">
                   <h4 class="card-title">
                       <span>About Us</span>
                   </h4>
-                  <form action="/" method="POST" class="form-group" enctype="multipart/form-data">
-                      <div class="form-group">
-                          <textarea class="form-control" id="description" rows="3">{{description}}</textarea>
-
-                      </div>
-                      <div class="custom-file">
-                          <input type="file" class="custom-file-input" id="shopLogo">
-                          <label class="custom-file-label" for="shopLogo">Choose your shop logo</label>
-                      </div>
+                  <form action="{% url 'update_vendor_info' %}" method="POST" class="form-group" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      {{ vendorForm.as_p }}
                       <div class="text-right">
                           <button class="btn btn-sm btn-primary mt-2" id="id_update_profile_button">
                               Submit
@@ -98,13 +89,6 @@ Shops
                       </div>
                   </form>
               </div>
-            <!-- test start -->
-            <form enctype="multipart/form-data" action="{% url 'update_vendor_info' %}" method="post">
-              {% csrf_token %}
-              {{ vendorForm.as_p }}
-              <input type="submit" class="btn btn-primary" value="Submit">
-            </form>
-            <!-- test end -->
             </div>
           </div>
         </div>

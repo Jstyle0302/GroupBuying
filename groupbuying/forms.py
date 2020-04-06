@@ -30,7 +30,13 @@ class VendorInfoForm(forms.ModelForm):
         model = Product   #!!!!wrong form?
         fields = ['description', 'image']
         widgets = {
-            'description': forms.Textarea(attrs={'cols': 70, 'rows': 5})}
+            'description': forms.Textarea(attrs={'cols': 70, 'rows': 5, 'placeholder': 'Write something about your shop!', 'class':'form-control'}),
+            'image': forms.FileInput(attrs={'class':'form-control-file','id':'id_vender_picture'})
+            }
+        labels = {
+            'description': "",
+            'image': "Upload Logo"
+        }
 
     def clean_picture(self):
         image = self.cleaned_data['image']
