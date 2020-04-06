@@ -46,13 +46,11 @@ Shops
           </a>
           {% endfor %}
           <!-- test -->
-          <a class="list-group-item list-group-item-action fas fa-plus" id="list-{{category}}-list" data-toggle="tab"
-            href="/" role="tab" aria-controls="{{category}}"></a>
           <br></br>
           <form action="{% url 'add_category' %}" method="POST">
-            <input type="text" name="new_category">
+            <input type="text" name="new_category" class="form-control text-center mb-1" placeholder="New Category">
             {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Add</button>    
+            <button type="submit" class="btn btn-primary btn-block">Add</button>    
           </form>
           <!-- test end -->
         </div>
