@@ -162,6 +162,7 @@ def show_order_page(request, order_id):
     return render(request, 'groupbuying/order.html', context)
 
 
+@login_required
 def order_page(request, order_id):
     context = {}
     if 'product_id' not in request.POST or not request.POST['product_id'] or \
