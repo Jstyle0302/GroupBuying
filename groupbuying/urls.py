@@ -20,6 +20,7 @@ urlpatterns = [
     path('shop', views.shop_page, name='shop'),
     path('shop_edit', views.shopEdit_page, name='shop_edit'),
     path('update_vendor_info', views.update_vendor_info, name='update_vendor_info'),
+    path('update_vendor_name', views.update_vendor_name, name='update_vendor_name'),
     path('add_category', views.add_category, name='add_category'),
     path('add_product', views.add_product, name='add_product'),
     path('update_product/<int:product_id>',

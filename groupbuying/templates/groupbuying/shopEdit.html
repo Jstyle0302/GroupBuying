@@ -64,8 +64,9 @@ Shops
           <div class="col-6">
             <div class="mx-auto text-center">
               <h4 class="border-bottom"><em>Profile</em></h4>
-              <form method="POST" action="" class="form-row justify-content-center">
-                <input class="form-group col-4 mr-1" value="{{shop_name}}" name=""></input>
+              <form action="{% url 'update_vendor_name' %}" method="POST" action="" class="form-row justify-content-center">
+                <input class="form-group col-4 mr-1" value="{{ vendorInfo.name }}" name="vendor_name"></input>
+                {% csrf_token %}
                 <input type="submit" class="form-group col-4 btn btn-primary btn-sm" value="Save">
               </form>
             </div>

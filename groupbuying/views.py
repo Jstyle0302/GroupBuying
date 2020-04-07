@@ -439,6 +439,25 @@ def update_product(request, product_id):
 
     return render(request, 'groupbuying/shop.html', context)
 
+@login_required
+def update_vendor_name(request):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+
+    if 'vendor_name' not in request.POST or not request.POST['vendor_name']:
+        errors.append('You must have enter the vendor name')
+    else:
+        cur_vendor_info.name = request.POST['vendor_name']
+        cur_vendor_info.save()
+
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+    context['productForm'] = ProductForm()
+    context['vendorInfo'] = cur_vendor_info
+    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+
+    return render(request, 'groupbuying/shopEdit.html', context)
 
 @login_required
 def update_vendor_info(request):
