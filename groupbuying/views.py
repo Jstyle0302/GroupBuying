@@ -55,7 +55,7 @@ def orderList_page(request):
     for orderUnit in orderUnits.distinct():
         if orderUnit.orderbundle.id in orderbundleId:
             continue
-        
+
         order = {
             'order_id': orderUnit.orderbundle.id,
             'name': orderUnit.orderbundle.vendor.name,
@@ -104,7 +104,7 @@ def show_order_page(request, order_id):
         orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
 
     else:
-        context['isFounder'] = False
+        context['isFounder'] = True
         orderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
 
 
@@ -121,7 +121,8 @@ def show_order_page(request, order_id):
     for orderUnit in orderUnits:
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
-        total_price += int(orderUnit.product.price)
+        print(orderUnit.buyer.name)
+        total_price += int(orderUnit.product.price)*int(orderUnit.quantity)
         dictOrder['order'] = []
         subOrder = {
             'product': orderUnit.product.name,
