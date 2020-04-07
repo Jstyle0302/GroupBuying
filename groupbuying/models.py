@@ -19,7 +19,7 @@ class CustomerInfo(models.Model):
     phoneNum = models.CharField(max_length=16)
     image = models.ImageField(blank=False, null=True, upload_to='img/', default='default.jpeg')
     content_type = models.CharField(max_length=50, default="")
-    customer_id = models.IntegerField()
+    customer_id = models.IntegerField(null=True)
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
@@ -39,7 +39,7 @@ class VendorInfo(models.Model):
                               upload_to='img/')  # Note: use ImageField?
     image_url = models.URLField(max_length=200)
     content_type = models.CharField(max_length=50, default="")
-    vendor_id = models.IntegerField()
+    vendor_id = models.IntegerField(null=True)
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
