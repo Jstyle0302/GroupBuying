@@ -65,6 +65,32 @@ def orderList_page(request):
 
 def share_page(request, order_id):
     context = {}
+    context['shop_name'] = "Starbucks"
+    context['description'] = "Very expensive and unhealthy food."
+    context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
+    context['menu'] = {
+        'all': {
+           
+        }
+    }
+
+    context['productForm'] = ProductForm()
+    context['vendorForm'] = VendorInfoForm()
+    context['description'] = "Hi Shine, please insert the vendor's description here"
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+    context['vendorInfo'] = VendorInfo.objects.all() # TODO: delte lated
+    # context = {'categories': categories, 'products': products, 'errors': errors}
+    orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
+    context['founder'] = orderbundle.holder.name
+    context['order_id'] = order_id
+
+
+    return render(request, 'groupbuying/shop.html', context)
+    
+
+def share_page_old(request, order_id):
+    context = {}
 
 
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
@@ -99,7 +125,7 @@ def share_page(request, order_id):
     return render(request, 'groupbuying/order.html', context)
 
 
-def order_page(request):
+def order_page(request, order_id):
     context = {}
     if 'product_id' not in request.POST or not request.POST['product_id'] or \
             'product_number' not in request.POST or not request.POST['product_number']:
@@ -108,9 +134,14 @@ def order_page(request):
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
     product =  Product.objects.filter(Q(id=str(request.POST['product_id'])))[0]
     vendorInfo = VendorInfo.objects.filter(Q(id=str(product.vendor.id)))[0]
-    new_orderbundle = OrderBundle(holder=customerInfo,
-                                    vendor=vendorInfo)
-    new_orderbundle.save()
+
+    if order_id == "new":
+        new_orderbundle = OrderBundle(holder=customerInfo,
+                                        vendor=vendorInfo)
+        new_orderbundle.save()
+    else:
+        new_orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
+
     new_orderUnit = OrderUnit(
                     buyer=customerInfo,
                     product=product,
@@ -229,29 +260,8 @@ def shop_page(request):
     context['description'] = "Very expensive and unhealthy food."
     context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
     context['menu'] = {
-        'Coffee': {
-            'Cappuccino': {
-                'price': 5,
-                'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
-                'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-            },
-            'Cold brew': {
-                'price': 6,
-                'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
-                'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-            }
-        },
-        'Tea': {
-            'Green Tea': {
-                'price': 4,
-                'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
-                'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-            },
-            'Chai Latte': {
-                'price': 4.5,
-                'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
-                'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-            }
+        'all': {
+           
         }
     }
 

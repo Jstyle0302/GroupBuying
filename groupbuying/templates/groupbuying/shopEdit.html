@@ -161,7 +161,7 @@ Shops
                         <h6 id="product-name-{{product.price}}">$ {{product.price}}</h6>
                       </span></h4>
                     <p class="card-text" id="product-name-{{product.description}}">{{ product.description }}</p>
-                    <form method="post" action="{% url 'order' %}">
+                    <form method="post" action=''>
                       <input type="hidden" name="product_id" value={{ product.id }}>
                       <div class="form-row">
                         <i class="fas fa-minus-circle btn btn-default"></i>
