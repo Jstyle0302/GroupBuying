@@ -51,14 +51,19 @@ def orderList_page(request):
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
     orderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
     context['orders'] = []
-    for orderUnit in orderUnits:
+    orderbundleId = []
+    for orderUnit in orderUnits.distinct():
+        if orderUnit.orderbundle.id in orderbundleId:
+            continue
+        
         order = {
             'order_id': orderUnit.orderbundle.id,
             'name': orderUnit.orderbundle.vendor.name,
             'description': orderUnit.orderbundle.vendor.description,
             'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
             }
-        context['orders'].append(order)    
+        context['orders'].append(order)
+        orderbundleId.append(orderUnit.orderbundle.id)    
 
     return render(request, 'groupbuying/orderList.html', context)
 
