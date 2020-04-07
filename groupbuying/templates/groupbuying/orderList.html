@@ -24,7 +24,7 @@ Profile
             <img class="card-img-top" src="{{order.image}}" alt="Card image cap">
             <div class="card-body">
                 <h5 class="card-title">{{order.name}}</h5>
-                <a class="btn btn-primary" href="{% url 'share' order.order_id %}?_id={{order.order_id}}">To Checkout</a>
+                <a class="btn btn-primary" href="{% url 'show_order' order.order_id %}?_id={{order.order_id}}">To Checkout</a>
             </div>
         </div>
     </div>

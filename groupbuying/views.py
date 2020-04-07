@@ -89,19 +89,46 @@ def share_page(request, order_id):
     return render(request, 'groupbuying/shop.html', context)
     
 
-def share_page_old(request, order_id):
+def show_order_page(request, order_id):
     context = {}
-
-
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
-    context['isFounder'] = False
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
+
+    if orderbundle.holder.id == request.user.id: 
+        context['isFounder'] = True
+        orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
+
+    else:
+        context['isFounder'] = False
+        orderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
+
+
     context['order_id'] = orderbundle.id
     context['shop'] = orderbundle.vendor.name
     context['founder'] = orderbundle.holder.name
 
-    orderUnit = OrderUnit.objects.filter(Q(orderbundle=orderbundle))[0]
+    
+    context['receipt'] = {}
+    context['receipt']['orders'] = []
+    context['receipt']['summary'] = {}
+    total_price = 0
+
+    for orderUnit in orderUnits:
+        dictOrder = {}
+        dictOrder['username'] = (orderUnit.buyer.name)
+        total_price += int(orderUnit.product.price)
+        dictOrder['order'] = []
+        subOrder = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+            }
+        dictOrder['order'].append(subOrder)    
+        context['receipt']['orders'].append(dictOrder)    
 
 
+    context['receipt']['summary']['total'] = total_price
+    '''
     context['receipt'] = {
         'orders': [{
             'username': orderUnit.buyer.name,
@@ -121,6 +148,7 @@ def share_page_old(request, order_id):
             'total': int(orderUnit.quantity) * int(orderUnit.product.price)
         }
     }
+    '''
 
     return render(request, 'groupbuying/order.html', context)
 
