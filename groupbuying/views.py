@@ -39,7 +39,8 @@ def get_shopEditPage_context(request):
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
-    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+    context['vendorForm'] = VendorInfoForm(
+        initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
 
     return context
 
@@ -64,9 +65,9 @@ def orderList_page(request):
             'name': orderUnit.orderbundle.vendor.name,
             'description': orderUnit.orderbundle.vendor.description,
             'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
-            }
+        }
         context['orders'].append(order)
-        orderbundleId.append(orderUnit.orderbundle.id)    
+        orderbundleId.append(orderUnit.orderbundle.id)
 
     return render(request, 'groupbuying/orderList.html', context)
 
@@ -78,7 +79,7 @@ def share_page(request, order_id):
     context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
     context['menu'] = {
         'all': {
-           
+
         }
     }
 
@@ -87,35 +88,33 @@ def share_page(request, order_id):
     context['description'] = "Hi Shine, please insert the vendor's description here"
     context['categories'] = Category.objects.all()
     context['products'] = Product.objects.all()
-    context['vendorInfo'] = VendorInfo.objects.all() # TODO: delte lated
+    context['vendorInfo'] = VendorInfo.objects.all()  # TODO: delte lated
     # context = {'categories': categories, 'products': products, 'errors': errors}
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
     context['founder'] = orderbundle.holder.name
     context['order_id'] = order_id
 
-
     return render(request, 'groupbuying/shop.html', context)
-    
+
 
 def show_order_page(request, order_id):
     context = {}
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
 
-    if orderbundle.holder.id == request.user.id: 
+    if orderbundle.holder.id == request.user.id:
         context['isFounder'] = True
         orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
 
     else:
         context['isFounder'] = True
-        orderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
-
+        orderUnits = OrderUnit.objects.filter(
+            Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
 
     context['order_id'] = orderbundle.id
     context['shop'] = orderbundle.vendor.name
     context['founder'] = orderbundle.holder.name
 
-    
     context['receipt'] = {}
     context['receipt']['orders'] = []
     context['receipt']['summary'] = {}
@@ -131,10 +130,9 @@ def show_order_page(request, order_id):
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
             'price': orderUnit.product.price
-            }
-        dictOrder['order'].append(subOrder)    
-        context['receipt']['orders'].append(dictOrder)    
-
+        }
+        dictOrder['order'].append(subOrder)
+        context['receipt']['orders'].append(dictOrder)
 
     context['receipt']['summary']['total'] = total_price
     '''
@@ -170,28 +168,28 @@ def order_page(request, order_id):
         return render(request, 'groupbuying/order.html', context)
 
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
-    product =  Product.objects.filter(Q(id=str(request.POST['product_id'])))[0]
+    product = Product.objects.filter(Q(id=str(request.POST['product_id'])))[0]
     vendorInfo = VendorInfo.objects.filter(Q(id=str(product.vendor.id)))[0]
 
     if order_id == "new":
         new_orderbundle = OrderBundle(holder=customerInfo,
-                                        vendor=vendorInfo)
+                                      vendor=vendorInfo)
         new_orderbundle.save()
     else:
         new_orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
 
     new_orderUnit = OrderUnit(
-                    buyer=customerInfo,
-                    product=product,
-                    quantity=int(request.POST['product_number']),
-                    comment='omg',
-                    orderTime=datetime.datetime.now(),
-                    orderDate=datetime.datetime.now(),
-                    deliverTime=datetime.datetime.now(),
-                    deliverDate=datetime.datetime.now(),
-                    isPaid=False,
-                    orderbundle=new_orderbundle
-                    )
+        buyer=customerInfo,
+        product=product,
+        quantity=int(request.POST['product_number']),
+        comment='omg',
+        orderTime=datetime.datetime.now(),
+        orderDate=datetime.datetime.now(),
+        deliverTime=datetime.datetime.now(),
+        deliverDate=datetime.datetime.now(),
+        isPaid=False,
+        orderbundle=new_orderbundle
+    )
     new_orderUnit.save()
 
     context['isFounder'] = True
@@ -217,8 +215,9 @@ def order_page(request, order_id):
             'total': int(request.POST['product_number']) * int(product.price)
         }
     }
-    
+
     return render(request, 'groupbuying/order.html', context)
+
 
 @login_required
 def profile_page(request, user_id):
@@ -245,6 +244,7 @@ def other_page(request):
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     return render(request, 'groupbuying/others.html', context)
 
+
 def get_menu(vendor_id):
     menu = {}
     categories = Category.objects.filter(vendor__id=vendor_id)
@@ -252,7 +252,8 @@ def get_menu(vendor_id):
 
     for name in categories_names:
         temp_pdict = {}
-        sub_products = Product.objects.filter(vendor__id=vendor_id, category__name=name)
+        sub_products = Product.objects.filter(
+            vendor__id=vendor_id, category__name=name)
         for sub_product in sub_products:
             temp_pInfodict = {}
             temp_pInfodict['id'] = sub_product.id
@@ -265,6 +266,7 @@ def get_menu(vendor_id):
 
     return menu
 
+
 @login_required
 def shopEdit_page(request):
     # print(request.GET)
@@ -274,53 +276,21 @@ def shopEdit_page(request):
     # instance = UserSocialAuth.objects.get(user=request.user, provider='facebook')
 
     context = {}
-    # context['shop_name'] = "Starbucks"
-    # context['description'] = "Very expensive and unhealthy food."
-    # context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
-    # context['menu'] = {
-    #     'Coffee': {
-    #         'Cappuccino': {
-    #             'id': 1,
-    #             'price': 5,
-    #             'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
-    #             'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-    #         },
-    #         'Cold brew': {
-    #             'id': 2,
-    #             'price': 6,
-    #             'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
-    #             'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-    #         }
-    #     },
-    #     'Tea': {
-    #         'Green Tea': {
-    #             'id': 3,
-    #             'price': 4,
-    #             'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
-    #             'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-    #         },
-    #         'Chai Latte': {
-    #             'id': 4,
-    #             'price': 4.5,
-    #             'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
-    #             'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-    #         }
-    #     }
-    # }
     context = get_shopEditPage_context(request)
 
     return render(request, 'groupbuying/shopEdit.html', context)
 
 # @login_required
-def shop_page(request):
 
+
+def shop_page(request):
     context = {}
     context['shop_name'] = "Starbucks"
     context['description'] = "Very expensive and unhealthy food."
     context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
     context['menu'] = {
         'all': {
-           
+
         }
     }
 
@@ -329,7 +299,8 @@ def shop_page(request):
     context['description'] = "Hi Shine, please insert the vendor's description here"
     context['categories'] = Category.objects.all()
     context['products'] = Product.objects.all()
-    context['vendorInfo'] = VendorInfo.objects.all() # TODO: get_the correct one
+    # TODO: get_the correct one
+    context['vendorInfo'] = VendorInfo.objects.all()
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)
@@ -349,7 +320,7 @@ def add_category(request):
         new_category.save()
 
     context = get_shopEditPage_context(request)
-    
+
     return render(request, 'groupbuying/shopEdit.html', context)
 
 
@@ -381,8 +352,9 @@ def add_product(request):
                               saleVolume=0,
                               vendor=request.user)
 
-        category = Category.objects.filter(name=str(request.POST['current_category']), vendor=request.user) 
-        if len(category) > 0: 
+        category = Category.objects.filter(
+            name=str(request.POST['current_category']), vendor=request.user)
+        if len(category) > 0:
             new_product.category = category[0]
         else:
             print('FAIL: Cannot find correct category')
@@ -403,7 +375,7 @@ def add_product(request):
             # new_product.save()
 
     context = get_shopEditPage_context(request)
-    
+
     return render(request, 'groupbuying/shopEdit.html', context)
 
 
@@ -440,6 +412,7 @@ def update_product(request):
 
     return render(request, 'groupbuying/shop.html', context)
 
+
 @login_required
 def update_vendor_name(request):
     context = {}
@@ -453,8 +426,9 @@ def update_vendor_name(request):
         cur_vendor_info.save()
 
     context = get_shopEditPage_context(request)
-    
+
     return render(request, 'groupbuying/shopEdit.html', context)
+
 
 @login_required
 def update_vendor_info(request):
@@ -482,7 +456,7 @@ def update_vendor_info(request):
             form.save()
 
     context = get_shopEditPage_context(request)
-    
+
     return render(request, 'groupbuying/shopEdit.html', context)
 
 
@@ -813,6 +787,7 @@ def search_page(request):
     context['restaurants'].append(restaurant3)
     return render(request, 'groupbuying/search.html',context)
     '''
+
 
 def login_action(request):
     context = {}

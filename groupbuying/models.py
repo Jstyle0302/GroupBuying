@@ -17,7 +17,8 @@ class CustomerInfo(models.Model):
     description = models.CharField(max_length=500)
     address = models.CharField(max_length=100)
     phoneNum = models.CharField(max_length=16)
-    image = models.ImageField(blank=False, null=True, upload_to='img/', default='default.jpeg')
+    image = models.ImageField(blank=False, null=True,
+                              upload_to='img/', default='default.jpeg')
     content_type = models.CharField(max_length=50, default="")
     customer_id = models.IntegerField(null=True)
 
@@ -98,6 +99,7 @@ class OrderBundle(models.Model):
         return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
             ',num=' + self.num + ',comment=' + str(self.comment)
 
+
 class OrderUnit(models.Model):
     buyer = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -115,8 +117,6 @@ class OrderUnit(models.Model):
     def __str__(self):
         return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
             ',num=' + self.num + ',comment=' + str(self.comment)
-
-
 
 
 # class UserItem(models.Model):

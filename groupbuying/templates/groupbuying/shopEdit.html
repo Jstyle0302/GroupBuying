@@ -139,7 +139,7 @@ Shops
         <div class="card">
           <div class="card-body">
             <ul class="list-group list-group-flush">
-              {% for dish,dish_info in dishes.items %}
+              {% for dish, dish_info in dishes.items %}
               <li class="list-group-item menu">
                 <div class="row no-gutters">
                   <div class="col-3 align-self-center">
@@ -154,33 +154,6 @@ Shops
                 </div>
               </li>
               {% endfor %}
-              <!-- test start -->
-              <!-- {% for product in products %}
-              <li class="list-group-item menu">
-                <div class="row no-gutters">
-                  <div class="col-3 align-self-center">
-                    <img src="{{ product.image.url }}" class="card-img px-1 rounded mx-auto"/>
-                  </div>
-                  <div class="col-9">
-                    <h4 class="card-title" id="product-name-{{product.name}}">{{ product.name }}&nbsp;<button class="far fa-edit btn" onclick="showModal( {{product.id}} )"></button><span class="float-right">
-                        <h6 id="product-name-{{product.price}}">$ {{product.price}}</h6>
-                      </span></h4>
-                    <p class="card-text" id="product-name-{{product.description}}">{{ product.description }}</p>
-                    <form method="post" action=''>
-                      <input type="hidden" name="product_id" value={{ product.id }}>
-                      <div class="form-row">
-                        <i class="fas fa-minus-circle btn btn-default"></i>
-                        <input type="number" name="product_number" value="1" class="form-control-sm">
-                        <i class="fas fa-plus-circle btn btn-default"></i>
-                        <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
-                      </div>
-                      {% csrf_token %}
-                    </form>
-                  </div>
-                </div>
-              </li>
-              {% endfor %} -->
-              <!-- test end -->
               <li class="list-group-item">
                 <h4 class="card-title">Add an new {{category}}</h4>
                 {{ errors }}
