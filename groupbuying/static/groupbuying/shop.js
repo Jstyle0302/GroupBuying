@@ -65,28 +65,7 @@ function getModal() {
 }
 
 // google.js
-google.charts.load('current', {'packages':['bar']});
-google.charts.setOnLoadCallback(drawBarChart);
-
-function drawBarChart() {
-  var data = google.visualization.arrayToDataTable([
-    ['Year', 'Coffee', 'Tea', 'Cake'],
-    ['2014', 1000, 400, 200],
-    ['2015', 1170, 460, 250],
-    ['2016', 660, 1120, 300],
-    ['2017', 1030, 540, 350]
-  ]);
-
-  var options = {
-    bars: 'horizontal' // Required for Material Bar Charts.
-  };
-
-  var chart = new google.charts.Bar(document.getElementById('statistics_bar'));
-
-  chart.draw(data, google.charts.Bar.convertOptions(options));
-}
-
-google.charts.load('current', {'packages':['corechart']});
+google.charts.load('current', {'packages':['corechart','bar']});
 google.charts.setOnLoadCallback(drawLineChart);
 
 function drawLineChart() {
@@ -100,7 +79,8 @@ function drawLineChart() {
 
   var options = {
     curveType: 'function',
-    legend: { position: 'bottom' }
+    height: 300,
+    width: 800
   };
 
   var chart = new google.visualization.LineChart(document.getElementById('statistics_line'));
@@ -108,7 +88,32 @@ function drawLineChart() {
   chart.draw(data, options);
 }
 
-google.charts.load('current', {'packages':['corechart']});
+
+// google.charts.load('current', {'packages':['bar']});
+google.charts.setOnLoadCallback(drawBarChart);
+
+function drawBarChart() {
+  var data = google.visualization.arrayToDataTable([
+    ['Year', 'Coffee', 'Tea', 'Cake'],
+    ['2014', 1000, 400, 200],
+    ['2015', 1170, 460, 250],
+    ['2016', 660, 1120, 300],
+    ['2017', 1030, 540, 350]
+  ]);
+
+  var options = {
+    bars: 'vertical', // Required for Material Bar Charts.
+    height: 300,
+    width: 800
+  };
+
+  var chart = new google.visualization.ColumnChart(document.getElementById('statistics_bar'));
+
+  chart.draw(data, google.charts.Bar.convertOptions(options));
+}
+
+
+// google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawPieChart);
 
 function drawPieChart() {
@@ -123,7 +128,9 @@ function drawPieChart() {
   ]);
 
   var options = {
-
+    legend: {position:'labeled',alignment:'end'},
+    height: 500,
+    width: 800
   };
 
   var chart = new google.visualization.PieChart(document.getElementById('statistics_pie'));
