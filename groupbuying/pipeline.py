@@ -5,7 +5,7 @@ from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserPr
 def create_profile(backend, user, response, *args, **kwargs):
     if backend.name == 'facebook':
         pass
-    if CustomerInfo.objects.get(customer_id=user.id):
+    if len(CustomerInfo.objects.all()) > 0 and CustomerInfo.objects.get(customer_id=user.id):
         return
 
     new_customerInfo = CustomerInfo(name=response.get('name'),
