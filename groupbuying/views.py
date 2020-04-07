@@ -151,7 +151,7 @@ def order_page(request):
     
     return render(request, 'groupbuying/order.html', context)
 
-
+@login_required
 def profile_page(request, user_id):
     context = {}
     customerInfo = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
