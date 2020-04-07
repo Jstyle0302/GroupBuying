@@ -243,10 +243,10 @@ def other_page(request):
 
 @login_required
 def shopEdit_page(request):
-    print(request.GET)
-    print(request.user.id, type(request.user.id))
-    print(request.user.social_auth.values_list('provider'))
-    print(request.user.social_auth.get(user=request.user, provider="google-oauth2"))
+    # print(request.GET)
+    # print(request.user.id, type(request.user.id))
+    # print(request.user.social_auth.values_list('provider'))
+    # print(request.user.social_auth.get(user=request.user, provider="google-oauth2"))
     # instance = UserSocialAuth.objects.get(user=request.user, provider='facebook')
 
     context = {}

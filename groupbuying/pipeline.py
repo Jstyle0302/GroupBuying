@@ -28,8 +28,3 @@ def create_profile(backend, user, response, *args, **kwargs):
                                   VendorInfo=new_vendorInfo)
 
     new_userProfile.save()
-    print(user)
-    print(response)
-    print(new_customerInfo)
-    print(new_vendorInfo)
-    print(new_userProfile)
