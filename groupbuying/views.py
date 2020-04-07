@@ -283,9 +283,12 @@ def shopEdit_page(request):
             }
         }
     }
-
+    
+    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    
+    context['vendorInfo'] = cur_vendor_info
+    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
     context['productForm'] = ProductForm()
-    context['vendorForm'] = VendorInfoForm()
     # context['categories'] = Category.objects.all()
     # context['products'] = Product.objects.all()
     # context['vendorInfo'] = VendorInfo.objects.all()
@@ -311,7 +314,7 @@ def shop_page(request):
     context['description'] = "Hi Shine, please insert the vendor's description here"
     context['categories'] = Category.objects.all()
     context['products'] = Product.objects.all()
-    context['vendorInfo'] = VendorInfo.objects.all() # TODO: delte lated
+    context['vendorInfo'] = VendorInfo.objects.all() # TODO: get_the correct one
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)
@@ -441,8 +444,7 @@ def update_product(request, product_id):
 def update_vendor_info(request):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    cur_vendor_info = VendorInfo(name="test",
-                                 description="test")  # TODO: need to get the correct vendor_info
+    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
 
     if 'description' not in request.POST or not request.POST['description'] or \
             'image' not in request.FILES or not request.FILES['image']:
@@ -462,15 +464,15 @@ def update_vendor_info(request):
                 cur_vendor_info.image = form.cleaned_data['image']
                 cur_vendor_info.content_type = form.cleaned_data['image'].content_type
             form.save()
+    
 
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
-    context['vendorForm'] = VendorInfoForm(
-        initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
     context['categories'] = Category.objects.all()
     context['products'] = Product.objects.all()
 
-    return render(request, 'groupbuying/shop.html', context)
+    return render(request, 'groupbuying/shopEdit.html', context)
 
 
 @login_required
