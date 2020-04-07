@@ -31,7 +31,7 @@ def PAGESIZE_CONSTANT():
     return 2
 
 
-def get_shopPage_context():
+def get_shopPage_context(request, cur_vendor_info):
     context = {}
     context['productForm'] = ProductForm()
     context['vendorForm'] = VendorInfoForm()
@@ -286,12 +286,11 @@ def shopEdit_page(request):
     
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
     
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+    context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
     context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
-    context['productForm'] = ProductForm()
-    # context['categories'] = Category.objects.all()
-    # context['products'] = Product.objects.all()
-    # context['vendorInfo'] = VendorInfo.objects.all()
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shopEdit.html', context)
@@ -333,14 +332,16 @@ def add_category(request):
                                 vendor=request.user)
         new_category.save()
 
-    context['productForm'] = ProductForm()
-    context['vendorForm'] = VendorInfoForm()
+    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    
     context['categories'] = Category.objects.all()
-    # Note: empty page in the beginning?
     context['products'] = Product.objects.all()
+    context['productForm'] = ProductForm()
+    context['vendorInfo'] = cur_vendor_info
+    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
     context['errors'] = errors
 
-    return render(request, 'groupbuying/shop.html', context)
+    return render(request, 'groupbuying/shopEdit.html', context)
 
 
 @login_required
@@ -485,11 +486,11 @@ def update_vendor_info(request):
             form.save()
     
 
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
     context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
 
     return render(request, 'groupbuying/shopEdit.html', context)
 
