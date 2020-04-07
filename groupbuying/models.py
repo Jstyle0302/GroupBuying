@@ -19,6 +19,7 @@ class CustomerInfo(models.Model):
     phoneNum = models.CharField(max_length=16)
     image = models.ImageField(blank=False, null=True, upload_to='img/', default='default.jpeg')
     content_type = models.CharField(max_length=50, default="")
+    customer_id = models.IntegerField()
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
@@ -36,11 +37,25 @@ class VendorInfo(models.Model):
     tagList = models.CharField(max_length=200)
     image = models.ImageField(blank=False, null=True,
                               upload_to='img/')  # Note: use ImageField?
+    image_url = models.URLField(max_length=200)
     content_type = models.CharField(max_length=50, default="")
+    vendor_id = models.IntegerField()
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
             ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
+
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, default=None, on_delete=models.PROTECT)
+    CustomerInfo = models.OneToOneField(CustomerInfo, on_delete=models.CASCADE)
+    VendorInfo = models.OneToOneField(VendorInfo, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return 'id=' + str(self.id) +  \
+            ', username="' + self.user.username + '"' \
+            ', first_name="' + self.user.first_name + '"' \
+            ', last_name="' + self.user.last_name + '"'
 
 
 class Category(models.Model):
@@ -74,18 +89,6 @@ class Rating(models.Model):
     rater = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     ratedTarget = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
 
-
-class UserProfile(models.Model):
-    user = models.ForeignKey(
-        User, default=None, on_delete=models.PROTECT)  # Note: one-to-one ?
-    CustomerInfo = models.OneToOneField(CustomerInfo, on_delete=models.CASCADE)
-    VendorInfo = models.OneToOneField(VendorInfo, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return 'id=' + str(self.id) +  \
-            ', username="' + self.user.username + '"' \
-            ', first_name="' + self.user.first_name + '"' \
-            ', last_name="' + self.user.last_name + '"'
 
 class OrderBundle(models.Model):
     holder = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)

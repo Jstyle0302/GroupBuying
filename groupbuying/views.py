@@ -243,6 +243,12 @@ def other_page(request):
 
 @login_required
 def shopEdit_page(request):
+    print(request.GET)
+    print(request.user.id, type(request.user.id))
+    print(request.user.social_auth.values_list('provider'))
+    print(request.user.social_auth.get(user=request.user, provider="google-oauth2"))
+    # instance = UserSocialAuth.objects.get(user=request.user, provider='facebook')
+
     context = {}
     context['shop_name'] = "Starbucks"
     context['description'] = "Very expensive and unhealthy food."
@@ -282,13 +288,14 @@ def shopEdit_page(request):
     context['vendorForm'] = VendorInfoForm()
     # context['categories'] = Category.objects.all()
     # context['products'] = Product.objects.all()
-    # context['vendorInfo'] = VendorInfo.objects.all() # TODO: delte lated
+    # context['vendorInfo'] = VendorInfo.objects.all()
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shopEdit.html', context)
 
 # @login_required
 def shop_page(request):
+
     context = {}
     context['shop_name'] = "Starbucks"
     context['description'] = "Very expensive and unhealthy food."
@@ -364,10 +371,9 @@ def add_product(request):
                               vendor=request.user)
         # category=Category.objects.filter(name=str(request.POST['current_category']))[0])
 
-        target_category = Category.objects.filter(
-            name=str(request.POST['current_category']))
+        target_category = Category.objects.get(name=str(request.POST['current_category']), vendor=request.user) # TODO: confirm the filter
         if (target_category):
-            new_product.category = target_category[0]
+            new_product.category = target_category
         else:
             new_product.category = None
 
@@ -795,6 +801,52 @@ def search_page(request):
     return render(request, 'groupbuying/search.html',context)
     '''
 
+{
+    'username': 'foobar',
+    'access_token': 'CAAD...',
+    'first_name': 'Foo',
+    'last_name': 'Bar',
+    'verified': True,
+    'name': 'Foo Bar',
+    'locale': 'en_US',
+    'gender': 'male',
+    'expires': '5183999',
+    'email': 'foo@bar.com',
+    'updated_time': '2014-01-14T15:58:35+0000',
+    'link': 'https://www.facebook.com/foobar',
+    'timezone': -3,
+    'id': '100000126636010',
+}
+
+def create_profile(backend, user, response, *args, **kwargs):
+    if backend.name == 'facebook':
+        pass
+    
+    new_customerInfo = CustomerInfo(name=response.get('name'),
+                                    email=response.get('email'),
+                                    description="",
+                                    address=response.get('locale'),
+                                    customer_id=user.id)
+    
+    new_customerInfo.save()
+
+    new_vendorInfo = VendorInfo(name=response.get('name'),
+                                email=response.get('email'),
+                                description="",
+                                address=response.get('locale'),
+                                vendor_id=user.id)
+
+    new_vendorInfo.save()
+
+    new_userProfile = UserProfile(user=user,
+                                  CustomerInfo=new_customerInfo,
+                                  VendorInfo=new_vendorInfo)
+
+    new_userProfile.save()
+    print(new_customerInfo)
+    print(new_vendorInfo)
+    print(new_userProfile)
+
 
 def login_action(request):
     context = {}
@@ -855,14 +907,16 @@ def register_action(request):
                                     email=form.cleaned_data['email'],
                                     description="Why nunu why",
                                     address=form.cleaned_data['address'],
-                                    phoneNum=form.cleaned_data['cell_phone'])
+                                    phoneNum=form.cleaned_data['cell_phone'],
+                                    customer_id=request.user.id)
     new_customerInfo.save()
 
     new_vendorInfo = VendorInfo(name=form.cleaned_data['username'],
                                 email=form.cleaned_data['email'],
                                 description="test",
                                 address=form.cleaned_data['address'],
-                                phoneNum=form.cleaned_data['cell_phone'])
+                                phoneNum=form.cleaned_data['cell_phone'],
+                                vendor_id=request.user.id)
     new_vendorInfo.save()
 
     new_userProfile = UserProfile(user=new_user,

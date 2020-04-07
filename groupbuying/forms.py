@@ -23,9 +23,6 @@ class ProductForm(forms.ModelForm):
             'description': "",
             'image': "Upload product picture"
         }
-        # widgets = {
-        #     'description': Textarea(attrs={'cols': 80, 'rows': 20}),
-        # }
 
     def clean_picture(self):
         image = self.cleaned_data['image']
