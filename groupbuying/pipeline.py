@@ -11,7 +11,6 @@ def create_profile(backend, user, response, *args, **kwargs):
                                     description="",
                                     address=response.get('locale'),
                                     customer_id=user.id)
-    
     new_customerInfo.save()
 
     new_vendorInfo = VendorInfo(name=response.get('name'),
@@ -20,11 +19,9 @@ def create_profile(backend, user, response, *args, **kwargs):
                                 address=response.get('locale'),
                                 image_url=response.get('picture'),
                                 vendor_id=user.id)
-
     new_vendorInfo.save()
 
     new_userProfile = UserProfile(user=user,
                                   CustomerInfo=new_customerInfo,
                                   VendorInfo=new_vendorInfo)
-
     new_userProfile.save()

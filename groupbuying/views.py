@@ -3,6 +3,7 @@ import operator
 import math
 import datetime
 
+from collections import defaultdict
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
@@ -31,12 +32,16 @@ def PAGESIZE_CONSTANT():
     return 2
 
 
-def get_shopPage_context(request, cur_vendor_info):
+def get_shopEditPage_context(request):
     context = {}
+    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+
+    # context['categories'] = Category.objects.all()
+    # context['products'] = Product.objects.all()
+    context['menu'] = get_menu(cur_vendor_info.vendor_id)    
     context['productForm'] = ProductForm()
-    context['vendorForm'] = VendorInfoForm()
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
+    context['vendorInfo'] = cur_vendor_info
+    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
 
     return context
 
@@ -241,6 +246,27 @@ def other_page(request):
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     return render(request, 'groupbuying/others.html', context)
 
+def get_menu(vendor_id):
+    menu = {}
+    categories = Category.objects.filter(vendor__id=vendor_id)
+    categories_names = [obj.name for obj in categories]
+
+    for name in categories_names:
+        temp_pdict = {}
+        sub_products = Product.objects.filter(vendor__id=vendor_id, category__name=name)
+        for sub_product in sub_products:
+            temp_pInfodict = {}
+            temp_pInfodict['id'] = sub_product.id
+            temp_pInfodict['price'] = sub_product.price
+            temp_pInfodict['image'] = sub_product.image
+            temp_pInfodict['description'] = sub_product.description
+            temp_pdict[sub_product.name] = dict(temp_pInfodict)
+            # print(temp_pdict)
+        menu[name] = dict(temp_pdict)
+    
+    print(menu)
+    return menu
+
 @login_required
 def shopEdit_page(request):
     # print(request.GET)
@@ -250,48 +276,40 @@ def shopEdit_page(request):
     # instance = UserSocialAuth.objects.get(user=request.user, provider='facebook')
 
     context = {}
-    context['shop_name'] = "Starbucks"
-    context['description'] = "Very expensive and unhealthy food."
-    context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
-    context['menu'] = {
-        'Coffee': {
-            'Cappuccino': {
-                'id': 1,
-                'price': 5,
-                'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
-                'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-            },
-            'Cold brew': {
-                'id': 2,
-                'price': 6,
-                'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
-                'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-            }
-        },
-        'Tea': {
-            'Green Tea': {
-                'id': 3,
-                'price': 4,
-                'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
-                'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-            },
-            'Chai Latte': {
-                'id': 4,
-                'price': 4.5,
-                'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
-                'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-            }
-        }
-    }
-    
-    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
-    
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
-    context['productForm'] = ProductForm()
-    context['vendorInfo'] = cur_vendor_info
-    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
-    # context = {'categories': categories, 'products': products, 'errors': errors}
+    # context['shop_name'] = "Starbucks"
+    # context['description'] = "Very expensive and unhealthy food."
+    # context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
+    # context['menu'] = {
+    #     'Coffee': {
+    #         'Cappuccino': {
+    #             'id': 1,
+    #             'price': 5,
+    #             'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
+    #             'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
+    #         },
+    #         'Cold brew': {
+    #             'id': 2,
+    #             'price': 6,
+    #             'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
+    #             'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
+    #         }
+    #     },
+    #     'Tea': {
+    #         'Green Tea': {
+    #             'id': 3,
+    #             'price': 4,
+    #             'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
+    #             'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
+    #         },
+    #         'Chai Latte': {
+    #             'id': 4,
+    #             'price': 4.5,
+    #             'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
+    #             'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
+    #         }
+    #     }
+    # }
+    context = get_shopEditPage_context(request)
 
     return render(request, 'groupbuying/shopEdit.html', context)
 
@@ -332,15 +350,8 @@ def add_category(request):
                                 vendor=request.user)
         new_category.save()
 
-    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    context = get_shopEditPage_context(request)
     
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
-    context['productForm'] = ProductForm()
-    context['vendorInfo'] = cur_vendor_info
-    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
-    context['errors'] = errors
-
     return render(request, 'groupbuying/shopEdit.html', context)
 
 
@@ -358,8 +369,6 @@ def get_product_photo(request, product_id):
 def add_product(request):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    # print(request.POST)
-    # print(request.FILES)
 
     if 'name' not in request.POST or not request.POST['name'] or \
             'price' not in request.POST or not request.POST['price']:
@@ -373,12 +382,12 @@ def add_product(request):
                               isAvailable=True,
                               saleVolume=0,
                               vendor=request.user)
-        # category=Category.objects.filter(name=str(request.POST['current_category']))[0])
 
-        target_category = Category.objects.get(name=str(request.POST['current_category']), vendor=request.user) # TODO: confirm the filter
-        if (target_category):
-            new_product.category = target_category
+        category = Category.objects.filter(name=str(request.POST['current_category']), vendor=request.user) 
+        if len(category) > 0: 
+            new_product.category = category[0]
         else:
+            print('FAIL: Cannot find correct category')
             new_product.category = None
 
         form = ProductForm(request.POST, request.FILES, instance=new_product)
@@ -395,21 +404,13 @@ def add_product(request):
             form.save()
             # new_product.save()
 
-    # print(request.POST['current_category'])
-    # print(Product.objects.filter(category__name=request.POST['current_category']))
-
-    context['productForm'] = ProductForm()
-    context['vendorForm'] = VendorInfoForm()
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
-    # context['products'] = Product.objects.filter(category__name=request.POST['current_category'], vendor__id=request.user.id)
-    context['errors'] = errors
-
-    return render(request, 'groupbuying/shop.html', context)
+    context = get_shopEditPage_context(request)
+    
+    return render(request, 'groupbuying/shopEdit.html', context)
 
 
 @login_required
-def update_product(request, product_id):
+def update_product(request):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
 
@@ -418,7 +419,8 @@ def update_product(request, product_id):
         errors.append(
             'You must have at least "name and price" for the product')
     else:
-        cur_product = Product.objects.get(pk=str(product_id))
+        cur_product = Product.objects.get(pk=str(request.POST['product_id']))
+
         # cur_product = Product.objects.filter(pk=str(product_id))[0] # Note: remember index for filter
         form = ProductForm(request.POST, request.FILES, instance=cur_product)
         if form.is_valid():
@@ -452,12 +454,8 @@ def update_vendor_name(request):
         cur_vendor_info.name = request.POST['vendor_name']
         cur_vendor_info.save()
 
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
-    context['productForm'] = ProductForm()
-    context['vendorInfo'] = cur_vendor_info
-    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
-
+    context = get_shopEditPage_context(request)
+    
     return render(request, 'groupbuying/shopEdit.html', context)
 
 @login_required
@@ -484,14 +482,9 @@ def update_vendor_info(request):
                 cur_vendor_info.image = form.cleaned_data['image']
                 cur_vendor_info.content_type = form.cleaned_data['image'].content_type
             form.save()
+
+    context = get_shopEditPage_context(request)
     
-
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
-    context['productForm'] = ProductForm()
-    context['vendorInfo'] = cur_vendor_info
-    context['vendorForm'] = VendorInfoForm(initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
-
     return render(request, 'groupbuying/shopEdit.html', context)
 
 

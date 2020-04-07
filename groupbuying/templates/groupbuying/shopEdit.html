@@ -39,19 +39,18 @@ Shops
           {% endif %}
           {% endfor %}
           <!-- test start -->
-          {% for category in categories %}
+          <!-- {% for category in categories %}
           <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="tab"
             href="#list-{{category}}" role="tab" aria-controls="{{category}}">
             <h5>{{category.name}}</h5>
           </a>
           {% endfor %}
-          <!-- test -->
           <br></br>
           <form action="{% url 'add_category' %}" method="POST">
             <input type="text" name="new_category" class="form-control text-center mb-1" placeholder="New Category">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary btn-block">Add</button>    
-          </form>
+          </form> -->
           <!-- test end -->
         </div>
       </div>
@@ -139,7 +138,7 @@ Shops
               <li class="list-group-item menu">
                 <div class="row no-gutters">
                   <div class="col-3 align-self-center">
-                    <img src="{{dish_info.image}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
+                    <img src="{{ dish_info.image.url }}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
                   </div>
                   <div class="col-9">
                     <h4 class="card-title"><span id="product-name-{{dish_info.id}}">{{ dish }}</span><i class="far fa-edit btn" onclick="showModal({{dish_info.id}})"></i><span class="float-right">
@@ -151,7 +150,7 @@ Shops
               </li>
               {% endfor %}
               <!-- test start -->
-              {% for product in products %}
+              <!-- {% for product in products %}
               <li class="list-group-item menu">
                 <div class="row no-gutters">
                   <div class="col-3 align-self-center">
@@ -175,7 +174,7 @@ Shops
                   </div>
                 </div>
               </li>
-              {% endfor %}
+              {% endfor %} -->
               <!-- test end -->
               <li class="list-group-item">
                 <h4 class="card-title">Add an new {{category}}</h4>
@@ -219,7 +218,7 @@ Shops
     <p><span class="close">&times;</span></p>
     <!-- test start -->
     <h3>Edit product</h3>
-    <form enctype="multipart/form-data" action="{% url 'update_product' 1 %}" method="post">
+    <form enctype="multipart/form-data" action="{% url 'update_product' %}" method="post">
       {% csrf_token %}
       <div class="form-row">
         <div class="form-group col-6" id="modal-name">
@@ -235,7 +234,7 @@ Shops
       <div class="form-group" id="modal-image">
         {{ productForm.image }}
       </div>
-      <input type="hidden" id="modal-id" name="id" value="">
+      <input type="hidden" id="modal-id" name="product_id" value="">
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <!-- test end -->

@@ -23,8 +23,7 @@ urlpatterns = [
     path('update_vendor_name', views.update_vendor_name, name='update_vendor_name'),
     path('add_category', views.add_category, name='add_category'),
     path('add_product', views.add_product, name='add_product'),
-    path('update_product/<int:product_id>',
-         views.update_product, name='update_product'),
+    path('update_product', views.update_product, name='update_product'),
     path('get_product_photo/<int:product_id>',
          views.get_product_photo, name='get_product_photo'),
     # customer features
