@@ -801,53 +801,6 @@ def search_page(request):
     return render(request, 'groupbuying/search.html',context)
     '''
 
-{
-    'username': 'foobar',
-    'access_token': 'CAAD...',
-    'first_name': 'Foo',
-    'last_name': 'Bar',
-    'verified': True,
-    'name': 'Foo Bar',
-    'locale': 'en_US',
-    'gender': 'male',
-    'expires': '5183999',
-    'email': 'foo@bar.com',
-    'updated_time': '2014-01-14T15:58:35+0000',
-    'link': 'https://www.facebook.com/foobar',
-    'timezone': -3,
-    'id': '100000126636010',
-}
-
-def create_profile(backend, user, response, *args, **kwargs):
-    if backend.name == 'facebook':
-        pass
-    
-    new_customerInfo = CustomerInfo(name=response.get('name'),
-                                    email=response.get('email'),
-                                    description="",
-                                    address=response.get('locale'),
-                                    customer_id=user.id)
-    
-    new_customerInfo.save()
-
-    new_vendorInfo = VendorInfo(name=response.get('name'),
-                                email=response.get('email'),
-                                description="",
-                                address=response.get('locale'),
-                                vendor_id=user.id)
-
-    new_vendorInfo.save()
-
-    new_userProfile = UserProfile(user=user,
-                                  CustomerInfo=new_customerInfo,
-                                  VendorInfo=new_vendorInfo)
-
-    new_userProfile.save()
-    print(new_customerInfo)
-    print(new_vendorInfo)
-    print(new_userProfile)
-
-
 def login_action(request):
     context = {}
 
