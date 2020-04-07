@@ -35,10 +35,7 @@ def PAGESIZE_CONSTANT():
 def get_shopEditPage_context(request):
     context = {}
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
-    # print(cur_vendor_info.image)
 
-    # context['categories'] = Category.objects.all()
-    # context['products'] = Product.objects.all()
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
