@@ -258,9 +258,9 @@ def shop_page(request):
     context['productForm'] = ProductForm()
     context['vendorForm'] = VendorInfoForm()
     context['description'] = "Hi Shine, please insert the vendor's description here"
-    # context['categories'] = Category.objects.all()
-    # context['products'] = Product.objects.all()
-    # context['vendorInfo'] = VendorInfo.objects.all() # TODO: delte lated
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
+    context['vendorInfo'] = VendorInfo.objects.all() # TODO: delte lated
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)
