@@ -410,7 +410,7 @@ def update_product(request):
     context['categories'] = Category.objects.all()
     context['products'] = Product.objects.all()
 
-    return render(request, 'groupbuying/shop.html', context)
+    return render(request, 'groupbuying/shopEdit.html', context)
 
 
 @login_required
@@ -446,9 +446,8 @@ def update_vendor_info(request):
                               instance=cur_vendor_info)
 
         if not form.is_valid():
-            print("form is NOT valid")
+            print("FALI: form is NOT valid")
         else:
-            print("form is valid")
             cur_vendor_info.description = request.POST['description']
             if 'image' in request.FILES:
                 cur_vendor_info.image = form.cleaned_data['image']

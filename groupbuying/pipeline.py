@@ -3,8 +3,6 @@ from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserPr
 
 
 def create_profile(backend, user, response, *args, **kwargs):
-    if backend.name == 'facebook':
-        pass
     if len(CustomerInfo.objects.all()) > 0 and CustomerInfo.objects.get(customer_id=user.id):
         return
 
@@ -19,8 +17,11 @@ def create_profile(backend, user, response, *args, **kwargs):
                                 email=response.get('email'),
                                 description="",
                                 address=response.get('locale'),
-                                image_url=response.get('picture'),
                                 vendor_id=user.id)
+
+    if backend.name == "google-oauth2":
+        new_vendorInfo.image_url = response.get('picture')
+
     new_vendorInfo.save()
 
     new_userProfile = UserProfile(user=user,
