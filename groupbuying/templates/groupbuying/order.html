@@ -91,6 +91,9 @@ Profile
                     <label for="orderDescription">Some words for shop owner</label>
                     <textarea class="form-control" id="orderDescription" rows="3"></textarea>
                 </div>
+                <div class="alert alert-danger" role="alert">
+                    Sorry your order shoud over the shopping limt, or you cannot checkout!
+                </div>
                 <a href="{% url 'send_email' order_id %}" class="btn btn-primary float-left">Checkout</a>
                 {% else %}
                 <div class="form-group">
