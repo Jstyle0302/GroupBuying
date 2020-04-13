@@ -302,7 +302,7 @@ def get_menu(vendor_id):
     return menu
 
 
-# @login_required
+@login_required
 def shopEdit_page(request):
     # print(request.GET)
     # print(request.user.id, type(request.user.id))
