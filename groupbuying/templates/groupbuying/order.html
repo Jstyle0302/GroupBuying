@@ -52,13 +52,14 @@ Profile
                             </tbody>
                         </thead>
                     </table>
+                    <textarea readonly class="form-control" id="orderDescription" rows="3">Less ice{{order.description}}</textarea>
                 </li>
             </ul>
             {% endfor %}
             {% endif %}
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <h3 class="card-title">Summary</h3>
+                <h3 class="card-title">Summary</h3>
                 <table class="table">
                     <thead>
                         <tr>
@@ -86,8 +87,16 @@ Profile
                     </tbody>
                 </table>
                 {% if isFounder %}
+                <div class="form-group">
+                    <label for="orderDescription">Some words for shop owner</label>
+                    <textarea class="form-control" id="orderDescription" rows="3"></textarea>
+                </div>
                 <a href="{% url 'send_email' order_id %}" class="btn btn-primary float-left">Checkout</a>
                 {% else %}
+                <div class="form-group">
+                    <label for="orderDescription">Some words for order founder</label>
+                    <textarea class="form-control" id="orderDescription" rows="3"></textarea>
+                </div>
                 <a href="#" class="btn btn-primary float-left">Submit to Founder</a>
                 {% endif %}
                 </li>
