@@ -35,4 +35,5 @@ urlpatterns = [
     path('orderList', views.orderList_page, name='orderList'),
     path('share/<str:order_id>', views.share_page, name='share'),
     path('show_order/<str:order_id>', views.show_order_page, name='show_order'),
+    path('send_email/<str:order_id>', views.send_email_page, name='send_email'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

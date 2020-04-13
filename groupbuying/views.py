@@ -26,6 +26,10 @@ from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserPr
 from django.db.models import Q
 from django.db.models import Avg
 from functools import reduce
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 
 
 def PAGESIZE_CONSTANT():
@@ -96,6 +100,57 @@ def share_page(request, order_id):
 
     return render(request, 'groupbuying/shop.html', context)
 
+def send_email_page(request, order_id):
+    context = {}
+    orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
+
+    if orderbundle.holder.id == request.user.id:
+        context['isFounder'] = True
+        orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
+
+    else:
+        context['isFounder'] = True
+        orderUnits = OrderUnit.objects.filter(
+            Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
+
+    context['order_id'] = orderbundle.id
+    context['shop'] = orderbundle.vendor.name
+    context['founder'] = orderbundle.holder.name
+
+    context['receipt'] = {}
+    context['receipt']['orders'] = []
+    context['receipt']['summary'] = {}
+    total_price = 0
+
+    for orderUnit in orderUnits:
+        dictOrder = {}
+        dictOrder['username'] = (orderUnit.buyer.name)
+        print(orderUnit.buyer.name)
+        total_price += int(orderUnit.product.price)*int(orderUnit.quantity)
+        dictOrder['order'] = []
+        subOrder = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+        }
+        dictOrder['order'].append(subOrder)
+        context['receipt']['orders'].append(dictOrder)
+
+    context['receipt']['summary']['total'] = total_price
+
+
+    subject = str(request.user.username) + "'s order at " + orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")" 
+    html_message = render_to_string('groupbuying/order_email.html', context)
+    plain_message = strip_tags(html_message)
+    from_email = 'groupbuyingTeam23@gmail.com'
+    to_email = [request.user.email]
+
+    send_mail(subject, plain_message, from_email, to_email, html_message=html_message, fail_silently=False)
+
+    ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
+
+    return redirect('shop')
 
 def show_order_page(request, order_id):
     context = {}
@@ -135,27 +190,7 @@ def show_order_page(request, order_id):
         context['receipt']['orders'].append(dictOrder)
 
     context['receipt']['summary']['total'] = total_price
-    '''
-    context['receipt'] = {
-        'orders': [{
-            'username': orderUnit.buyer.name,
-            'order': [{
-                'product': orderUnit.product.name,
-                'count': orderUnit.quantity,
-                'price': orderUnit.product.price
-            }],
-            'total': int(orderUnit.quantity) * int(orderUnit.product.price)
-        }],
-        'summary': {
-            'order': [{
-                'product': orderUnit.product.name,
-                'count': orderUnit.quantity,
-                'price': orderUnit.product.price
-            }],
-            'total': int(orderUnit.quantity) * int(orderUnit.product.price)
-        }
-    }
-    '''
+
 
     return render(request, 'groupbuying/order.html', context)
 
