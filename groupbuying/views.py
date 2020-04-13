@@ -302,7 +302,7 @@ def get_menu(vendor_id):
     return menu
 
 
-@login_required
+# @login_required
 def shopEdit_page(request):
     # print(request.GET)
     # print(request.user.id, type(request.user.id))
@@ -311,7 +311,7 @@ def shopEdit_page(request):
     # instance = UserSocialAuth.objects.get(user=request.user, provider='facebook')
 
     context = {}
-    context = get_shopEditPage_context(request)
+    # context = get_shopEditPage_context(request)
 
     return render(request, 'groupbuying/shopEdit.html', context)
 
@@ -332,6 +332,7 @@ def shop_page(request):
     context['productForm'] = ProductForm()
     context['vendorForm'] = VendorInfoForm()
     context['description'] = "Hi Shine, please insert the vendor's description here"
+    context['limitCost'] = 5
     context['categories'] = Category.objects.all()
     context['products'] = Product.objects.all()
     # TODO: get_the correct one
