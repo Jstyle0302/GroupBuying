@@ -32,16 +32,16 @@
                                 {% for order in receipt.orders %}
                                 <tr>
                                     <td align="center" valign="top">
-                                        <h5 class="card-title">{{order.username}}</h5>
-                                        <table border="0" cellspacing="0" width="100%">
+                                        <h2>{{order.username}}</h2>
+                                        <table border="0" cellspacing="0" width="100%" style="text-align: center;">
                                             <thead>
-                                                <tr style="background-color: #6c7ae0;font-size: 18px;color: #fff; height:5vh;">
+                                                <tr style="background-color: #6c7ae0;font-size: 18px;color: #fff; height:5vh; font-size: 150%;">
                                                     <th scope="col">#</th>
                                                     <th scope="col">Product</th>
                                                     <th scope="col">Count</th>
                                                     <th scope="col">Price</th>
                                                 </tr>
-                                            <tbody style="font-size: 15px;color: #808080;">
+                                            <tbody style="font-size: 15px;color: #808080; font-size: 150%;">
                                                 {% for item in order.order %}
                                                 {% if forloop.counter|divisibleby:"2" == 0 %}
                                                 <tr style="background-color: #f8f6ff; height:5vh;">
@@ -81,17 +81,17 @@
                             <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailFooter">
                                 <tr>
                                     <td align="center" valign="top">
-                                        <h3 class="card-title">Summary</h3>
-                                        <table cellspacing="0" width="100%">
+                                        <h1>Summary</h1>
+                                        <table cellspacing="0" width="100%" style=" text-align: center;">
                                             <thead>
-                                                <tr style="background-color: #6c7ae0;font-size: 18px;color: #fff; height:5vh;">
+                                                <tr style="background-color: #6c7ae0;font-size: 18px;color: #fff; height:5vh; font-size: 150%;">
                                                     <th scope="col">#</th>
                                                     <th scope="col">Product</th>
                                                     <th scope="col">Count</th>
                                                     <th scope="col">Total</th>
                                                 </tr>
                                             </thead>
-                                            <tbody style="font-size: 15px;color: #808080;">
+                                            <tbody style="font-size: 15px;color: #808080; font-size: 150%;">
                                                 {% for item in receipt.summary.order %}
                                                 {% if forloop.counter|divisibleby:"2" == 0 %}
                                                 <tr style="background-color: #f8f6ff; height:5vh;">
