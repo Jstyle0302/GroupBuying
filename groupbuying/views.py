@@ -328,15 +328,32 @@ def shop_page(request):
 
         }
     }
+    context['posts'] = [{
+        'id':1,
+        'created_by': {
+            'username': 'Shine'
+        },
+        'creation_time': 'today',
+        'post': 'Delicious',
+        'rating':5
+    },{
+        'id':2,
+        'created_by': {
+            'username': 'Yangming'
+        },
+        'creation_time': 'tomorrow',
+        'post': 'Tasty',
+        'rating':4
+    }]
 
-    context['productForm'] = ProductForm()
-    context['vendorForm'] = VendorInfoForm()
-    context['description'] = "Hi Shine, please insert the vendor's description here"
-    context['limitCost'] = 5
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
-    # TODO: get_the correct one
-    context['vendorInfo'] = VendorInfo.objects.all()
+    # context['productForm'] = ProductForm()
+    # context['vendorForm'] = VendorInfoForm()
+    # context['description'] = "Hi Shine, please insert the vendor's description here"
+    # context['limitCost'] = 5
+    # context['categories'] = Category.objects.all()
+    # context['products'] = Product.objects.all()
+    # # TODO: get_the correct one
+    # context['vendorInfo'] = VendorInfo.objects.all()
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)

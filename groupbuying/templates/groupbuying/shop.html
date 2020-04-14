@@ -9,9 +9,9 @@ Shops
 {% block content %}
 <div class="alert alert-success row" role="alert">
   {% if founder %}
-    This order is raised by {{founder}}.
+  This order is raised by {{founder}}.
   {% else %}
-    This order is raised by {{user.username}}.
+  This order is raised by {{user.username}}.
   {% endif %}
 </div>
 <div class="row">
@@ -23,6 +23,10 @@ Shops
           <a class="list-group-item list-group-item-action active" id="list-profile-list" data-toggle="tab"
             href="#list-profile" role="tab" aria-controls="profile">
             <h5>Profile</h5>
+          </a>
+          <a class="list-group-item list-group-item-action" id="list-review-list" data-toggle="tab" href="#list-review"
+            role="tab" aria-controls="review">
+            <h5>Review</h5>
           </a>
           <h4 class="text-uppercase font-italic text-muted mt-5">Menu</h4>
           {% for category in menu %}
@@ -64,18 +68,76 @@ Shops
           <div class="row">
             <div class="col-4 align-self-center">
               <img id="id_user_picture" class="card-img img-thumbnail" src="{{vendorInfo.image.url}}"
-                   alt="Default image" onerror="this.onerror=null;this.src='https://i.stack.imgur.com/l60Hf.png';">
+                alt="Default image" onerror="this.onerror=null;this.src='https://i.stack.imgur.com/l60Hf.png';">
             </div>
             <div class="col-8 align-self-center">
               <div class="card-body">
-                  <h4 class="card-title">
-                      <span>About Us</span>
-                  </h4>
-                  <p class="text-monospace">Shopping limit: $ {{limitCost}}</p>
-                  <textarea name="description" cols="70" rows="3" readonly id="id_description" class="card-text col mb-2 form-control form-control-lg">{{description}}</textarea>
+                <h4 class="card-title">
+                  <span>About Us</span>
+                </h4>
+                <p class="text-monospace">Shopping limit: $ {{limitCost}}</p>
+                <textarea name="description" cols="70" rows="3" readonly id="id_description"
+                  class="card-text col mb-2 form-control form-control-lg">{{description}}</textarea>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="list-review" role="tabpanel" aria-labelledby="list-review-list">
+        <div class="row justify-content-md-center">
+          <div class="col-6">
+            <div class="mx-auto text-center">
+              <h4 class="border-bottom"><em>Review</em></h4>
+              <h2>{{shop_name}}</h2>
+            </div>
+          </div>
+          <div class="card col-12 mb-2">
+            <div class="card-body">
+              <h5 class="card-title">Comment & Score</h5>
+              <form>
+                <div class="form-group">
+                  <fieldset class="rating form-group">
+                    <input type="radio" id="star5" name="rating" value="5" /><label class="fa fa-star" for="star5"
+                      title="Awesome - 5 stars"></label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label class="fa fa-star" for="star4"
+                      title="Good - 4 stars"></label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label class="fa fa-star" for="star3"
+                      title="Medium - 3 stars"></label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label class="fa fa-star" for="star2"
+                      title="Bad - 2 stars"></label>
+                    <input type="radio" id="star1" name="rating" value="1" /><label class="fa fa-star" for="star1"
+                      title="Sucks - 1 star"></label>
+                  </fieldset>
+                </div>
+                <div class="form-group">
+                  <textarea class="form-control" id="comment" rows="3"
+                    placeholder="Write your feeling about this shop"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary float-right">Submit</button>
+              </form>
+            </div>
+          </div>
+          {% for post in posts%}
+          <div class="card col-12">
+            <div class="card-body">
+              <strong><a id="id_post_profile_{{ post.id }}"
+                  href="/follower/{{ post.created_by.username }}">{{ post.created_by.username }}</a></strong><span id="id_post_date_time_{{ post.id }}"
+                class="float-right">{{ post.creation_time }}</span>
+                <h5 class="card-subtitle mt-1">
+                  {% for j in '01234'|make_list %}
+                  {% if forloop.counter <= post.rating %}
+                  <span class="fa fa-star checked"></span>
+                  {%else%}
+                  <span class="fa fa-star"></span>
+                  {% endif %}
+                  {% endfor %}
+                </h5>
+              <p id="id_post_text_{{ post.id }}">
+                {{ post.post }}
+              </p>
+            </div>
+          </div>
+          {% endfor %}
         </div>
       </div>
       {% for category,dishes in menu.items %}
@@ -121,32 +183,33 @@ Shops
                   <div class="col-3 align-self-center">
                     <!-- workaround for image path -->
                     {% if founder %}
-                      <img src="../{{ product.image.url }}" class="card-img px-1 rounded mx-auto"/>
+                    <img src="../{{ product.image.url }}" class="card-img px-1 rounded mx-auto" />
                     {% else %}
-                    <img src="{{ product.image.url }}" class="card-img px-1 rounded mx-auto"/>
+                    <img src="{{ product.image.url }}" class="card-img px-1 rounded mx-auto" />
                     {% endif %}
                     <!-- <img src="{% url 'get_product_photo' product.id %}" class="card-img px-1 rounded mx-auto"> -->
                   </div>
                   <div class="col-9">
-                    <h4 class="card-title">{{ product.name }}&nbsp;<i class="far fa-edit btn"></i><span class="float-right">
+                    <h4 class="card-title">{{ product.name }}&nbsp;<i class="far fa-edit btn"></i><span
+                        class="float-right">
                         <h6>$ {{product.price}}</h6>
                       </span></h4>
                     <p class="card-text">{{ product.description }}</p>
                     {% if order_id %}
-                      <form method="post" action="{% url 'order' order_id %}">
-                    {% else %}
+                    <form method="post" action="{% url 'order' order_id %}">
+                      {% else %}
                       <form method="post" action="{% url 'order' "new" %}">
-                    {% endif %}
-                    
-                      <input type="hidden" name="product_id" value={{ product.id }}>
-                      <div class="form-row">
-                        <i class="fas fa-minus-circle btn btn-default"></i>
-                        <input type="number" name="product_number" value="1" class="form-control-sm">
-                        <i class="fas fa-plus-circle btn btn-default"></i>
-                        <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
-                      </div>
-                      {% csrf_token %}
-                    </form>
+                        {% endif %}
+
+                        <input type="hidden" name="product_id" value={{ product.id }}>
+                        <div class="form-row">
+                          <i class="fas fa-minus-circle btn btn-default"></i>
+                          <input type="number" name="product_number" value="1" class="form-control-sm">
+                          <i class="fas fa-plus-circle btn btn-default"></i>
+                          <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
+                        </div>
+                        {% csrf_token %}
+                      </form>
                   </div>
                 </div>
               </li>
