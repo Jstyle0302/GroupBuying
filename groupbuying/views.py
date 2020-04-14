@@ -646,13 +646,19 @@ def rating_star(request):
 
     customer_info = CustomerInfo.objects.filter(id=str(request.user.id)).first()
     target_info = VendorInfo.objects.filter(id=str(request.user.id)).first()
+    old_rating = Rating.objects.filter(Q(rater=customer_info) & Q(
+        ratedTarget=target_info)).first()
 
-    new_rating = Rating(rating=float(rating),
-                              rater=customer_info,
-                              ratedTarget=target_info
-                              )
-    new_rating.save()
-    
+    if not old_rating:  
+        new_rating = Rating(rating=float(rating),
+                                rater=customer_info,
+                                ratedTarget=target_info
+                                )
+        new_rating.save()
+    else:
+        old_rating.rating = float(rating)
+        old_rating.save()
+        
     return redirect('shop')
 
 @login_required
