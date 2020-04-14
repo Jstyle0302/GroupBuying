@@ -176,13 +176,14 @@ def show_order_page(request, order_id):
     
 
     for orderUnit in orderUnits:
-        print(orderUnit.isPaid)
+
         if orderUnit.isPaid == False:
             continue
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
         dictOrder['order'] = []
-        
+        dictOrder['description'] = orderUnit.comment
+
         subOrder = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -285,11 +286,15 @@ def order_page(request, order_id):
 def checkout_to_holder(request, order_unit_id):
     context = {}
     orderUnit = OrderUnit.objects.filter(Q(id=str(order_unit_id)))[0]
-    orderUnit.isPaid = True
+    if 'orderDescription' in request.POST and request.POST['orderDescription']:
+        print(request.POST['orderDescription'])
+        orderUnit.comment = request.POST['orderDescription']
+   
+    orderUnit.isPaid = True 
     orderUnit.save()
-    print("checkout_to_holder")
-    print(order_unit_id)
-    print(orderUnit.isPaid)
+    #print("checkout_to_holder")
+    #print(order_unit_id)
+    #print(orderUnit.isPaid)
     return redirect('shop')
 
 

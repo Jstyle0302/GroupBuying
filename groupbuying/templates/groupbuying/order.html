@@ -52,7 +52,7 @@ Profile
                             </tbody>
                         </thead>
                     </table>
-                    <textarea readonly class="form-control" id="orderDescription" rows="3">Less ice(Shine to do){{order.description}}</textarea>
+                    <textarea readonly class="form-control" id="orderDescription" rows="3">{{order.description}}</textarea>
                 </li>
             </ul>
             {% endfor %}
@@ -86,6 +86,12 @@ Profile
                         </tr>
                     </tbody>
                 </table>
+                
+                {% if order_unit_id %}
+                <form method="post" action="{% url 'checkout_to_holder' order_unit_id %}">
+                {% else %}
+                {% endif %}
+
                 {% if isFounder %}
                 <div class="form-group">
                     <label for="orderDescription">Some words for shop owner</label>
@@ -95,7 +101,7 @@ Profile
                     Sorry your order shoud over the shopping limt, or you cannot checkout!(Shine to do)
                 </div>
                     {% if order_unit_id %}
-                    <a href="{% url 'checkout_to_holder' order_unit_id %}" class="btn btn-primary float-left">Checkout</a>
+                    <button type="submit" class="btn btn-primary btn-sm">Check out</button>
                     {% else %}
                     {% endif %}
                 {% else %}
@@ -103,8 +109,11 @@ Profile
                     <label for="orderDescription">Some words for order founder</label>
                     <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
                 </div>
-                <a href="#" class="btn btn-primary float-left">Submit to Founder</a>
+                <button type="submit" class="btn btn-primary btn-sm">Check out</button>
                 {% endif %}
+
+                {% csrf_token %}
+                </form>
                 </li>
             </ul>
         </div>
