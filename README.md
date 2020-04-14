@@ -14,3 +14,11 @@ How to run groupbuying
 1. Install SSL server libaray: pip install django-sslserver
 2. add 'sslserver' in INSTALLED_APPS in setting.py
 3. Run: python manage.py runsslserver
+
+
+To-do list:
+1. Shop profile need to connect the shopping limit button with the model
+2. Order page need to add link the description to the database and those message should be sent to shop owner
+3. Shop profile page need to connect textarea input box to database.
+4. Order mail page should check its css style
+5. Link the data of review section in shop page with database. 
