@@ -192,9 +192,10 @@ Shops
                             </tr>
                           </tbody>
                         </table>
+                        <textarea readonly class="form-control mb-1" name ="orderDescription" id="orderDescription{{order.order_id}}" rows="3">{{order.receipt.summary.description}}</textarea>
                         <form method="post" action="">
                           <input type="hidden" name="order_id" value="{{order.order_id}}">
-                          <button type="submit" class="btn btn-success btn-sm float-right">Finish order #{{order.order_id}}</button>
+                          <button type="submit" class="btn btn-success btn-sm">Finish order #{{order.order_id}}</button>
                         </form>
                   </div>
                 </div>
@@ -247,6 +248,7 @@ Shops
                             </tr>
                           </tbody>
                         </table>
+                        <textarea readonly class="form-control" name ="orderDescription" id="orderDescription{{order.order_id}}" rows="3">{{order.receipt.summary.description}}</textarea>
                   </div>
                 </div>
               </div>

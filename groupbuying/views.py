@@ -457,6 +457,7 @@ def shopEdit_page(request):
                     'count': 1,
                     'price': 10
                 }],
+                'description': "Shine is handsome.",
                 'total': 20
             }
         }
@@ -479,6 +480,7 @@ def shopEdit_page(request):
                     'count': 1,
                     'price': 10
                 }],
+                'description': "Shine is handsome.",
                 'total': 20
             }
         }
