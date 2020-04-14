@@ -710,8 +710,10 @@ def fill_restaurant_info(obj):
 
     # TBD
     restaurant['price'] = 5
-    restaurant[
-        'image'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
+    if obj.image:
+        restaurant['image'] = obj.image_url
+    else:    
+        restaurant['image'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
 
     return restaurant
 
