@@ -94,7 +94,8 @@ Shops
           <div class="card col-12 mb-2">
             <div class="card-body">
               <h5 class="card-title">Comment & Score</h5>
-              <form>
+              <form method="post" action="{% url 'rating_star' %}" class="text-center">
+      
                 <div class="form-group">
                   <fieldset class="rating form-group">
                     <input type="radio" id="star5" name="rating" value="5" /><label class="fa fa-star" for="star5"
@@ -114,6 +115,7 @@ Shops
                     placeholder="Write your feeling about this shop"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary float-right">Submit</button>
+                {% csrf_token %}
               </form>
             </div>
           </div>

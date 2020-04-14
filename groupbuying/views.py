@@ -162,35 +162,60 @@ def show_order_page(request, order_id):
         orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
 
     else:
-        context['isFounder'] = True
+        context['isFounder'] = False
         orderUnits = OrderUnit.objects.filter(
             Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
 
     context['order_id'] = orderbundle.id
     context['shop'] = orderbundle.vendor.name
     context['founder'] = orderbundle.holder.name
-
     context['receipt'] = {}
     context['receipt']['orders'] = []
     context['receipt']['summary'] = {}
-    total_price = 0
+    context['receipt']['summary']['order'] = []
+    context['checkout_to_shopper'] = 1
 
     for orderUnit in orderUnits:
+
+        if orderUnit.isPaid == False:
+            continue
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
-        print(orderUnit.buyer.name)
-        total_price += int(orderUnit.product.price)*int(orderUnit.quantity)
         dictOrder['order'] = []
+        dictOrder['description'] = orderUnit.comment
+
         subOrder = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
             'price': orderUnit.product.price
         }
+        summary = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+        }
+
         dictOrder['order'].append(subOrder)
         context['receipt']['orders'].append(dictOrder)
 
-    context['receipt']['summary']['total'] = total_price
+        is_product_exist = 0
+        for order in context['receipt']['summary']['order']:
+            if orderUnit.product.name in order['product']:
+                is_product_exist = 1
+                order['count'] =  str(int(order['count']) +  int(orderUnit.quantity))
 
+
+        if is_product_exist == 0:
+            context['receipt']['summary']['order'].append(summary)
+
+
+    total_price = 0
+
+    for order in context['receipt']['summary']['order']:
+        order['price'] = (int(order['count']) * int(order['price']))
+        total_price += order['price']
+
+    context['receipt']['summary']['total'] = total_price
 
     return render(request, 'groupbuying/order.html', context)
 
@@ -227,8 +252,10 @@ def order_page(request, order_id):
     )
     new_orderUnit.save()
 
+    context['checkout_to_holder'] = 1
     context['isFounder'] = True
     context['order_id'] = new_orderbundle.id
+    context['order_unit_id'] = new_orderUnit.id
     context['shop'] = vendorInfo.name
     context['founder'] = new_orderbundle.holder.name
     context['receipt'] = {
@@ -252,6 +279,105 @@ def order_page(request, order_id):
     }
 
     return render(request, 'groupbuying/order.html', context)
+
+@login_required
+def checkout_to_holder(request, order_unit_id):
+    context = {}
+    orderUnit = OrderUnit.objects.filter(Q(id=str(order_unit_id)))[0]
+    if 'orderDescription' in request.POST and request.POST['orderDescription']:
+        orderUnit.comment = request.POST['orderDescription']
+   
+    orderUnit.isPaid = True 
+    orderUnit.save()
+    #print("checkout_to_holder")
+    #print(order_unit_id)
+    #print(orderUnit.isPaid)
+    return redirect('shop')
+
+
+@login_required
+def checkout_to_shopper(request, order_id):
+    context = {}
+    orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
+
+    if orderbundle.holder.id == request.user.id:
+        context['isFounder'] = True
+        orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
+
+    else:
+        context['isFounder'] = True
+        orderUnits = OrderUnit.objects.filter(
+            Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
+
+    context['order_id'] = orderbundle.id
+    context['shop'] = orderbundle.vendor.name
+    context['founder'] = orderbundle.holder.name
+
+    context['receipt'] = {}
+    context['receipt']['orders'] = []
+    context['receipt']['summary'] = {}
+    context['receipt']['summary']['order'] = []
+    
+    if 'orderDescription' in request.POST and request.POST['orderDescription']:
+        context['receipt']['description'] = request.POST['orderDescription']
+
+
+    for orderUnit in orderUnits:
+
+        if orderUnit.isPaid == False:
+            continue
+        dictOrder = {}
+        dictOrder['username'] = (orderUnit.buyer.name)
+        dictOrder['order'] = []
+        dictOrder['description'] = orderUnit.comment
+
+        subOrder = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+        }
+        summary = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+        }
+
+        dictOrder['order'].append(subOrder)
+        context['receipt']['orders'].append(dictOrder)
+
+        is_product_exist = 0
+        for order in context['receipt']['summary']['order']:
+            if orderUnit.product.name in order['product']:
+                is_product_exist = 1
+                order['count'] =  str(int(order['count']) +  int(orderUnit.quantity))
+
+
+        if is_product_exist == 0:
+            context['receipt']['summary']['order'].append(summary)
+
+
+    total_price = 0
+
+    for order in context['receipt']['summary']['order']:
+        order['price'] = (int(order['count']) * int(order['price']))
+        total_price += order['price']
+
+    context['receipt']['summary']['total'] = total_price
+
+    subject = str(request.user.username) + "'s order at " + orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")" 
+    html_message = render_to_string('groupbuying/order_email.html', context)
+    plain_message = strip_tags(html_message)
+    from_email = 'groupbuyingTeam23@gmail.com'
+    to_email = [request.user.email]
+
+    send_mail(subject, plain_message, from_email, to_email, html_message=html_message, fail_silently=False)
+
+    ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
+
+    return redirect('shop')
+
+
 
 
 @login_required
@@ -346,14 +472,14 @@ def shop_page(request):
         'rating':4
     }]
 
-    # context['productForm'] = ProductForm()
-    # context['vendorForm'] = VendorInfoForm()
-    # context['description'] = "Hi Shine, please insert the vendor's description here"
-    # context['limitCost'] = 5
-    # context['categories'] = Category.objects.all()
-    # context['products'] = Product.objects.all()
+    context['productForm'] = ProductForm()
+    context['vendorForm'] = VendorInfoForm()
+    context['description'] = "Hi Shine, please insert the vendor's description here"
+    context['limitCost'] = 5
+    context['categories'] = Category.objects.all()
+    context['products'] = Product.objects.all()
     # # TODO: get_the correct one
-    # context['vendorInfo'] = VendorInfo.objects.all()
+    context['vendorInfo'] = VendorInfo.objects.all()
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     return render(request, 'groupbuying/shop.html', context)
@@ -513,6 +639,23 @@ def update_vendor_info(request):
 
 
 @login_required
+def rating_star(request):
+    rating = ''
+    if 'rating' in request.POST and request.POST['rating']:
+        rating = request.POST['rating']
+
+    customer_info = CustomerInfo.objects.filter(id=str(request.user.id)).first()
+    target_info = VendorInfo.objects.filter(id=str(request.user.id)).first()
+
+    new_rating = Rating(rating=float(rating),
+                              rater=customer_info,
+                              ratedTarget=target_info
+                              )
+    new_rating.save()
+    
+    return redirect('shop')
+
+@login_required
 def update_customer_info(request, user_id):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.
@@ -584,8 +727,10 @@ def fill_restaurant_info(obj):
 
     # TBD
     restaurant['price'] = 5
-    restaurant[
-        'image'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
+    if obj.image:
+        restaurant['image'] = obj.image_url
+    else:    
+        restaurant['image'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
 
     return restaurant
 

@@ -21,7 +21,7 @@ Profile
                 Order Number: {{order_id}}, Order shop: {{shop}}, Order founder: {{founder}}
                 <h6 class="card-subtitle mb-2 text-muted">Want to group others? Forward this link for them:<a href="{% url 'share' order_id %}?_id={{order_id}}">groupbuying.com?order={{order_id}}</a></h6>
             </div>
-            {% if isFounder %}
+
             {% for order in receipt.orders %}
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -52,11 +52,11 @@ Profile
                             </tbody>
                         </thead>
                     </table>
-                    <textarea readonly class="form-control" id="orderDescription" rows="3">Less ice(Shine to do){{order.description}}</textarea>
+                    <textarea readonly class="form-control" id="orderDescription" rows="3">{{order.description}}</textarea>
                 </li>
             </ul>
             {% endfor %}
-            {% endif %}
+
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                 <h3 class="card-title">Summary</h3>
@@ -86,22 +86,35 @@ Profile
                         </tr>
                     </tbody>
                 </table>
+
+                {% if order_unit_id and checkout_to_holder%}
+                <form method="post" action="{% url 'checkout_to_holder' order_unit_id %}">
+                {% endif %}
+                {% if checkout_to_shopper %}
+                <form method="post" action="{% url 'checkout_to_shopper' order_id %}">
+                {% endif %}
+
                 {% if isFounder %}
-                <div class="form-group">
-                    <label for="orderDescription">Some words for shop owner</label>
-                    <textarea class="form-control" id="orderDescription" rows="3"></textarea>
-                </div>
                 <div class="alert alert-danger" role="alert">
                     Sorry your order shoud over the shopping limt, or you cannot checkout!(Shine to do)
                 </div>
-                <a href="{% url 'send_email' order_id %}" class="btn btn-primary float-left">Checkout</a>
+                    <div class="form-group">
+                        <label for="orderDescription">Some words for shop owner</label>
+                        <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Check out</button>
                 {% else %}
-                <div class="form-group">
-                    <label for="orderDescription">Some words for order founder</label>
-                    <textarea class="form-control" id="orderDescription" rows="3"></textarea>
-                </div>
-                <a href="#" class="btn btn-primary float-left">Submit to Founder</a>
+                    {% if order_unit_id and checkout_to_holder%}
+                    <div class="form-group">
+                        <label for="orderDescription">Some words for order founder</label>
+                        <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Check out</button>
+                    {% endif %}
                 {% endif %}
+
+                {% csrf_token %}
+                </form>
                 </li>
             </ul>
         </div>
