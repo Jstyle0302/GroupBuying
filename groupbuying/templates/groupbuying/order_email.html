@@ -59,6 +59,7 @@
                                     </tbody>
                                 </thead>
                             </table>
+                            <textarea readonly class="form-control" id="orderDescription" rows="3">{{order.description}}</textarea>
                         </li>
                     </ul>
                     {% endfor %}
@@ -90,6 +91,7 @@
                                     <td></td>
                                     <td class="bg-warning text-dark">{{receipt.summary.total}}</td>
                                 </tr>
+                                <textarea readonly class="form-control" id="orderDescription" rows="3">{{receipt.description}}</textarea>
                             </tbody>
                         </table>
                         </li>

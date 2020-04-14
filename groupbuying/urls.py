@@ -37,5 +37,5 @@ urlpatterns = [
     path('show_order/<str:order_id>', views.show_order_page, name='show_order'),
     path('send_email/<str:order_id>', views.send_email_page, name='send_email'),
     path('checkout_to_holder/<str:order_unit_id>', views.checkout_to_holder, name='checkout_to_holder'),
-    path('checkout_to_shoper/<str:order_unit_id>', views.checkout_to_shoper, name='checkout_to_shoper'),
+    path('checkout_to_shopper/<str:order_id>', views.checkout_to_shopper, name='checkout_to_shopper'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

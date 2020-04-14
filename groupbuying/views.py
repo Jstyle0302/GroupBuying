@@ -162,7 +162,7 @@ def show_order_page(request, order_id):
         orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
 
     else:
-        context['isFounder'] = True
+        context['isFounder'] = False
         orderUnits = OrderUnit.objects.filter(
             Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
 
@@ -173,7 +173,7 @@ def show_order_page(request, order_id):
     context['receipt']['orders'] = []
     context['receipt']['summary'] = {}
     context['receipt']['summary']['order'] = []
-    
+    context['checkout_to_shopper'] = 1
 
     for orderUnit in orderUnits:
 
@@ -252,9 +252,7 @@ def order_page(request, order_id):
     )
     new_orderUnit.save()
 
-    print("order_page")
-    print(new_orderUnit.id)
-
+    context['checkout_to_holder'] = 1
     context['isFounder'] = True
     context['order_id'] = new_orderbundle.id
     context['order_unit_id'] = new_orderUnit.id
@@ -287,7 +285,6 @@ def checkout_to_holder(request, order_unit_id):
     context = {}
     orderUnit = OrderUnit.objects.filter(Q(id=str(order_unit_id)))[0]
     if 'orderDescription' in request.POST and request.POST['orderDescription']:
-        print(request.POST['orderDescription'])
         orderUnit.comment = request.POST['orderDescription']
    
     orderUnit.isPaid = True 
@@ -299,10 +296,87 @@ def checkout_to_holder(request, order_unit_id):
 
 
 @login_required
-def checkout_to_shoper(request, order_unit_id):
+def checkout_to_shopper(request, order_id):
     context = {}
+    orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
 
-    return render(request, 'groupbuying/order.html', context)
+    if orderbundle.holder.id == request.user.id:
+        context['isFounder'] = True
+        orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
+
+    else:
+        context['isFounder'] = True
+        orderUnits = OrderUnit.objects.filter(
+            Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
+
+    context['order_id'] = orderbundle.id
+    context['shop'] = orderbundle.vendor.name
+    context['founder'] = orderbundle.holder.name
+
+    context['receipt'] = {}
+    context['receipt']['orders'] = []
+    context['receipt']['summary'] = {}
+    context['receipt']['summary']['order'] = []
+    
+    if 'orderDescription' in request.POST and request.POST['orderDescription']:
+        context['receipt']['description'] = request.POST['orderDescription']
+
+
+    for orderUnit in orderUnits:
+
+        if orderUnit.isPaid == False:
+            continue
+        dictOrder = {}
+        dictOrder['username'] = (orderUnit.buyer.name)
+        dictOrder['order'] = []
+        dictOrder['description'] = orderUnit.comment
+
+        subOrder = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+        }
+        summary = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+        }
+
+        dictOrder['order'].append(subOrder)
+        context['receipt']['orders'].append(dictOrder)
+
+        is_product_exist = 0
+        for order in context['receipt']['summary']['order']:
+            if orderUnit.product.name in order['product']:
+                is_product_exist = 1
+                order['count'] =  str(int(order['count']) +  int(orderUnit.quantity))
+
+
+        if is_product_exist == 0:
+            context['receipt']['summary']['order'].append(summary)
+
+
+    total_price = 0
+
+    for order in context['receipt']['summary']['order']:
+        order['price'] = (int(order['count']) * int(order['price']))
+        total_price += order['price']
+
+    context['receipt']['summary']['total'] = total_price
+
+    subject = str(request.user.username) + "'s order at " + orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")" 
+    html_message = render_to_string('groupbuying/order_email.html', context)
+    plain_message = strip_tags(html_message)
+    from_email = 'groupbuyingTeam23@gmail.com'
+    to_email = [request.user.email]
+
+    send_mail(subject, plain_message, from_email, to_email, html_message=html_message, fail_silently=False)
+
+    ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
+
+    return redirect('shop')
+
 
 
 

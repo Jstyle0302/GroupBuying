@@ -86,30 +86,31 @@ Profile
                         </tr>
                     </tbody>
                 </table>
-                
-                {% if order_unit_id %}
+
+                {% if order_unit_id and checkout_to_holder%}
                 <form method="post" action="{% url 'checkout_to_holder' order_unit_id %}">
-                {% else %}
+                {% endif %}
+                {% if checkout_to_shopper %}
+                <form method="post" action="{% url 'checkout_to_shopper' order_id %}">
                 {% endif %}
 
                 {% if isFounder %}
-                <div class="form-group">
-                    <label for="orderDescription">Some words for shop owner</label>
-                    <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
-                </div>
                 <div class="alert alert-danger" role="alert">
                     Sorry your order shoud over the shopping limt, or you cannot checkout!(Shine to do)
                 </div>
-                    {% if order_unit_id %}
+                    <div class="form-group">
+                        <label for="orderDescription">Some words for shop owner</label>
+                        <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
+                    </div>
                     <button type="submit" class="btn btn-primary btn-sm">Check out</button>
-                    {% else %}
-                    {% endif %}
                 {% else %}
-                <div class="form-group">
-                    <label for="orderDescription">Some words for order founder</label>
-                    <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm">Check out</button>
+                    {% if order_unit_id and checkout_to_holder%}
+                    <div class="form-group">
+                        <label for="orderDescription">Some words for order founder</label>
+                        <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Check out</button>
+                    {% endif %}
                 {% endif %}
 
                 {% csrf_token %}
