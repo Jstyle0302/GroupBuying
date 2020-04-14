@@ -428,7 +428,7 @@ def get_menu(vendor_id):
     return menu
 
 
-@login_required
+# @login_required
 def shopEdit_page(request):
     # print(request.GET)
     # print(request.user.id, type(request.user.id))
@@ -437,7 +437,7 @@ def shopEdit_page(request):
     # instance = UserSocialAuth.objects.get(user=request.user, provider='facebook')
 
     context = {}
-    # context = get_shopEditPage_context(request)
+    context = get_shopEditPage_context(request)
     context['incompleted'] = [{
         'order_id': 10,
         'receipt': {

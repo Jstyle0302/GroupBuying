@@ -101,6 +101,8 @@ Shops
                   {% csrf_token %}
                   <label for="shoppingLimit">Shopping Limit(Shine to do)</label>
                   <input id="shoppingLimit" type="number" min="1" step="0.1" class="form-control">
+                  <label for="shopHashtag">Shop Category</label>
+                  <input id="shopHashtag" type="text" class="form-control">
                   {{ vendorForm.as_p }}
                   <div class="text-right">
                     <button class="btn btn-sm btn-primary mt-2" id="id_update_profile_button">
