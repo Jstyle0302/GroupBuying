@@ -438,6 +438,52 @@ def shopEdit_page(request):
 
     context = {}
     # context = get_shopEditPage_context(request)
+    context['incompleted'] = [{
+        'order_id': 10,
+        'receipt': {
+            'summary': {
+                'order': [{
+                    # 'product': orderUnit.product.name,
+                    # 'count': orderUnit.quantity,
+                    # 'price': orderUnit.product.price
+                    'product': 'Coffee',
+                    'count': 2,
+                    'price': 10
+                },{
+                    # 'product': orderUnit.product.name,
+                    # 'count': orderUnit.quantity,
+                    # 'price': orderUnit.product.price
+                    'product': 'Cake',
+                    'count': 1,
+                    'price': 10
+                }],
+                'total': 20
+            }
+        }
+    },{
+        'order_id': 2,
+        'receipt': {
+            'summary': {
+                'order': [{
+                    # 'product': orderUnit.product.name,
+                    # 'count': orderUnit.quantity,
+                    # 'price': orderUnit.product.price
+                    'product': 'Coffee',
+                    'count': 2,
+                    'price': 10
+                },{
+                    # 'product': orderUnit.product.name,
+                    # 'count': orderUnit.quantity,
+                    # 'price': orderUnit.product.price
+                    'product': 'Cake',
+                    'count': 1,
+                    'price': 10
+                }],
+                'total': 20
+            }
+        }
+    }]
+    context['finished'] = context['incompleted']
 
     return render(request, 'groupbuying/shopEdit.html', context)
 
