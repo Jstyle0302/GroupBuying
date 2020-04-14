@@ -41,7 +41,7 @@
                                                 </tr>
                                             <tbody style="font-size: 15px;color: #808080;">
                                                 {% for item in order.order %}
-                                                {% if forloop.conuter % 2 == 0 %}
+                                                {% if forloop.counter|divisibleby:"2" == 0 %}
                                                 <tr style="background-color: #f8f6ff;">
                                                     <th scope="row">{{forloop.counter}}</th>
                                                     <td>{{item.product}}</td>
@@ -91,7 +91,7 @@
                                             </thead>
                                             <tbody style="font-size: 15px;color: #808080;">
                                                 {% for item in receipt.summary.order %}
-                                                {% if forloop.conuter % 2 == 0 %}
+                                                {% if forloop.counter|divisibleby:"2" == 0 %}
                                                 <tr style="background-color: #f8f6ff;">
                                                     <th scope="row">{{forloop.counter}}</th>
                                                     <td>{{item.product}}</td>
