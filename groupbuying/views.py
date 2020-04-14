@@ -639,6 +639,23 @@ def update_vendor_info(request):
 
 
 @login_required
+def rating_star(request):
+    rating = ''
+    if 'rating' in request.POST and request.POST['rating']:
+        rating = request.POST['rating']
+
+    customer_info = CustomerInfo.objects.filter(id=str(request.user.id)).first()
+    target_info = VendorInfo.objects.filter(id=str(request.user.id)).first()
+
+    new_rating = Rating(rating=float(rating),
+                              rater=customer_info,
+                              ratedTarget=target_info
+                              )
+    new_rating.save()
+    
+    return redirect('shop')
+
+@login_required
 def update_customer_info(request, user_id):
     context = {}
     errors = []  # A list to record messages for any errors we encounter.

@@ -38,4 +38,5 @@ urlpatterns = [
     path('send_email/<str:order_id>', views.send_email_page, name='send_email'),
     path('checkout_to_holder/<str:order_unit_id>', views.checkout_to_holder, name='checkout_to_holder'),
     path('checkout_to_shopper/<str:order_id>', views.checkout_to_shopper, name='checkout_to_shopper'),
+    path('rating_star', views.rating_star, name='rating_star'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
