@@ -176,6 +176,9 @@ def show_order_page(request, order_id):
     
 
     for orderUnit in orderUnits:
+        print(orderUnit.isPaid)
+        if orderUnit.isPaid == False:
+            continue
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
         dictOrder['order'] = []
@@ -248,8 +251,12 @@ def order_page(request, order_id):
     )
     new_orderUnit.save()
 
+    print("order_page")
+    print(new_orderUnit.id)
+
     context['isFounder'] = True
     context['order_id'] = new_orderbundle.id
+    context['order_unit_id'] = new_orderUnit.id
     context['shop'] = vendorInfo.name
     context['founder'] = new_orderbundle.holder.name
     context['receipt'] = {
@@ -273,6 +280,25 @@ def order_page(request, order_id):
     }
 
     return render(request, 'groupbuying/order.html', context)
+
+@login_required
+def checkout_to_holder(request, order_unit_id):
+    context = {}
+    orderUnit = OrderUnit.objects.filter(Q(id=str(order_unit_id)))[0]
+    orderUnit.isPaid = True
+    orderUnit.save()
+    print("checkout_to_holder")
+    print(order_unit_id)
+    print(orderUnit.isPaid)
+    return redirect('shop')
+
+
+@login_required
+def checkout_to_shoper(request, order_unit_id):
+    context = {}
+
+    return render(request, 'groupbuying/order.html', context)
+
 
 
 @login_required
