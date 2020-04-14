@@ -169,28 +169,49 @@ def show_order_page(request, order_id):
     context['order_id'] = orderbundle.id
     context['shop'] = orderbundle.vendor.name
     context['founder'] = orderbundle.holder.name
-
     context['receipt'] = {}
     context['receipt']['orders'] = []
     context['receipt']['summary'] = {}
-    total_price = 0
+    context['receipt']['summary']['order'] = []
+    
 
     for orderUnit in orderUnits:
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
-        print(orderUnit.buyer.name)
-        total_price += int(orderUnit.product.price)*int(orderUnit.quantity)
         dictOrder['order'] = []
+        
         subOrder = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
             'price': orderUnit.product.price
         }
+        summary = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+        }
+
         dictOrder['order'].append(subOrder)
         context['receipt']['orders'].append(dictOrder)
 
-    context['receipt']['summary']['total'] = total_price
+        is_product_exist = 0
+        for order in context['receipt']['summary']['order']:
+            if orderUnit.product.name in order['product']:
+                is_product_exist = 1
+                order['count'] =  str(int(order['count']) +  int(orderUnit.quantity))
 
+
+        if is_product_exist == 0:
+            context['receipt']['summary']['order'].append(summary)
+
+
+    total_price = 0
+
+    for order in context['receipt']['summary']['order']:
+        order['price'] = (int(order['count']) * int(order['price']))
+        total_price += order['price']
+
+    context['receipt']['summary']['total'] = total_price
 
     return render(request, 'groupbuying/order.html', context)
 
