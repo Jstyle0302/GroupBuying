@@ -10,29 +10,31 @@ Register
 
 {% block content %}
 <div class="row">
-    <h1 class="mb-3 font-weight-normal text-center mx-auto">
-      <span id="id_name_of_page">Register</span>
-    </h1>
+  <h1 class="mb-3 font-weight-normal text-center mx-auto">
+    <span id="id_name_of_page">Register</span>
+  </h1>
 </div>
+<div class="row">
+  <span class="text mx-auto">Already have an account? <a id="id_login_link" href="{% url 'login' %}">Login</a></span>
+</div>
+<br>
 <div class="row justify-content-center">
-    <div class="col-4">
-        <form method="post" action="{% url 'register' %}" class="text-center">
-            <table>
-                {% for entry in form.visible_fields %}
-                <div class="form-group">
-                  {{entry}}
-                </div>
-                {% endfor %}
-            </table>
-            {% csrf_token %}
-            <button class="btn btn-lg btn-primary btn-block" type="submit" id="id_login_button">Submit</button>
-        </form>
-    </div>
-    <div class="divider align-items-center"></div>
-    <div class="col-4">
-      <div class="row align-items-center">
-        <div class="col">
-          <!-- Facebook -->
+  <div class="col-4">
+    <form method="post" action="{% url 'register' %}" class="text-center">
+        {% for entry in form.visible_fields %}
+        <div class="form-group">
+          {{entry}}
+        </div>
+        {% endfor %}
+      {% csrf_token %}
+      <button class="btn btn-lg btn-primary btn-block" type="submit" id="id_login_button">Submit</button>
+    </form>
+  </div>
+  <div class="divider"></div>
+  <div class="col-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <!-- Facebook -->
         <a href="/account/provider/facebook" title="Facebook" class="btn btn-block btn-social btn-facebook">
           <i class="fa fa-facebook"></i> Sign up with Facebook
         </a>
@@ -41,14 +43,14 @@ Register
         <a href="/account/provider/google" title="Google" class="btn btn-block btn-social btn-google">
           <i class="fa fa-google"></i> Sign up with Google
         </a>
-        </div>
       </div>
     </div>
+  </div>
 </div>
 <br>
 <br>
 <br>
 <div class="row">
-    <p class="text-muted mx-auto">&copy; 2020 Spring, CMU Web development, team 23</p>
+  <p class="text-muted mx-auto">&copy; 2020 Spring, CMU Web development, team 23</p>
 </div>
 {% endblock %}
