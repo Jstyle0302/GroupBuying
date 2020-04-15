@@ -412,6 +412,21 @@ def get_menu(vendor_id):
 
     return menu
 
+def complete_order(request):
+    errors = []
+    if 'order_id' not in request.POST or not request.POST['order_id']:
+        errors.append('You must have provide the order id')
+    else:
+        cur_order = OrderBundle.objects.get(pk=int(request.POST['order_id']))
+        cur_order.isCompleted = True;
+        cur_order.save()
+
+    context = get_shopEditPage_context(request)
+    context['errors'] = errors
+
+    return render(request, 'groupbuying/shopEdit.html', context)
+
+
 def get_orders(vendor_id):
     incompleted = []
     finished = []
