@@ -694,26 +694,31 @@ def update_vendor_info(request):
     errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
 
-    if 'description' not in request.POST or not request.POST['description'] or \
-            'image' not in request.FILES or not request.FILES['image']:
-        errors.append(
-            'You must have at least "description and image" for the vendor info')
-    else:
+    # if 'description' not in request.POST or not request.POST['description'] or \
+    #         'image' not in request.FILES or not request.FILES['image']:
+    #     errors.append(
+    #         'You must have at least "description and image" for the vendor info')
+    # else:
         # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check
-        form = VendorInfoForm(request.POST, request.FILES,
-                              instance=cur_vendor_info)
-
-        if not form.is_valid():
-            print("FALI: form is NOT valid")
-        else:
+    
+    form = VendorInfoForm(request.POST, request.FILES, instance=cur_vendor_info)
+    if not form.is_valid():
+        print("FALI: form is NOT valid")
+    else:
+        if not request.POST['description']:
             cur_vendor_info.description = request.POST['description']
-            if 'image' in request.FILES:
-                cur_vendor_info.image = form.cleaned_data['image']
-                cur_vendor_info.content_type = form.cleaned_data['image'].content_type
-            form.save()
+        if not request.POST['min_order']:
+            cur_vendor_info.min_order = int(request.POST['min_order'])
+        if not request.POST['tagList']:
+            cur_vendor_info.tagList = request.POST['tagList']
+        if 'image' in request.FILES:
+            cur_vendor_info.image = form.cleaned_data['image']
+            cur_vendor_info.content_type = form.cleaned_data['image'].content_type
+        
+        form.save()
 
     context = get_shopEditPage_context(request)
-
+    print(cur_vendor_info)
     return render(request, 'groupbuying/shopEdit.html', context)
 
 

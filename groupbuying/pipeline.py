@@ -17,6 +17,7 @@ def create_profile(backend, user, response, *args, **kwargs):
                                 email=response.get('email'),
                                 description="",
                                 address=response.get('locale'),
+                                min_order=0,
                                 vendor_id=user.id)
 
     if backend.name == "google-oauth2":

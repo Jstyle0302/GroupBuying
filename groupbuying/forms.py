@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
-from groupbuying.models import Product, CustomerInfo
+from groupbuying.models import Product, CustomerInfo, VendorInfo
 
 MAX_UPLOAD_SIZE = 2500000
 
@@ -38,14 +38,19 @@ class ProductForm(forms.ModelForm):
 
 
 class VendorInfoForm(forms.ModelForm):
+    # image = forms.ImageField(required=False)
     class Meta:
-        model = Product  # !!!!wrong form?
-        fields = ['description', 'image']
+        model = VendorInfo
+        fields = ['min_order', 'tagList', 'description', 'image']
         widgets = {
+            'min_order': forms.NumberInput(attrs={'placeholder': 'Minimum Order', 'class': 'form-control', 'id': 'id_min_order'}),
+            'tagList': forms.TextInput(attrs={'placeholder': 'Shop Tag', 'class': 'form-control', 'id': 'id_shop_tag'}),
             'description': forms.Textarea(attrs={'cols': 70, 'rows': 5, 'placeholder': 'Write something about your shop!', 'class': 'form-control'}),
             'image': forms.FileInput(attrs={'class': 'form-control-file', 'id': 'id_vender_picture'})
         }
         labels = {
+            'min_order': "Minimum Order",
+            'tagList': "Shop Tag",
             'description': "",
             'image': "Upload Logo"
         }

@@ -70,7 +70,7 @@ Shops
         <div class="row justify-content-md-center">
           <div class="col-6">
             <div class="mx-auto text-center">
-              <h4 class="border-bottom"><em>Profile</em></h4>
+              <h4 class="border-bottom"><em>Shop Name</em></h4>
               <h5>{{ vendorInfo.name }}<i
                 id="{{vendorInfo.name}}" class="far fa-edit btn" data-toggle="modal" data-target="#vendorModal" data-whatever="{{ vendorInfo.name }}"></i>
               </h5>
@@ -96,10 +96,10 @@ Shops
                 <form action="{% url 'update_vendor_info' %}" method="POST" class="form-group"
                   enctype="multipart/form-data">
                   {% csrf_token %}
-                  <label for="shoppingLimit">Shopping Limit(Shine to do)</label>
+                  <!-- <label for="shoppingLimit">Minimum Order</label>
                   <input id="shoppingLimit" type="number" min="1" step="0.1" class="form-control">
-                  <label for="shopHashtag">Shop Category</label>
-                  <input id="shopHashtag" type="text" class="form-control">
+                  <label for="shopHashtag">Shop Tag</label>
+                  <input id="shopHashtag" type="text" class="form-control"> -->
                   {{ vendorForm.as_p }}
                   <div class="text-right">
                     <button class="btn btn-sm btn-primary mt-2" id="id_update_profile_button">
@@ -415,7 +415,7 @@ Shops
         <form action="{% url 'update_vendor_name' %}" method="POST">
           <div class="form-group" id="modal-vendor-name">
             <label for="menu-name">New Shop Name</label>
-            <input type="text" class="form-control" id="menu-name">
+            <input type="text" class="form-control" id="menu-name", name='vendor_name'>
           </div>
           <input type="hidden" id="modal-vendor-id" name="vendor_id" value="">
           {% csrf_token %}

@@ -36,6 +36,7 @@ class VendorInfo(models.Model):
     address = models.CharField(max_length=100)
     phoneNum = models.CharField(max_length=16)
     tagList = models.CharField(max_length=200)
+    min_order = models.IntegerField(null=True)
     image = models.ImageField(blank=False, null=True,
                               upload_to='img/')  # Note: use ImageField?
     image_url_OAuth = models.URLField(max_length=200)
@@ -43,8 +44,10 @@ class VendorInfo(models.Model):
     vendor_id = models.IntegerField(null=True)
 
     def __str__(self):
-        return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
-            ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
+        return 'id = ' + str(self.id) + ' name = ' + self.name + ' email = ' + self.email + \
+            ' address = ' + str(self.address) + ' phoneNum = ' + str(self.phoneNum) + \
+            ' min_order = ' + str(self.min_order) + " vendor_id = " + str(self.vendor_id) + \
+            ' tagList = ' + str(self.tagList)
 
 
 class UserProfile(models.Model):
