@@ -71,12 +71,9 @@ Shops
           <div class="col-6">
             <div class="mx-auto text-center">
               <h4 class="border-bottom"><em>Profile</em></h4>
-              <form action="{% url 'update_vendor_name' %}" method="POST" action=""
-                class="form-row justify-content-center">
-                <input class="form-group col-4 mr-1" value="{{ vendorInfo.name }}" name="vendor_name"></input>
-                {% csrf_token %}
-                <input type="submit" class="form-group col-4 btn btn-primary btn-sm" value="Save">
-              </form>
+              <h5>{{ vendorInfo.name }}<i
+                id="{{vendorInfo.name}}" class="far fa-edit btn" data-toggle="modal" data-target="#vendorModal" data-whatever="{{ vendorInfo.name }}"></i>
+              </h5>
             </div>
           </div>
         </div>
@@ -287,10 +284,9 @@ Shops
           <div class="col-6">
             <div class="mx-auto text-center">
               <h4 class="border-bottom"><em>Menu</em></h4>
-              <form method="POST" action="" class="form-row justify-content-center">
-                <input class="form-group col-4 mr-1" value="{{category}}" name=""></input>
-                <input type="submit" class="form-group col-4 btn btn-primary btn-sm" value="Save">
-              </form>
+              <h5>{{category}}<i
+                id="{{category}}" class="far fa-edit btn" data-toggle="modal" data-target="#menuModal" data-whatever="{{category}}"></i>
+              </h5>              
             </div>
           </div>
         </div>
@@ -305,7 +301,7 @@ Shops
                   </div>
                   <div class="col-9">
                     <h4 class="card-title"><span id="product-name-{{dish_info.id}}">{{ dish }}</span><i
-                        class="far fa-edit btn" onclick="showModal({{dish_info.id}})"></i><span class="float-right">
+                        class="far fa-edit btn" data-toggle="modal" data-target="#dishModal" data-whatever="{{dish_info.id}}"></i><span class="float-right">
                         <h6>$ <span id="product-price-{{dish_info.id}}">{{dish_info.price}}</span></h6>
                       </span></h4>
                     <p class="card-text" id="product-description-{{dish_info.id}}">{{ dish_info.description }}</p>
@@ -348,35 +344,89 @@ Shops
 
 
 {% block footer %}
-<!-- The Modal -->
-<div id="myModal" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <p><span class="close">&times;</span></p>
-    <!-- test start -->
-    <h3>Edit product</h3>
-    <form enctype="multipart/form-data" action="{% url 'update_product' %}" method="post">
-      {% csrf_token %}
-      <div class="form-row">
-        <div class="form-group col-6" id="modal-name">
-          {{ productForm.name }}
-        </div>
-        <div class="form-group col-6" id="modal-price">
-          {{ productForm.price }}
-        </div>
+<div class="modal fade" id="dishModal" tabindex="-1" role="dialog" aria-labelledby="dishModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dishModalLabel">Edit product</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="form-group" id="modal-description">
-        {{ productForm.description }}
+      <div class="modal-body">
+        <form enctype="multipart/form-data" action="{% url 'update_product' %}" method="post">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-6" id="modal-name">
+              {{ productForm.name }}
+            </div>
+            <div class="form-group col-6" id="modal-price">
+              {{ productForm.price }}
+            </div>
+          </div>
+          <div class="form-group" id="modal-description">
+            {{ productForm.description }}
+          </div>
+          <div class="form-group" id="modal-image">
+            {{ productForm.image }}
+          </div>
+          <input type="hidden" id="modal-id" name="product_id" value="">
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
       </div>
-      <div class="form-group" id="modal-image">
-        {{ productForm.image }}
-      </div>
-      <input type="hidden" id="modal-id" name="product_id" value="">
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-    <!-- test end -->
+    </div>
   </div>
 </div>
+
+<div class="modal fade" id="menuModal" tabindex="-1" role="dialog" aria-labelledby="menuModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="menuModalLabel">Edit Menu Name</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form enctype="multipart/form-data" action="/" method="post">
+          {% csrf_token %}
+          <div class="form-group" id="modal-menu-name">
+            <label for="menu-name">New Menu Name</label>
+            <input type="text" class="form-control" id="menu-name">
+          </div>
+          <input type="hidden" id="modal-menu-id" name="menu_id" value="">
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="vendorModal" tabindex="-1" role="dialog" aria-labelledby="vendorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="vendorModalLabel">Edit Shop Name</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'update_vendor_name' %}" method="POST">
+          <div class="form-group" id="modal-vendor-name">
+            <label for="menu-name">New Shop Name</label>
+            <input type="text" class="form-control" id="menu-name">
+          </div>
+          <input type="hidden" id="modal-vendor-id" name="vendor_id" value="">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {% load static %}
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="{% static 'groupbuying/shop.js' %}" type="text/javascript"></script>

@@ -6,63 +6,37 @@ $('#list-tab a').on('click', function (e) {
   })
 
 // Get the modal
-var modal = document.getElementById("myModal");
+$('#dishModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget)
+  var id = button.data('whatever')
+  var modal = $(this)
 
-// Get the modal context
-var modalContext = $("#myModal #context");
+  var name = $("#product-name-".concat(id)).text();
+  var price = $("#product-price-".concat(id)).text();
+  var description = $("#product-description-".concat(id)).text();
+  modal.find('#modal-name input').val(name);
+  modal.find('#modal-price input').val(price);
+  modal.find('#modal-description textarea').val(description);
+  modal.find('#modal-id').val(id);
+})
 
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+$('#menuModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget)
+  var name = button.data('whatever')
+  var id = button.data('id')
+  var modal = $(this)
+  modal.find('#modal-menu-name input').val(name);
+  modal.find('#modal-menu-id').val(id);
+})
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks on the button, open the modal
-// $(".far.fa-edit.btn").click(function(e){
-//     var target = $(e.target);
-//     console.log(target)
-//     $("#modal-name input").val('Shine')
-//     $("#modal-price input").val(1)
-//     $("#modal-description textarea").val('Very handsome')
-//     // $("#modal-name")
-//     // console.log(target)
-//     // modalContext.append(getModal())
-//     modal.style.display = "block";
-// });
-
-function showModal(id) {
-  // var target = $(e.target);
-    // console.log(target)
-    console.log('success')
-    var name = $("#product-name-".concat(id)).text();
-    var price = $("#product-price-".concat(id)).text();
-    var description = $("#product-description-".concat(id)).text();
-    $("#modal-name input").val(name);
-    $("#modal-price input").val(price);
-    $("#modal-description textarea").val(description);
-    $("#modal-id").val(id);
-    modal.style.display = "block";
-}
-
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-  modalContext.empty();
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-    modalContext.empty();
-  }
-}
-
-function getModal() {
-    var contextForm = ``
-  return contextForm;
-}
+$('#vendorModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget)
+  var name = button.data('whatever')
+  var id = button.data('id')
+  var modal = $(this)
+  modal.find('#modal-vendor-name input').val(name);
+  modal.find('#modal-vendor-id').val(id);
+})
 
 // google.js
 google.charts.load('current', {'packages':['corechart','bar']});
