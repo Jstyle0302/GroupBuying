@@ -20,7 +20,7 @@ def create_profile(backend, user, response, *args, **kwargs):
                                 vendor_id=user.id)
 
     if backend.name == "google-oauth2":
-        new_vendorInfo.image_url = response.get('picture')
+        new_vendorInfo.image_url_OAuth = response.get('picture')
 
     new_vendorInfo.save()
 

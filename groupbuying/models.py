@@ -38,7 +38,7 @@ class VendorInfo(models.Model):
     tagList = models.CharField(max_length=200)
     image = models.ImageField(blank=False, null=True,
                               upload_to='img/')  # Note: use ImageField?
-    image_url = models.URLField(max_length=200)
+    image_url_OAuth = models.URLField(max_length=200)
     content_type = models.CharField(max_length=50, default="")
     vendor_id = models.IntegerField(null=True)
 
@@ -87,6 +87,7 @@ class Product(models.Model):
 
 class Rating(models.Model):
     rating = models.FloatField()
+
     rater = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     ratedTarget = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
 

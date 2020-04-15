@@ -31,7 +31,6 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 
-
 def PAGESIZE_CONSTANT():
     return 2
 
@@ -39,12 +38,14 @@ def PAGESIZE_CONSTANT():
 def get_shopEditPage_context(request):
     context = {}
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    orderbundle = OrderBundle.objects.filter(Q(vendor=cur_vendor_info))
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
     context['vendorForm'] = VendorInfoForm(
         initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+
 
     return context
 
@@ -100,6 +101,7 @@ def share_page(request, order_id):
 
     return render(request, 'groupbuying/shop.html', context)
 
+
 def send_email_page(request, order_id):
     context = {}
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
@@ -139,18 +141,20 @@ def send_email_page(request, order_id):
 
     context['receipt']['summary']['total'] = total_price
 
-
-    subject = str(request.user.username) + "'s order at " + orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")" 
+    subject = str(request.user.username) + "'s order at " + \
+        orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")"
     html_message = render_to_string('groupbuying/order_email.html', context)
     plain_message = strip_tags(html_message)
     from_email = 'groupbuyingTeam23@gmail.com'
     to_email = [request.user.email]
 
-    send_mail(subject, plain_message, from_email, to_email, html_message=html_message, fail_silently=False)
+    send_mail(subject, plain_message, from_email, to_email,
+              html_message=html_message, fail_silently=False)
 
     ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
 
     return redirect('shop')
+
 
 def show_order_page(request, order_id):
     context = {}
@@ -202,12 +206,11 @@ def show_order_page(request, order_id):
         for order in context['receipt']['summary']['order']:
             if orderUnit.product.name in order['product']:
                 is_product_exist = 1
-                order['count'] =  str(int(order['count']) +  int(orderUnit.quantity))
-
+                order['count'] = str(
+                    int(order['count']) + int(orderUnit.quantity))
 
         if is_product_exist == 0:
             context['receipt']['summary']['order'].append(summary)
-
 
     total_price = 0
 
@@ -280,18 +283,19 @@ def order_page(request, order_id):
 
     return render(request, 'groupbuying/order.html', context)
 
+
 @login_required
 def checkout_to_holder(request, order_unit_id):
     context = {}
     orderUnit = OrderUnit.objects.filter(Q(id=str(order_unit_id)))[0]
     if 'orderDescription' in request.POST and request.POST['orderDescription']:
         orderUnit.comment = request.POST['orderDescription']
-   
-    orderUnit.isPaid = True 
+
+    orderUnit.isPaid = True
     orderUnit.save()
-    #print("checkout_to_holder")
-    #print(order_unit_id)
-    #print(orderUnit.isPaid)
+    # print("checkout_to_holder")
+    # print(order_unit_id)
+    # print(orderUnit.isPaid)
     return redirect('shop')
 
 
@@ -318,10 +322,9 @@ def checkout_to_shopper(request, order_id):
     context['receipt']['orders'] = []
     context['receipt']['summary'] = {}
     context['receipt']['summary']['order'] = []
-    
+
     if 'orderDescription' in request.POST and request.POST['orderDescription']:
         context['receipt']['description'] = request.POST['orderDescription']
-
 
     for orderUnit in orderUnits:
 
@@ -350,12 +353,11 @@ def checkout_to_shopper(request, order_id):
         for order in context['receipt']['summary']['order']:
             if orderUnit.product.name in order['product']:
                 is_product_exist = 1
-                order['count'] =  str(int(order['count']) +  int(orderUnit.quantity))
-
+                order['count'] = str(
+                    int(order['count']) + int(orderUnit.quantity))
 
         if is_product_exist == 0:
             context['receipt']['summary']['order'].append(summary)
-
 
     total_price = 0
 
@@ -365,19 +367,19 @@ def checkout_to_shopper(request, order_id):
 
     context['receipt']['summary']['total'] = total_price
 
-    subject = str(request.user.username) + "'s order at " + orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")" 
+    subject = str(request.user.username) + "'s order at " + \
+        orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")"
     html_message = render_to_string('groupbuying/order_email.html', context)
     plain_message = strip_tags(html_message)
     from_email = 'groupbuyingTeam23@gmail.com'
     to_email = [request.user.email]
 
-    send_mail(subject, plain_message, from_email, to_email, html_message=html_message, fail_silently=False)
+    send_mail(subject, plain_message, from_email, to_email,
+              html_message=html_message, fail_silently=False)
 
     ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
 
     return redirect('shop')
-
-
 
 
 @login_required
@@ -413,8 +415,7 @@ def get_menu(vendor_id):
 
     for name in categories_names:
         temp_pdict = {}
-        sub_products = Product.objects.filter(
-            vendor__id=vendor_id, category__name=name)
+        sub_products = Product.objects.filter(vendor__id=vendor_id, category__name=name)
         for sub_product in sub_products:
             temp_pInfodict = {}
             temp_pInfodict['id'] = sub_product.id
@@ -428,7 +429,7 @@ def get_menu(vendor_id):
     return menu
 
 
-# @login_required
+@login_required
 def shopEdit_page(request):
     # print(request.GET)
     # print(request.user.id, type(request.user.id))
@@ -437,7 +438,7 @@ def shopEdit_page(request):
     # instance = UserSocialAuth.objects.get(user=request.user, provider='facebook')
 
     context = {}
-    # context = get_shopEditPage_context(request)
+    context = get_shopEditPage_context(request)
     context['incompleted'] = [{
         'order_id': 10,
         'receipt': {
@@ -449,7 +450,7 @@ def shopEdit_page(request):
                     'product': 'Coffee',
                     'count': 2,
                     'price': 10
-                },{
+                }, {
                     # 'product': orderUnit.product.name,
                     # 'count': orderUnit.quantity,
                     # 'price': orderUnit.product.price
@@ -461,7 +462,7 @@ def shopEdit_page(request):
                 'total': 20
             }
         }
-    },{
+    }, {
         'order_id': 2,
         'receipt': {
             'summary': {
@@ -472,7 +473,7 @@ def shopEdit_page(request):
                     'product': 'Coffee',
                     'count': 2,
                     'price': 10
-                },{
+                }, {
                     # 'product': orderUnit.product.name,
                     # 'count': orderUnit.quantity,
                     # 'price': orderUnit.product.price
@@ -485,36 +486,36 @@ def shopEdit_page(request):
             }
         }
     }]
-    context['menu'] = {
-        'Coffee': {
-            'Cappuccino': {
-                'id': 1,
-                'price': 5,
-                'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
-                'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-            },
-            'Cold brew': {
-                'id': 2,
-                'price': 6,
-                'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
-                'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-            }
-        },
-        'Tea': {
-            'Green Tea': {
-                'id': 3,
-                'price': 4,
-                'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
-                'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-            },
-            'Chai Latte': {
-                'id': 4,
-                'price': 4.5,
-                'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
-                'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-            }
-        }
-    }
+    # context['menu'] = {
+    #     'Coffee': {
+    #         'Cappuccino': {
+    #             'id': 1,
+    #             'price': 5,
+    #             'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
+    #             'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
+    #         },
+    #         'Cold brew': {
+    #             'id': 2,
+    #             'price': 6,
+    #             'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
+    #             'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
+    #         }
+    #     },
+    #     'Tea': {
+    #         'Green Tea': {
+    #             'id': 3,
+    #             'price': 4,
+    #             'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
+    #             'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
+    #         },
+    #         'Chai Latte': {
+    #             'id': 4,
+    #             'price': 4.5,
+    #             'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
+    #             'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
+    #         }
+    #     }
+    # }
     context['finished'] = context['incompleted']
 
     return render(request, 'groupbuying/shopEdit.html', context)
@@ -533,21 +534,21 @@ def shop_page(request):
         }
     }
     context['posts'] = [{
-        'id':1,
+        'id': 1,
         'created_by': {
             'username': 'Shine'
         },
         'creation_time': 'today',
         'post': 'Delicious',
-        'rating':5
-    },{
-        'id':2,
+        'rating': 5
+    }, {
+        'id': 2,
         'created_by': {
             'username': 'Yangming'
         },
         'creation_time': 'tomorrow',
         'post': 'Tasty',
-        'rating':4
+        'rating': 4
     }]
 
     context['productForm'] = ProductForm()
@@ -722,22 +723,24 @@ def rating_star(request):
     if 'rating' in request.POST and request.POST['rating']:
         rating = request.POST['rating']
 
-    customer_info = CustomerInfo.objects.filter(id=str(request.user.id)).first()
+    customer_info = CustomerInfo.objects.filter(
+        id=str(request.user.id)).first()
     target_info = VendorInfo.objects.filter(id=str(request.user.id)).first()
     old_rating = Rating.objects.filter(Q(rater=customer_info) & Q(
         ratedTarget=target_info)).first()
 
-    if not old_rating:  
+    if not old_rating:
         new_rating = Rating(rating=float(rating),
-                                rater=customer_info,
-                                ratedTarget=target_info
-                                )
+                            rater=customer_info,
+                            ratedTarget=target_info
+                            )
         new_rating.save()
     else:
         old_rating.rating = float(rating)
         old_rating.save()
-        
+
     return redirect('shop')
+
 
 @login_required
 def update_customer_info(request, user_id):
@@ -812,8 +815,8 @@ def fill_restaurant_info(obj):
     # TBD
     restaurant['price'] = 5
     if obj.image:
-        restaurant['image'] = obj.image_url
-    else:    
+        restaurant['image'] = obj.image_url_OAuth
+    else:
         restaurant['image'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
 
     return restaurant
