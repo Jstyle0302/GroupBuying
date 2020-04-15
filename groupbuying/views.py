@@ -34,22 +34,6 @@ from django.utils.html import strip_tags
 def PAGESIZE_CONSTANT():
     return 2
 
-
-def get_shopEditPage_context(request):
-    context = {}
-    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
-    orderbundle = OrderBundle.objects.filter(Q(vendor=cur_vendor_info))
-
-    context['menu'] = get_menu(cur_vendor_info.vendor_id)
-    context['productForm'] = ProductForm()
-    context['vendorInfo'] = cur_vendor_info
-    context['vendorForm'] = VendorInfoForm(
-        initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
-
-
-    return context
-
-
 def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
@@ -428,64 +412,125 @@ def get_menu(vendor_id):
 
     return menu
 
+def get_orders(vendor_id):
+    incompleted = []
+    finished = []
+
+    orderbundles = OrderBundle.objects.filter(vendor__id=vendor_id)    
+    # orderbundle.orderunit_set.all() # reverse lookup
+
+    for orderbundle in orderbundles:
+        tmp_order = {'order': []}
+        tmp_summary = {}
+        tmp_orderbundle_dict = {'order_id': orderbundle.id}
+        orderUnits = OrderUnit.objects.filter(orderbundle=orderbundle)
+        
+        for orderUnit in orderUnits:
+            tmp_orderUnit_dict = {}
+            tmp_orderUnit_dict['product'] = orderUnit.product.name
+            tmp_orderUnit_dict['count'] = orderUnit.quantity
+            tmp_orderUnit_dict['price'] = orderUnit.product.price
+            tmp_order['order'].append(dict(tmp_orderUnit_dict))
+        
+        tmp_summary['summary'] = dict(tmp_order)
+        tmp_orderbundle_dict['receipt'] = dict(tmp_summary)
+
+        if orderbundle.isCompleted:
+            finished.append(dict(tmp_orderbundle_dict))
+        else:
+            incompleted.append(dict(tmp_orderbundle_dict))
+
+    return incompleted, finished
+
+def get_shopEditPage_context(request):
+    context = {}
+    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
+    # if True:
+    #     test_product = Product.objects.all()[0]
+    #     new_orderbundle = OrderBundle(holder=cur_cutstome_info, vendor=cur_vendor_info)
+    #     new_orderbundle.save()
+
+    #     new_orderUnit = OrderUnit(
+    #         buyer=cur_cutstome_info,
+    #         product=test_product,
+    #         quantity=2,
+    #         comment='omg TEST',
+    #         orderTime=datetime.datetime.now(),
+    #         orderDate=datetime.datetime.now(),
+    #         deliverTime=datetime.datetime.now(),
+    #         deliverDate=datetime.datetime.now(),
+    #         isPaid=False,
+    #         orderbundle=new_orderbundle
+    #     )
+    #     new_orderUnit.save()
+    
+    context['menu'] = get_menu(cur_vendor_info.vendor_id)
+    context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
+    context['productForm'] = ProductForm()
+    context['vendorInfo'] = cur_vendor_info
+    context['vendorForm'] = VendorInfoForm(
+        initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+
+    return context
 
 @login_required
 def shopEdit_page(request):
+    context = {}
     # print(request.GET)
     # print(request.user.id, type(request.user.id))
     # print(request.user.social_auth.values_list('provider'))
     # print(request.user.social_auth.get(user=request.user, provider="google-oauth2"))
     # instance = UserSocialAuth.objects.get(user=request.user, provider='facebook')
 
-    context = {}
-    context = get_shopEditPage_context(request)
-    context['incompleted'] = [{
-        'order_id': 10,
-        'receipt': {
-            'summary': {
-                'order': [{
-                    # 'product': orderUnit.product.name,
-                    # 'count': orderUnit.quantity,
-                    # 'price': orderUnit.product.price
-                    'product': 'Coffee',
-                    'count': 2,
-                    'price': 10
-                }, {
-                    # 'product': orderUnit.product.name,
-                    # 'count': orderUnit.quantity,
-                    # 'price': orderUnit.product.price
-                    'product': 'Cake',
-                    'count': 1,
-                    'price': 10
-                }],
-                'description': "Shine is handsome.",
-                'total': 20
-            }
-        }
-    }, {
-        'order_id': 2,
-        'receipt': {
-            'summary': {
-                'order': [{
-                    # 'product': orderUnit.product.name,
-                    # 'count': orderUnit.quantity,
-                    # 'price': orderUnit.product.price
-                    'product': 'Coffee',
-                    'count': 2,
-                    'price': 10
-                }, {
-                    # 'product': orderUnit.product.name,
-                    # 'count': orderUnit.quantity,
-                    # 'price': orderUnit.product.price
-                    'product': 'Cake',
-                    'count': 1,
-                    'price': 10
-                }],
-                'description': "Shine is handsome.",
-                'total': 20
-            }
-        }
-    }]
+    # context['incompleted'] = [{
+    #     'order_id': 10,
+    #     'receipt': {
+    #         'summary': {
+    #             'order': [{
+    #                 # 'product': orderUnit.product.name,
+    #                 # 'count': orderUnit.quantity,
+    #                 # 'price': orderUnit.product.price
+    #                 'product': 'Coffee',
+    #                 'count': 2,
+    #                 'price': 10
+    #             }, {
+    #                 # 'product': orderUnit.product.name,
+    #                 # 'count': orderUnit.quantity,
+    #                 # 'price': orderUnit.product.price
+    #                 'product': 'Cake',
+    #                 'count': 1,
+    #                 'price': 10
+    #             }],
+    #             'description': "Shine is handsome.",
+    #             'total': 20
+    #         }
+    #     }
+    # }, {
+    #     'order_id': 2,
+    #     'receipt': {
+    #         'summary': {
+    #             'order': [{
+    #                 # 'product': orderUnit.product.name,
+    #                 # 'count': orderUnit.quantity,
+    #                 # 'price': orderUnit.product.price
+    #                 'product': 'Coffee',
+    #                 'count': 2,
+    #                 'price': 10
+    #             }, {
+    #                 # 'product': orderUnit.product.name,
+    #                 # 'count': orderUnit.quantity,
+    #                 # 'price': orderUnit.product.price
+    #                 'product': 'Cake',
+    #                 'count': 1,
+    #                 'price': 10
+    #             }],
+    #             'description': "Shine is handsome.",
+    #             'total': 20
+    #         }
+    #     }
+    # }]
+
     # context['menu'] = {
     #     'Coffee': {
     #         'Cappuccino': {
@@ -516,13 +561,13 @@ def shopEdit_page(request):
     #         }
     #     }
     # }
-    context['finished'] = context['incompleted']
+    # context['finished'] = context['incompleted']
+
+    context = get_shopEditPage_context(request)
 
     return render(request, 'groupbuying/shopEdit.html', context)
 
 # @login_required
-
-
 def shop_page(request):
     context = {}
     context['shop_name'] = "Starbucks"

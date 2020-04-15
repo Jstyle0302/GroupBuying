@@ -90,7 +90,7 @@ class Product(models.Model):
 
 class Rating(models.Model):
     rating = models.FloatField()
-
+    comment = models.CharField(max_length=500, default="")
     rater = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     ratedTarget = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
 
@@ -98,6 +98,7 @@ class Rating(models.Model):
 class OrderBundle(models.Model):
     holder = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
+    isCompleted = models.BooleanField(default=False)
 
     def __str__(self):
         return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
