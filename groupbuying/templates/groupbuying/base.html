@@ -43,7 +43,7 @@
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
 								<a id="id_nav_home" class="dropdown-item" href="{% url 'home' %}">Home</a>
-								<a id="id_nav_shop" class="dropdown-item" href="{% url 'shop' %}">Shop Page(for customer)</a>
+								<a id="id_nav_shop" class="dropdown-item" href="{% url 'shop' user.id %}">Shop Page(for customer)</a>
 								<a id="id_nav_shopper_profile" class="dropdown-item" href="{% url 'shop_edit' %}">shopper Profile</a>
 								<a id="id_nav_user_profile" class="dropdown-item" href="{% url 'profile' user.id %}">User Profile</a>
 								<a id="id_nav_user_profile" class="dropdown-item" href="{% url 'other' %}">Other Profile(demo)</a>

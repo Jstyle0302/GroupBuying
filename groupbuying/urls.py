@@ -17,7 +17,7 @@ urlpatterns = [
     path('filtering', views.filtering, name='filtering'),
     path('page<int:page>', views.page, name='page'),
     # seller features
-    path('shop', views.shop_page, name='shop'),
+    path('shop/<int:shop_id>', views.shop_page, name='shop'),
     path('shop_edit', views.shopEdit_page, name='shop_edit'),
     path('update_vendor_info', views.update_vendor_info, name='update_vendor_info'),
     path('update_vendor_name', views.update_vendor_name, name='update_vendor_name'),

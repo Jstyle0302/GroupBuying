@@ -73,7 +73,7 @@ Shops
           <div class="row">
             <div class="col-4 align-self-center">
               {% if vendorInfo.image != "" %}
-              <img id="id_user_picture" class="card-img img-thumbnail" src="{{vendorInfo.image.url}}"
+              <img id="id_user_picture" class="card-img img-thumbnail" src="../{{ vendorInfo.image.url }}"
                 alt="Default image" onerror="this.onerror=null;this.src='https://i.stack.imgur.com/l60Hf.png';">
               {% else %}
               <img id="id_user_picture" class="card-img img-thumbnail" src="{{ vendorInfo.image_url_OAuth }}" ;"
@@ -85,6 +85,11 @@ Shops
                 <h4 class="card-title">
                   <span>About Us</span>
                 </h4>
+                {% for tag in tags %}
+                <p class="btn btn-light btn-sm">
+                  {{tag}}<span class="fas fa-times"></span>
+                </p>
+                {% endfor %}
                 <p class="text-monospace">Shopping limit: $ {{ vendorInfo.min_order }}</p>
                 <textarea name="description" cols="70" rows="3" readonly id="id_description"
                   class="card-text col mb-2 form-control form-control-lg">{{ vendorInfo.description }}</textarea>
@@ -169,7 +174,7 @@ Shops
               <li class="list-group-item menu">
                 <div class="row no-gutters">
                   <div class="col-3 align-self-center">
-                    <img src="{{dish_info.image.url}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
+                    <img src="../{{dish_info.image.url}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
                   </div>
                   <div class="col-9">
                     <h4 class="card-title">{{ dish }}<span class="float-right">

@@ -107,7 +107,7 @@ Shops
           </div>
           <div class="col-9">
             <div class="card-body">
-              <h3 class="card-title"><a id="id_restaurant_profile_{{ restaurant.id }}" href="">{{ restaurant.name }}</a>
+              <h3 class="card-title"><a id="id_restaurant_profile_{{ restaurant.id }}" href="{% url 'shop' restaurant.id %}">{{ restaurant.name }}</a>
               </h3>
               <h5 class="card-subtitle mb-2">
                 <span>$ {{restaurant.price}}</span>&nbsp;
@@ -126,7 +126,7 @@ Shops
               </h6>
               <p class="card-text" id="id_restaurant_description_{{ restaurant.id }}">{{ restaurant.description }}</p>
               <p>
-                <a href="{% url 'shop' %}" class="btn btn-primary">More Info</a>
+                <a href="{% url 'shop' restaurant.id %}" class="btn btn-primary">More Info</a>
               </p>
             </div>
           </div>
