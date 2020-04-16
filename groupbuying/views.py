@@ -926,6 +926,7 @@ def update_customer_info(request, user_id):
         form = CustomerInfoForm(
             request.POST, request.FILES, instance=cur_customer_info)
         if form.is_valid():
+            print("form is valid 1")
             form.save()
 
     if 'image' in request.FILES and request.FILES['image']:
