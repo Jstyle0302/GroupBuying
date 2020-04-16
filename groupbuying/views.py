@@ -416,7 +416,7 @@ def get_menu(vendor_id):
 
 
 def complete_order(request):
-    errors = []
+    # errors = []
     if 'order_id' not in request.POST or not request.POST['order_id']:
         errors.append('You must have provide the order id')
     else:
@@ -424,12 +424,13 @@ def complete_order(request):
         cur_order.isCompleted = True
         cur_order.save()
 
-    context = get_shopEditPage_context(request)
-    context['errors'] = errors
+    # context = get_shopEditPage_context(request)
+    # context['errors'] = errors
 
     # return redirect('shop_edit', kwargs=context)
-
-    return render(request, 'groupbuying/shopEdit.html', context)
+    
+    return redirect('shop_edit')
+    # return render(request, 'groupbuying/shopEdit.html', context)
 
 
 def get_orders(vendor_id):
@@ -660,7 +661,7 @@ def shop_page(request):
 
 @login_required
 def update_category_name(request):
-    context = {}
+    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
     #print(request.POST, request.POST['new_menu_name'], request.POST['menu_id'])
@@ -674,14 +675,15 @@ def update_category_name(request):
         cur_category.name = request.POST['new_menu_name']
         cur_category.save()
 
-    context = get_shopEditPage_context(request)
-
-    return render(request, 'groupbuying/shopEdit.html', context)
+    # context = get_shopEditPage_context(request)
+    
+    return redirect('shop_edit')
+    # return render(request, 'groupbuying/shopEdit.html', context)
 
 
 @login_required
 def add_category(request):
-    context = {}
+    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
 
     # Adds the new item to the database if the request parameter is present
@@ -692,9 +694,10 @@ def add_category(request):
                                 vendor=request.user)
         new_category.save()
 
-    context = get_shopEditPage_context(request)
+    # context = get_shopEditPage_context(request)
 
-    return render(request, 'groupbuying/shopEdit.html', context)
+    return redirect('shop_edit')
+    # return render(request, 'groupbuying/shopEdit.html', context)
 
 
 @login_required
@@ -709,7 +712,7 @@ def get_product_photo(request, product_id):
 
 @login_required
 def add_product(request):
-    context = {}
+    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
 
     if 'name' not in request.POST or not request.POST['name'] or \
@@ -743,18 +746,18 @@ def add_product(request):
             if 'image' in request.FILES:
                 new_product.image = form.cleaned_data['image']
                 new_product.content_type = form.cleaned_data['image'].content_type
-            context['message'] = 'Product #{0} saved.'.format(new_product.id)
+            # context['message'] = 'Product #{0} saved.'.format(new_product.id)
             form.save()
             # new_product.save()
 
-    context = get_shopEditPage_context(request)
-
-    return render(request, 'groupbuying/shopEdit.html', context)
-
+    # context = get_shopEditPage_context(request)
+    # return render(request, 'groupbuying/shopEdit.html', context)
+    
+    return redirect('shop_edit')
 
 @login_required
 def update_product(request):
-    context = {}
+    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
 
     if 'name' not in request.POST or not request.POST['name'] or \
@@ -777,18 +780,18 @@ def update_product(request):
         else:
             print("FAIL: ProductForm is NOT valid")
 
-    context['productForm'] = ProductForm()
+    # context['productForm'] = ProductForm()
     # context['vendorInfo'] = cur_vendor_info
-    context['vendorForm'] = VendorInfoForm()
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
+    # context['vendorForm'] = VendorInfoForm()
+    # context['categories'] = Category.objects.all()
+    # context['products'] = Product.objects.all()
 
-    return render(request, 'groupbuying/shopEdit.html', context)
-
+    # return render(request, 'groupbuying/shopEdit.html', context)
+    return redirect('shop_edit')
 
 @login_required
 def update_vendor_name(request):
-    context = {}
+    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
 
@@ -798,14 +801,14 @@ def update_vendor_name(request):
         cur_vendor_info.name = request.POST['vendor_name']
         cur_vendor_info.save()
 
-    context = get_shopEditPage_context(request)
+    # context = get_shopEditPage_context(request)
 
-    return render(request, 'groupbuying/shopEdit.html', context)
-
+    # return render(request, 'groupbuying/shopEdit.html', context)
+    return redirect('shop_edit')
 
 @login_required
 def update_vendor_info(request):
-    context = {}
+    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
 
@@ -833,10 +836,10 @@ def update_vendor_info(request):
 
         form.save()
 
-    context = get_shopEditPage_context(request)
-    print(cur_vendor_info)
-    return render(request, 'groupbuying/shopEdit.html', context)
-
+    # context = get_shopEditPage_context(request)
+    # print(cur_vendor_info)
+    # return render(request, 'groupbuying/shopEdit.html', context)
+    return redirect('shop_edit')
 
 @login_required
 def rating_star(request):
