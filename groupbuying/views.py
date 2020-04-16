@@ -37,6 +37,32 @@ def PAGESIZE_CONSTANT():
 
 def home_page(request):
     context = {}
+    context['recent'] = [{
+            # 'order_id': orderUnit.orderbundle.id,
+            # 'name': orderUnit.orderbundle.vendor.name,
+            # 'description': orderUnit.orderbundle.vendor.description,
+            'order_id': 1,
+            'name': 'Starbuck',
+            'description': 'Coffee shop',
+            'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
+    },{
+            # 'order_id': orderUnit.orderbundle.id,
+            # 'name': orderUnit.orderbundle.vendor.name,
+            # 'description': orderUnit.orderbundle.vendor.description,
+            'order_id': 2,
+            'name': 'Starbuck',
+            'description': 'Coffee shop',
+            'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
+    },{
+            # 'order_id': orderUnit.orderbundle.id,
+            # 'name': orderUnit.orderbundle.vendor.name,
+            # 'description': orderUnit.orderbundle.vendor.description,
+            'order_id': 3,
+            'name': 'Starbuck',
+            'description': 'Coffee shop',
+            'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
+    }]
+    context['recommends'] = context['recent']
     return render(request, 'groupbuying/home.html', context)
 
 

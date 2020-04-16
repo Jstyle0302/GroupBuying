@@ -39,36 +39,36 @@ Login
   </div>
 </div>
 <h3 class="pb-3 mb-4 font-italic border-bottom">
+  Our Top recommends
+</h3>
+<div class="card-deck mb-4 justify-content-around">
+  {% for shop in recommends %}
+  <div class="card col-3">
+    <img class="card-img-top" src="{{shop.image}}" alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title">{{shop.name}}</h5>
+      <p class="card-text">{{shop.description}}</p>
+      <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<h3 class="pb-3 mb-4 font-italic border-bottom">
   Your recently orders
 </h3>
-<div class="card-deck">
-  <div class="card col-4">
-    <img class="card-img-top" src="https://www.applecaredoctors.com/wp-content/uploads/2019/06/Healthy-Food_AppleCare_Urgent-Care-Near-Me-1.jpg" alt="Card image cap">
+<div class="card-deck mb-4 justify-content-around">
+  {% for shop in recent %}
+  <div class="card col-3">
+    <img class="card-img-top" src="{{shop.image}}" alt="Card image cap">
     <div class="card-body">
-      <h5 class="card-title">Salad</h5>
-      <p class="card-text">This is a salad.</p>
+      <h5 class="card-title">{{shop.name}}</h5>
+      <p class="card-text">{{shop.description}}</p>
       <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
       <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
     </div>
   </div>
-  <div class="card col-4">
-    <img class="card-img-top" src="https://www.applecaredoctors.com/wp-content/uploads/2019/06/Healthy-Food_AppleCare_Urgent-Care-Near-Me-1.jpg" alt="Card image cap">
-    <div class="card-body">
-      <h5 class="card-title">Drinks</h5>
-      <p class="card-text">This is a drink.</p>
-      <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
-      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-    </div>
-  </div>
-  <div class="card col-4">
-    <img class="card-img-top" src="https://www.applecaredoctors.com/wp-content/uploads/2019/06/Healthy-Food_AppleCare_Urgent-Care-Near-Me-1.jpg" alt="Card image cap">
-    <div class="card-body">
-      <h5 class="card-title">Appetizer</h5>
-      <p class="card-text">This is an appetizer.</p>
-      <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
-      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-    </div>
-  </div>
+  {% endfor %}
 </div>
 <div class="row align-items-center content mt-2">
   <div class="col-md-6 order-2 order-md-1">
