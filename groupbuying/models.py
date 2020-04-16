@@ -100,7 +100,8 @@ class OrderBundle(models.Model):
     holder = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
     isCompleted = models.BooleanField(default=False)
-
+    isPaid = models.BooleanField(default=False)
+    
     def __str__(self):
         return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
             ',num=' + self.num + ',comment=' + str(self.comment)
