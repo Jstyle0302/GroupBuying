@@ -32,7 +32,7 @@ from django.utils.html import strip_tags
 
 
 def PAGESIZE_CONSTANT():
-    return 2
+    return 1
 
 
 def home_page(request):
@@ -968,7 +968,7 @@ def fill_restaurant_info(obj):
     # TBD
     restaurant['price'] = 5
     if obj.image:
-        restaurant['image'] = obj.image
+        restaurant['image'] = obj.image.url
     else:
         restaurant['image'] = obj.image_url_OAuth
 
