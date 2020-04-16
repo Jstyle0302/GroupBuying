@@ -15,7 +15,7 @@ urlpatterns = [
     path('search', views.search_page, name='search'),
     path('sorting', views.sorting, name='sorting'),
     path('filtering', views.filtering, name='filtering'),
-    path('page/<int:page>', views.page, name='page'),
+    path('page<int:page>', views.page, name='page'),
     # seller features
     path('shop/<int:shop_id>', views.shop_page, name='shop'),
     path('shop_edit', views.shopEdit_page, name='shop_edit'),

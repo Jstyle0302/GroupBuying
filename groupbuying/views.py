@@ -33,7 +33,7 @@ from django.utils.html import strip_tags
 
 
 def PAGESIZE_CONSTANT():
-    return 2
+    return 1
 
 
 def home_page(request):
@@ -932,6 +932,7 @@ def update_customer_info(request, user_id):
         form = CustomerInfoForm(
             request.POST, request.FILES, instance=cur_customer_info)
         if form.is_valid():
+            print("form is valid 1")
             form.save()
 
     if 'image' in request.FILES and request.FILES['image']:
@@ -993,7 +994,7 @@ def fill_restaurant_info(obj):
     # TBD
     restaurant['price'] = 5
     if obj.image:
-        restaurant['image'] = obj.image
+        restaurant['image'] = obj.image.url
     else:
         restaurant['image'] = obj.image_url_OAuth
 
@@ -1104,10 +1105,18 @@ def filtering(request):
 
 
 def filter_by_price(request, prev_result):
-    if ('price_filter' in request.POST and request.POST['price_filter']):
-        print('dummy\n')
+    if ('price_filter' not in request.POST
+            or not request.POST['price_filter']):
+        return prev_result, rating_query
+    price = int(request.POST['price_filter'])
 
-    return prev_result
+    if price < 100:
+        result = prev_result.filter(
+            min_order__lte=price)
+    else:
+        result = prev_result
+        
+    return result
 
 
 def filter_by_rating(request, prev_result):

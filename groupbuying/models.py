@@ -14,7 +14,7 @@ class CustomerInfo(models.Model):
     # UserProefile.lastName, can be user name or vendor name
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
-    description = models.CharField(max_length=500)
+    description = models.CharField(max_length=500, default='', blank=True)
     address = models.CharField(max_length=100)
     phoneNum = models.CharField(max_length=16)
     image = models.ImageField(blank=False, null=True,
@@ -101,7 +101,7 @@ class OrderBundle(models.Model):
     vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
     isCompleted = models.BooleanField(default=False)
     isPaid = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
             ',num=' + self.num + ',comment=' + str(self.comment)
