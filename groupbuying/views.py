@@ -423,7 +423,9 @@ def complete_order(request):
 
     context = get_shopEditPage_context(request)
     context['errors'] = errors
-
+    
+    #return redirect('shop_edit', kwargs=context)
+    
     return render(request, 'groupbuying/shopEdit.html', context)
 
 
@@ -457,15 +459,35 @@ def get_orders(vendor_id):
 
     return incompleted, finished
 
+def get_reviews(vendor_id):
+    posts = []
+    ratings = Rating.objects.filter(ratedTarget__id=vendor_id)
+    for rating in ratings:
+        tmp_review_dict = {}
+        tmp_review_dict['id'] = rating.id
+        tmp_review_dict['created_by'] = {'username': rating.rater.name}
+        tmp_review_dict['creation_time'] = rating.createTime
+        tmp_review_dict['post'] = rating.comment
+        tmp_review_dict['rating'] = rating.rating
+        posts.append(dict(tmp_review_dict))
+    
+    return posts
+
 def get_shopEditPage_context(request):
     context = {}
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
     cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
+
     # if True:
     #     test_product = Product.objects.all()[0]
     #     new_orderbundle = OrderBundle(holder=cur_cutstome_info, vendor=cur_vendor_info)
     #     new_orderbundle.save()
-
+        # new_rating = Rating(rating=float(3.5),
+        #                     comment="TestTest123",
+        #                     createTime=datetime.datetime.now(),
+        #                     rater=cur_cutstome_info,
+        #                     ratedTarget=cur_vendor_info)
+        # new_rating.save()
     #     new_orderUnit = OrderUnit(
     #         buyer=cur_cutstome_info,
     #         product=test_product,
@@ -481,6 +503,7 @@ def get_shopEditPage_context(request):
     #     new_orderUnit.save()
     
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
+    context['posts'] = get_reviews(cur_vendor_info.vendor_id)
     context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
@@ -580,6 +603,7 @@ def shopEdit_page(request):
 
     context = get_shopEditPage_context(request)
 
+    # return redirect(reverse('shop_edit', kwargs=context))
     return render(request, 'groupbuying/shopEdit.html', context)
 
 # @login_required

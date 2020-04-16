@@ -91,8 +91,10 @@ class Product(models.Model):
 class Rating(models.Model):
     rating = models.FloatField()
     comment = models.CharField(max_length=500, default="")
+    createTime = models.TimeField()
     rater = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     ratedTarget = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
+    
 
 
 class OrderBundle(models.Model):
