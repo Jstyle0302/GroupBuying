@@ -1099,10 +1099,18 @@ def filtering(request):
 
 
 def filter_by_price(request, prev_result):
-    if ('price_filter' in request.POST and request.POST['price_filter']):
-        print('dummy\n')
+    if ('price_filter' not in request.POST
+            or not request.POST['price_filter']):
+        return prev_result, rating_query
+    price = int(request.POST['price_filter'])
 
-    return prev_result
+    if price < 100:
+        result = prev_result.filter(
+            min_order__lte=price)
+    else:
+        result = prev_result
+        
+    return result
 
 
 def filter_by_rating(request, prev_result):
