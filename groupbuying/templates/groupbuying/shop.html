@@ -73,7 +73,7 @@ Shops
           <div class="row">
             <div class="col-4 align-self-center">
               {% if vendorInfo.image != "" %}
-              <img id="id_user_picture" class="card-img img-thumbnail" src="{{vendorInfo.image.url}}"
+              <img id="id_user_picture" class="card-img img-thumbnail" src="../{{ vendorInfo.image.url }}"
                 alt="Default image" onerror="this.onerror=null;this.src='https://i.stack.imgur.com/l60Hf.png';">
               {% else %}
               <img id="id_user_picture" class="card-img img-thumbnail" src="{{ vendorInfo.image_url_OAuth }}" ;"
@@ -174,7 +174,7 @@ Shops
               <li class="list-group-item menu">
                 <div class="row no-gutters">
                   <div class="col-3 align-self-center">
-                    <img src="{{dish_info.image.url}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
+                    <img src="../{{dish_info.image.url}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
                   </div>
                   <div class="col-9">
                     <h4 class="card-title">{{ dish }}<span class="float-right">

@@ -444,7 +444,7 @@ def get_menu(vendor_id):
 
 
 def complete_order(request):
-    # errors = []
+    errors = []
     if 'order_id' not in request.POST or not request.POST['order_id']:
         errors.append('You must have provide the order id')
     else:
@@ -507,13 +507,29 @@ def get_reviews(vendor_id):
 
     return posts
 
+def get_shopPage_context(request, shop_id):
+    context = {}
+    cur_vendor_info = VendorInfo.objects.get(vendor_id=shop_id)
+    # cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
+
+    context['menu'] = get_menu(cur_vendor_info.vendor_id)
+    context['posts'] = get_reviews(cur_vendor_info.vendor_id)
+    context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
+    context['vendorInfo'] = cur_vendor_info
+    print(VendorInfo.image)
+    # context['productForm'] = ProductForm()
+    # context['vendorForm'] = VendorInfoForm(
+    #     initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+
+    return context
 
 def get_shopEditPage_context(request):
     context = {}
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
-    cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
 
     # if True:
+    #    cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
+
     #     test_product = Product.objects.all()[0]
     #     new_orderbundle = OrderBundle(holder=cur_cutstome_info, vendor=cur_vendor_info)
     #     new_orderbundle.save()
@@ -646,7 +662,7 @@ def shopEdit_page(request):
 # @login_required
 
 
-def shop_page(request):
+def shop_page(request, shop_id):
     context = {}
     # context['shop_name'] = "Starbucks"
     # context['description'] = "Very expensive and unhealthy food."
@@ -685,6 +701,7 @@ def shop_page(request):
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     # context = get_shopEditPage_context(request)
+    context = get_shopPage_context(request, shop_id)
     context['tags'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
 
     return render(request, 'groupbuying/shop.html', context)
