@@ -95,10 +95,10 @@ class Rating(models.Model):
     rater = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     ratedTarget = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
 
-
 class OrderBundle(models.Model):
     holder = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
+    totalPrice = models.IntegerField(default=0)
     isCompleted = models.BooleanField(default=False)
     isPaid = models.BooleanField(default=False)
 

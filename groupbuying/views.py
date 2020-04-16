@@ -152,6 +152,7 @@ def send_email_page(request, order_id):
         context['receipt']['orders'].append(dictOrder)
 
     context['receipt']['summary']['total'] = total_price
+    orderbundle.total_price = total_price
 
     subject = str(request.user.username) + "'s order at " + \
         orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")"
