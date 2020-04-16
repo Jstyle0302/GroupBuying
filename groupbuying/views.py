@@ -423,6 +423,18 @@ def other_page(request):
     return render(request, 'groupbuying/others.html', context)
 
 
+def delete_tag(request, tag_name):
+    errors = []  # A list to record messages for any errors we encounter.
+    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+
+    # old_tag_list = cur_vendor_info.tagList.split(',')
+    old_tag_list = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
+    new_tag_list = [tag for tag in old_tag_list if tag != tag_name]
+    cur_vendor_info.tagList = str(','.join(new_tag_list))
+    cur_vendor_info.save()
+    
+    return redirect('shop_edit')
+
 def get_menu(vendor_id):
     menu = {}
     categories = Category.objects.filter(vendor__id=vendor_id)
@@ -495,11 +507,9 @@ def get_orders(vendor_id):
 
 
 def get_reviews(vendor_id):
-    print(Rating.objects.all()[0].ratedTarget.id)
-
     posts = []
     ratings = Rating.objects.filter(ratedTarget__id=vendor_id)
-    # print(ratings)
+
     for rating in ratings:
         tmp_review_dict = {}
         tmp_review_dict['id'] = rating.id
@@ -518,7 +528,8 @@ def get_shopPage_context(request, shop_id):
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
-    context['tags'] = cur_vendor_info.tagList.split(',')
+    context['tags'] = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
+    # context['tags'] = cur_vendor_info.tagList.split(',')
     context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
     context['vendorInfo'] = cur_vendor_info
 
@@ -560,8 +571,8 @@ def get_shopEditPage_context(request):
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
-    context['tags'] = cur_vendor_info.tagList.split(',')
-    
+    # context['tags'] = cur_vendor_info.tagList.split(',')
+    context['tags'] = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
@@ -718,7 +729,6 @@ def update_category_name(request):
     errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
     #print(request.POST, request.POST['new_menu_name'], request.POST['menu_id'])
-    
     if 'new_menu_name' not in request.POST or not request.POST['new_menu_name']:
         errors.append('You must have enter the new_menu name')
     elif 'menu_id' not in request.POST or not request.POST['menu_id']:
@@ -864,7 +874,8 @@ def update_vendor_info(request):
     # context = {}
     errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
-
+    # print(cur_vendor_info.tagList)
+    
     # if 'description' not in request.POST or not request.POST['description'] or \
     #         'image' not in request.FILES or not request.FILES['image']:
     #     errors.append(
@@ -881,11 +892,15 @@ def update_vendor_info(request):
             cur_vendor_info.description = request.POST['description']
         if request.POST['min_order']:
             cur_vendor_info.min_order = int(request.POST['min_order'])
-        if request.POST['tagList']:
-            tmp_tags = re.split('[\*\,\/\+\s]', request.POST['tagList'])
-            for tag in tmp_tags:
-                if tag != '':
-                    cur_vendor_info.tagList += ',' + str(tag)
+        # if request.POST['tagList']:
+            # print(request.POST['tagList'])
+            # print(cur_vendor_info.tagList)
+            # tmp_tags = re.split('[\*\,\/\+\s]', request.POST['tagList'])
+            # print(tmp_tags)
+            # for tag in tmp_tags:
+            #     if tag != '':
+            #         cur_vendor_info.tagList += ',' + str(tag)
+            # print(cur_vendor_info.tagList)
         if 'image' in request.FILES:
             cur_vendor_info.image = form.cleaned_data['image']
             cur_vendor_info.content_type = form.cleaned_data['image'].content_type

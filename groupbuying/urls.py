@@ -21,6 +21,7 @@ urlpatterns = [
     path('shop_edit', views.shopEdit_page, name='shop_edit'),
     path('update_vendor_info', views.update_vendor_info, name='update_vendor_info'),
     path('update_vendor_name', views.update_vendor_name, name='update_vendor_name'),
+    path('delete_tag/<str:tag_name>', views.delete_tag, name='delete_tag'),
     path('add_category', views.add_category, name='add_category'),
     path('update_category_name', views.update_category_name, name='update_category_name'),
     path('add_product', views.add_product, name='add_product'),
