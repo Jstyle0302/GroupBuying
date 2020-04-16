@@ -176,14 +176,21 @@ Shops
                         <h6>$ {{dish_info.price}}</h6>
                       </span></h4>
                     <p class="card-text">{{ dish_info.description }}</p>
-                    <form>
-                      <div class="form-row">
-                        <i class="fas fa-minus-circle btn btn-default"></i>
-                        <input type="number" name="" value="1" class="form-control-sm">
-                        <i class="fas fa-plus-circle btn btn-default"></i>
-                        <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
-                      </div>
-                    </form>
+                    {% if order_id %}
+                    <form method="post" action="{% url 'order' order_id %}">
+                      {% else %}
+                      <form method="post" action="{% url 'order' "new" %}">
+                        {% endif %}
+
+                        <input type="hidden" name="product_id" value={{ dish_info.id }}>
+                        <div class="form-row">
+                          <i class="fas fa-minus-circle btn btn-default"></i>
+                          <input type="number" name="product_number" value="1" class="form-control-sm">
+                          <i class="fas fa-plus-circle btn btn-default"></i>
+                          <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
+                        </div>
+                        {% csrf_token %}
+                      </form>
                   </div>
                 </div>
               </li>
