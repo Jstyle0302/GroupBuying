@@ -47,7 +47,7 @@ def orderList_page(request):
     context['orders'] = []
     orderbundleId = []
     for orderUnit in orderUnits.distinct():
-        if orderUnit.orderbundle.id in orderbundleId:
+        if orderUnit.orderbundle.id in orderbundleId or orderUnit.orderbundle.isPaid == True:
             continue
 
         order = {
@@ -289,7 +289,9 @@ def checkout_to_shopper(request, order_id):
     context = {}
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
-
+    orderbundle.isPaid = True
+    orderbundle.save()
+    
     if orderbundle.holder.id == request.user.id:
         context['isFounder'] = True
         orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
