@@ -103,6 +103,13 @@ Shops
       <div class="card mb-3" id="card_restaurant_{{ restaurant.id }}">
         <div class="row no-gutters">
           <div class="col-3 align-self-center">
+
+            {% if restaurant.image != "" %}
+            <img src="{{restaurant.image.url}}" class="card-img px-1 rounded mx-auto" alt="{{ restaurant.name }}">
+            {% else %}
+            <img src="{{restaurant.image_url_OAuth}}" class="card-img px-1 rounded mx-auto" alt="{{ restaurant.name }}">
+            {% endif %}
+
             <img src="{{restaurant.image}}" class="card-img px-1 rounded mx-auto" alt="{{ restaurant.name }}">
           </div>
           <div class="col-9">
