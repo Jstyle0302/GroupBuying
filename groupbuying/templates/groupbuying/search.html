@@ -1,5 +1,10 @@
 {% extends "groupbuying/base.html" %}
 
+{% block headFiles %}
+{% load static %}
+<link href="{% static 'groupbuying/search.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
 {% block pageName %}
 Shops
 {% endblock %}
