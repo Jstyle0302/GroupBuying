@@ -2,6 +2,7 @@ import json
 import operator
 import math
 import datetime
+import re
 
 from collections import defaultdict
 from django.shortcuts import render, redirect, get_object_or_404
@@ -514,9 +515,10 @@ def get_shopPage_context(request, shop_id):
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
+    context['tags'] = cur_vendor_info.tagList.split(',')
     context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
     context['vendorInfo'] = cur_vendor_info
-    print(VendorInfo.image)
+
     # context['productForm'] = ProductForm()
     # context['vendorForm'] = VendorInfoForm(
     #     initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
@@ -555,6 +557,8 @@ def get_shopEditPage_context(request):
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
+    context['tags'] = cur_vendor_info.tagList.split(',')
+    
     context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
@@ -653,8 +657,7 @@ def shopEdit_page(request):
     # }
     # context['finished'] = context['incompleted']
 
-    # context = get_shopEditPage_context(request)
-    context['tags'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
+    context = get_shopEditPage_context(request)
 
     # return redirect(reverse('shop_edit', kwargs=context))
     return render(request, 'groupbuying/shopEdit.html', context)
@@ -871,12 +874,15 @@ def update_vendor_info(request):
     if not form.is_valid():
         print("FALI: form is NOT valid")
     else:
-        if not request.POST['description']:
+        if request.POST['description']:
             cur_vendor_info.description = request.POST['description']
-        if not request.POST['min_order']:
+        if request.POST['min_order']:
             cur_vendor_info.min_order = int(request.POST['min_order'])
-        if not request.POST['tagList']:
-            cur_vendor_info.tagList = request.POST['tagList']
+        if request.POST['tagList']:
+            tmp_tags = re.split('[\*\,\/\+\s]', request.POST['tagList'])
+            for tag in tmp_tags:
+                if tag != '':
+                    cur_vendor_info.tagList += ',' + str(tag)
         if 'image' in request.FILES:
             cur_vendor_info.image = form.cleaned_data['image']
             cur_vendor_info.content_type = form.cleaned_data['image'].content_type
