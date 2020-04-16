@@ -15,6 +15,7 @@
         
 	    {% load static %}
 		<link href="{% static 'groupbuying/base.css' %}" rel="stylesheet" type="text/css">
+		{% block headFiles %}{% endblock %}
 		<!-- <script src="{% static 'socialnetwork/socialnetwork.js' %}" type="text/javascript"></script> -->
 		<title> {% block title %} Group Buying {% endblock %} </title>
 	</head>

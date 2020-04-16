@@ -1,5 +1,10 @@
 {% extends "groupbuying/base.html" %}
 
+{% block headFiles %}
+{% load static %}
+		<link href="{% static 'groupbuying/shop.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
 {% block pageName %}
 Shops
 {% endblock %}
@@ -59,7 +64,7 @@ Shops
         <div class="row justify-content-md-center">
           <div class="col-6">
             <div class="mx-auto text-center">
-              <h4 class="border-bottom"><em>Profile</em></h4>
+              <h4 class="border-bottom"><em>{{ vendorInfo.name }}</em></h4>
               <h2>{{vendorInfo.name}}</h2>
             </div>
           </div>
