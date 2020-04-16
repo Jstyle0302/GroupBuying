@@ -34,6 +34,7 @@ from django.utils.html import strip_tags
 def PAGESIZE_CONSTANT():
     return 2
 
+
 def home_page(request):
     context = {}
     return render(request, 'groupbuying/home.html', context)
@@ -399,7 +400,8 @@ def get_menu(vendor_id):
 
     for name in categories_names:
         temp_pdict = {}
-        sub_products = Product.objects.filter(vendor__id=vendor_id, category__name=name)
+        sub_products = Product.objects.filter(
+            vendor__id=vendor_id, category__name=name)
         for sub_product in sub_products:
             temp_pInfodict = {}
             temp_pInfodict['id'] = sub_product.id
@@ -412,20 +414,21 @@ def get_menu(vendor_id):
 
     return menu
 
+
 def complete_order(request):
     errors = []
     if 'order_id' not in request.POST or not request.POST['order_id']:
         errors.append('You must have provide the order id')
     else:
         cur_order = OrderBundle.objects.get(pk=int(request.POST['order_id']))
-        cur_order.isCompleted = True;
+        cur_order.isCompleted = True
         cur_order.save()
 
     context = get_shopEditPage_context(request)
     context['errors'] = errors
-    
-    #return redirect('shop_edit', kwargs=context)
-    
+
+    # return redirect('shop_edit', kwargs=context)
+
     return render(request, 'groupbuying/shopEdit.html', context)
 
 
@@ -433,7 +436,7 @@ def get_orders(vendor_id):
     incompleted = []
     finished = []
 
-    orderbundles = OrderBundle.objects.filter(vendor__id=vendor_id)    
+    orderbundles = OrderBundle.objects.filter(vendor__id=vendor_id)
     # orderbundle.orderunit_set.all() # reverse lookup
 
     for orderbundle in orderbundles:
@@ -441,14 +444,14 @@ def get_orders(vendor_id):
         tmp_summary = {}
         tmp_orderbundle_dict = {'order_id': orderbundle.id}
         orderUnits = OrderUnit.objects.filter(orderbundle=orderbundle)
-        
+
         for orderUnit in orderUnits:
             tmp_orderUnit_dict = {}
             tmp_orderUnit_dict['product'] = orderUnit.product.name
             tmp_orderUnit_dict['count'] = orderUnit.quantity
             tmp_orderUnit_dict['price'] = orderUnit.product.price
             tmp_order['order'].append(dict(tmp_orderUnit_dict))
-        
+
         tmp_summary['summary'] = dict(tmp_order)
         tmp_orderbundle_dict['receipt'] = dict(tmp_summary)
 
@@ -458,6 +461,7 @@ def get_orders(vendor_id):
             incompleted.append(dict(tmp_orderbundle_dict))
 
     return incompleted, finished
+
 
 def get_reviews(vendor_id):
     posts = []
@@ -470,8 +474,9 @@ def get_reviews(vendor_id):
         tmp_review_dict['post'] = rating.comment
         tmp_review_dict['rating'] = rating.rating
         posts.append(dict(tmp_review_dict))
-    
+
     return posts
+
 
 def get_shopEditPage_context(request):
     context = {}
@@ -482,12 +487,12 @@ def get_shopEditPage_context(request):
     #     test_product = Product.objects.all()[0]
     #     new_orderbundle = OrderBundle(holder=cur_cutstome_info, vendor=cur_vendor_info)
     #     new_orderbundle.save()
-        # new_rating = Rating(rating=float(3.5),
-        #                     comment="TestTest123",
-        #                     createTime=datetime.datetime.now(),
-        #                     rater=cur_cutstome_info,
-        #                     ratedTarget=cur_vendor_info)
-        # new_rating.save()
+    # new_rating = Rating(rating=float(3.5),
+    #                     comment="TestTest123",
+    #                     createTime=datetime.datetime.now(),
+    #                     rater=cur_cutstome_info,
+    #                     ratedTarget=cur_vendor_info)
+    # new_rating.save()
     #     new_orderUnit = OrderUnit(
     #         buyer=cur_cutstome_info,
     #         product=test_product,
@@ -501,7 +506,7 @@ def get_shopEditPage_context(request):
     #         orderbundle=new_orderbundle
     #     )
     #     new_orderUnit.save()
-    
+
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
     context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
@@ -511,6 +516,7 @@ def get_shopEditPage_context(request):
         initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
 
     return context
+
 
 @login_required
 def shopEdit_page(request):
@@ -607,45 +613,69 @@ def shopEdit_page(request):
     return render(request, 'groupbuying/shopEdit.html', context)
 
 # @login_required
+
+
 def shop_page(request):
     context = {}
-    context['shop_name'] = "Starbucks"
-    context['description'] = "Very expensive and unhealthy food."
-    context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
-    context['menu'] = {
-        'all': {
+    # context['shop_name'] = "Starbucks"
+    # context['description'] = "Very expensive and unhealthy food."
+    # context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
+    # context['menu'] = {
+    #     'all': {
 
-        }
-    }
-    context['posts'] = [{
-        'id': 1,
-        'created_by': {
-            'username': 'Shine'
-        },
-        'creation_time': 'today',
-        'post': 'Delicious',
-        'rating': 5
-    }, {
-        'id': 2,
-        'created_by': {
-            'username': 'Yangming'
-        },
-        'creation_time': 'tomorrow',
-        'post': 'Tasty',
-        'rating': 4
-    }]
+    #     }
+    # }
+    # context['posts'] = [{
+    #     'id': 1,
+    #     'created_by': {
+    #         'username': 'Shine'
+    #     },
+    #     'creation_time': 'today',
+    #     'post': 'Delicious',
+    #     'rating': 5
+    # }, {
+    #     'id': 2,
+    #     'created_by': {
+    #         'username': 'Yangming'
+    #     },
+    #     'creation_time': 'tomorrow',
+    #     'post': 'Tasty',
+    #     'rating': 4
+    # }]
 
-    context['productForm'] = ProductForm()
-    context['vendorForm'] = VendorInfoForm()
-    context['description'] = "Hi Shine, please insert the vendor's description here"
-    context['limitCost'] = 5
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
-    # # TODO: get_the correct one
-    context['vendorInfo'] = VendorInfo.objects.all()
+    # context['productForm'] = ProductForm()
+    # context['vendorForm'] = VendorInfoForm()
+    # context['description'] = "Hi Shine, please insert the vendor's description here"
+    # context['limitCost'] = 5
+    # context['categories'] = Category.objects.all()
+    # context['products'] = Product.objects.all()
+    # # # TODO: get_the correct one
+    # context['vendorInfo'] = VendorInfo.objects.all()
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
+    context = get_shopEditPage_context(request)
+
     return render(request, 'groupbuying/shop.html', context)
+
+@login_required
+def update_category_name(request):
+    context = {}
+    errors = []  # A list to record messages for any errors we encounter.
+    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    #print(request.POST, request.POST['new_menu_name'], request.POST['menu_id'])
+    
+    if 'new_menu_name' not in request.POST or not request.POST['new_menu_name']:
+        errors.append('You must have enter the new_menu name')
+    elif 'menu_id' not in request.POST or not request.POST['menu_id']:
+        errors.append('You must provide menu id')
+    else:
+        cur_category = Category.objects.get(pk=int(request.POST['menu_id']))
+        cur_category.name = request.POST['new_menu_name']
+        cur_category.save()
+
+    context = get_shopEditPage_context(request)
+
+    return render(request, 'groupbuying/shopEdit.html', context)
 
 
 @login_required
@@ -783,9 +813,10 @@ def update_vendor_info(request):
     #     errors.append(
     #         'You must have at least "description and image" for the vendor info')
     # else:
-        # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check
-    
-    form = VendorInfoForm(request.POST, request.FILES, instance=cur_vendor_info)
+    # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check
+
+    form = VendorInfoForm(request.POST, request.FILES,
+                          instance=cur_vendor_info)
     if not form.is_valid():
         print("FALI: form is NOT valid")
     else:
@@ -798,7 +829,7 @@ def update_vendor_info(request):
         if 'image' in request.FILES:
             cur_vendor_info.image = form.cleaned_data['image']
             cur_vendor_info.content_type = form.cleaned_data['image'].content_type
-        
+
         form.save()
 
     context = get_shopEditPage_context(request)

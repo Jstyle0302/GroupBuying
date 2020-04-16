@@ -397,11 +397,11 @@ Shops
         </button>
       </div>
       <div class="modal-body">
-        <form enctype="multipart/form-data" action="/" method="post">
+        <form enctype="multipart/form-data" action="{% url 'update_category_name' %}" method="post">
           {% csrf_token %}
           <div class="form-group" id="modal-menu-name">
             <label for="menu-name">New Menu Name</label>
-            <input type="text" class="form-control" id="menu-name">
+            <input type="text" class="form-control" id="menu-name" name="new_menu_name">
           </div>
           <input type="hidden" id="modal-menu-id" name="menu_id" value="">
           <button type="submit" class="btn btn-primary">Save</button>
