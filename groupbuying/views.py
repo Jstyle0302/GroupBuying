@@ -637,7 +637,8 @@ def shopEdit_page(request):
     # }
     # context['finished'] = context['incompleted']
 
-    context = get_shopEditPage_context(request)
+    # context = get_shopEditPage_context(request)
+    context['tags'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
 
     # return redirect(reverse('shop_edit', kwargs=context))
     return render(request, 'groupbuying/shopEdit.html', context)
@@ -683,7 +684,8 @@ def shop_page(request):
     # context['vendorInfo'] = VendorInfo.objects.all()
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
-    context = get_shopEditPage_context(request)
+    # context = get_shopEditPage_context(request)
+    context['tags'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
 
     return render(request, 'groupbuying/shop.html', context)
 

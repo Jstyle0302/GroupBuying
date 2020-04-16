@@ -85,6 +85,11 @@ Shops
                 <h4 class="card-title">
                   <span>About Us</span>
                 </h4>
+                {% for tag in tags %}
+                <p class="btn btn-light btn-sm">
+                  {{tag}}<span class="fas fa-times"></span>
+                </p>
+                {% endfor %}
                 <p class="text-monospace">Shopping limit: $ {{ vendorInfo.min_order }}</p>
                 <textarea name="description" cols="70" rows="3" readonly id="id_description"
                   class="card-text col mb-2 form-control form-control-lg">{{ vendorInfo.description }}</textarea>

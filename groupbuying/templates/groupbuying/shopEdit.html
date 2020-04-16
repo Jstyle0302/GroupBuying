@@ -94,7 +94,11 @@ Shops
                   <span>About Us</span><a class="btn btn-success btn-sm float-right" href="#">
                     <i class="fas fa-eye"></i> Preview</a>
                 </h4>
-                
+                {% for tag in tags %}
+                <p class="btn btn-light btn-sm">
+                  {{tag}}<span class="fas fa-times"></span>
+                </p>
+                {% endfor %}
                 <div class="dropdown">
                   <input type="text" class="form-control" placeholder="Search.." id="myInput" onkeyup="filterFunction()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <div class="dropdown-menu" aria-labelledby="myInput" id="myDropdown">
