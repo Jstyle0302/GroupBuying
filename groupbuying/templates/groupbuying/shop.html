@@ -103,14 +103,13 @@ Shops
           <div class="col-6">
             <div class="mx-auto text-center">
               <h4 class="border-bottom"><em>Review</em></h4>
-              <h2>{{shop_name}}</h2>
+              <h2>{{vendorInfo.name}}</h2>
             </div>
           </div>
           <div class="card col-12 mb-2">
             <div class="card-body">
               <h5 class="card-title">Comment & Score</h5>
               <form method="post" action="{% url 'rating_star' %}" class="text-center">
-      
                 <div class="form-group">
                   <fieldset class="rating form-group">
                     <input type="radio" id="star5" name="rating" value="5" /><label class="fa fa-star" for="star5"
@@ -129,6 +128,7 @@ Shops
                   <textarea class="form-control" id="comment" name="comment" rows="3"
                     placeholder="Write your feeling about this shop"></textarea>
                 </div>
+                <input type="hidden" name="shop_id" value={{ vendorInfo.id }}>
                 <button type="submit" class="btn btn-primary float-right">Submit</button>
                 {% csrf_token %}
               </form>

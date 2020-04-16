@@ -494,9 +494,11 @@ def get_orders(vendor_id):
 
 
 def get_reviews(vendor_id):
-    print(vendor_id)
+    print(Rating.objects.all()[0].ratedTarget.id)
+
     posts = []
     ratings = Rating.objects.filter(ratedTarget__id=vendor_id)
+    # print(ratings)
     for rating in ratings:
         tmp_review_dict = {}
         tmp_review_dict['id'] = rating.id
@@ -704,8 +706,8 @@ def shop_page(request, shop_id):
     # context = {'categories': categories, 'products': products, 'errors': errors}
 
     # context = get_shopEditPage_context(request)
+    # context['tags'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
     context = get_shopPage_context(request, shop_id)
-    context['tags'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
 
     return render(request, 'groupbuying/shop.html', context)
 
@@ -902,7 +904,9 @@ def rating_star(request):
 
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
-    target_info = VendorInfo.objects.filter(id=str(request.user.id)).first() # TODO: correct?
+    # target_info = VendorInfo.objects.filter(id=str(request.user.id)).first() # TODO: correct?
+    target_info = VendorInfo.objects.get(pk=int(request.POST['shop_id']))
+    
     old_rating = Rating.objects.filter(Q(rater=customer_info) & Q(
         ratedTarget=target_info)).first()
     
@@ -915,9 +919,11 @@ def rating_star(request):
         new_rating.save()
     else:
         old_rating.rating = float(rating)
+        old_rating.comment = request.POST['comment']
+        old_rating.createTime = datetime.datetime.now()
         old_rating.save()
 
-    return redirect('shop')
+    return redirect('shop/' + str(request.POST['shop_id']))
 
 
 @login_required
