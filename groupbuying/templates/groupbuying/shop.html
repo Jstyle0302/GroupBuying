@@ -116,7 +116,7 @@ Shops
                   </fieldset>
                 </div>
                 <div class="form-group">
-                  <textarea class="form-control" id="comment" rows="3"
+                  <textarea class="form-control" id="comment" name="comment" rows="3"
                     placeholder="Write your feeling about this shop"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary float-right">Submit</button>
@@ -164,7 +164,7 @@ Shops
               <li class="list-group-item menu">
                 <div class="row no-gutters">
                   <div class="col-3 align-self-center">
-                    <img src="{{dish_info.image}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
+                    <img src="{{dish_info.image.url}}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
                   </div>
                   <div class="col-9">
                     <h4 class="card-title">{{ dish }}<span class="float-right">

@@ -464,6 +464,7 @@ def get_orders(vendor_id):
 
 
 def get_reviews(vendor_id):
+    print(vendor_id)
     posts = []
     ratings = Rating.objects.filter(ratedTarget__id=vendor_id)
     for rating in ratings:
@@ -845,15 +846,16 @@ def rating_star(request):
 
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
-    target_info = VendorInfo.objects.filter(id=str(request.user.id)).first()
+    target_info = VendorInfo.objects.filter(id=str(request.user.id)).first() # TODO: correct?
     old_rating = Rating.objects.filter(Q(rater=customer_info) & Q(
         ratedTarget=target_info)).first()
-
+    
     if not old_rating:
         new_rating = Rating(rating=float(rating),
+                            comment=request.POST['comment'],
+                            createTime=datetime.datetime.now(),
                             rater=customer_info,
-                            ratedTarget=target_info
-                            )
+                            ratedTarget=target_info)
         new_rating.save()
     else:
         old_rating.rating = float(rating)
