@@ -1108,6 +1108,9 @@ def fill_context_filter_query_rules(context, fitler_query):
     for tag in fitler_query.tag:
         context['query_rules'].append(tag)
 
+    if fitler_query.price != '':
+        context['query_rules'].append(fitler_query.price)
+
     cache.set('context', context)
 
     return context
@@ -1128,7 +1131,7 @@ def filtering(request):
         result = VendorInfo.objects.all()
         search_text = ''
 
-    result = filter_by_price(request, result)
+    result, fitler_query.price = filter_by_price(request, result)
     result, fitler_query.rating = filter_by_rating(request, result)
     result, fitler_query.tag = filter_by_tag(request, result)
 
@@ -1152,8 +1155,10 @@ def filter_by_price(request, prev_result):
             min_order__lte=price)
     else:
         result = prev_result
-        
-    return result
+
+    price_query = "price <= " + str(price)
+
+    return result, price_query
 
 
 def filter_by_rating(request, prev_result):
@@ -1178,7 +1183,7 @@ def filter_by_rating(request, prev_result):
     result = prev_result.filter(
         id__in=avg_rating_filtered.values('ratedTarget'))
 
-    rating_query = "rating >=" + str(rating)
+    rating_query = "rating >= " + str(rating)
     return result, rating_query
 
 
