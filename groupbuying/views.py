@@ -33,7 +33,7 @@ from django.utils.html import strip_tags
 
 
 def PAGESIZE_CONSTANT():
-    return 1
+    return 5
 
 
 def home_page(request):
