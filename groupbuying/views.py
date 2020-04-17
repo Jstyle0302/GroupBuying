@@ -96,26 +96,14 @@ def orderList_page(request):
 
 def share_page(request, order_id):
     context = {}
-    context['shop_name'] = "Starbucks"
-    context['description'] = "Very expensive and unhealthy food."
-    context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
-    context['menu'] = {
-        'all': {
-
-        }
-    }
-
-    context['productForm'] = ProductForm()
-    context['vendorForm'] = VendorInfoForm()
-    context['description'] = "Hi Shine, please insert the vendor's description here"
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
-    context['vendorInfo'] = VendorInfo.objects.all()  # TODO: delte lated
-    # context = {'categories': categories, 'products': products, 'errors': errors}
+    context = {}
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
+    shop_id = orderbundle.vendor.id
+    context = get_shopPage_context(request, shop_id)
+
     context['founder'] = orderbundle.holder.name
     context['order_id'] = order_id
-
+    
     return render(request, 'groupbuying/shop.html', context)
 
 
@@ -196,6 +184,7 @@ def show_order_page(request, order_id):
     context['receipt']['summary'] = {}
     context['receipt']['summary']['order'] = []
     context['checkout_to_shopper'] = 1
+    context['min_order'] = orderbundle.vendor.min_order
 
     for orderUnit in orderUnits:
 
