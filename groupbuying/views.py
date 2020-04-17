@@ -1029,7 +1029,11 @@ def fill_restaurant_info(obj):
     restaurant['rating'] = rating_proc(obj)
 
     # TBD
-    restaurant['price'] = obj.min_order
+    if not obj.min_order:
+        restaurant['price'] = 0
+    else:
+        restaurant['price'] = obj.min_order    
+
     if obj.image:
         restaurant['image'] = obj.image.url
     else:
@@ -1156,6 +1160,10 @@ def filter_by_price(request, prev_result):
     else:
         result = prev_result
 
+    for obj in prev_result:
+        if not obj.min_order:
+            result |= VendorInfo.objects.filter(id=obj.id)
+
     price_query = "price <= " + str(price)
 
     return result, price_query
@@ -1188,7 +1196,7 @@ def filter_by_rating(request, prev_result):
         id__in=avg_rating_filtered.values('ratedTarget'))
 
     
-    for obj in VendorInfo.objects.all():
+    for obj in prev_result:
         if not avg_rating.filter(ratedTarget=int(obj.id)) and int(rating) <= 3 :
             result |= VendorInfo.objects.filter(id=obj.id)
 
