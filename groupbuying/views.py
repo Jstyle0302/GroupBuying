@@ -441,6 +441,7 @@ def get_menu(vendor_id):
     categories_names = [obj.name for obj in categories]
 
     for name in categories_names:
+        temp_dish_dict = {}
         temp_pdict = {}
         sub_products = Product.objects.filter(
             vendor__id=vendor_id, category__name=name)
@@ -452,7 +453,9 @@ def get_menu(vendor_id):
             temp_pInfodict['description'] = sub_product.description
             temp_pdict[sub_product.name] = dict(temp_pInfodict)
             # print(temp_pdict)
-        menu[name] = dict(temp_pdict)
+        temp_dish_dict['dishes'] = dict(temp_pdict)
+        temp_dish_dict['id'] = categories.get(name=name).id
+        menu[name] = dict(temp_dish_dict)
 
     return menu
 
@@ -675,6 +678,7 @@ def shopEdit_page(request):
             'id': 1
         }
     }
+
     # context['finished'] = context['incompleted']
 
     context = get_shopEditPage_context(request)
@@ -734,7 +738,7 @@ def update_category_name(request):
     # context = {}
     errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
-    #print(request.POST, request.POST['new_menu_name'], request.POST['menu_id'])
+    print(request.POST, request.POST['new_menu_name'], request.POST['menu_id'])
     if 'new_menu_name' not in request.POST or not request.POST['new_menu_name']:
         errors.append('You must have enter the new_menu name')
     elif 'menu_id' not in request.POST or not request.POST['menu_id']:
