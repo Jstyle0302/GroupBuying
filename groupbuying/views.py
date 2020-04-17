@@ -81,10 +81,6 @@ def orderList_page(request):
             'order_id': orderUnit.orderbundle.id,
             'name': orderUnit.orderbundle.vendor.name,
             'description': orderUnit.orderbundle.vendor.description,
-            if orderUnit.orderbundle.vendor.image:
-                restaurant['image'] = obj.image.url
-            else:
-                restaurant['image'] = obj.image_url_OAuth
             'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
         }
         context['orders'].append(order)
