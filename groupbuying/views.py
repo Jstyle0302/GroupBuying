@@ -408,6 +408,8 @@ def profile_page(request, user_id):
     for orderUnit in reversed(OrderUnits):
         if i >= 5:
             break
+        if orderUnit.isPaid == False:
+            continue
         order = {}
         order['shop_name'] = orderUnit.orderbundle.vendor.name
         order['orderbundle_id'] = orderUnit.orderbundle.id
