@@ -1179,9 +1179,18 @@ def filter_by_rating(request, prev_result):
 
     avg_rating = Rating.objects.values('ratedTarget').annotate(
         avg_rating=Avg('rating')).order_by('ratedTarget')
+
+
     avg_rating_filtered = avg_rating.filter(rating__gte=rating)
+
+
     result = prev_result.filter(
         id__in=avg_rating_filtered.values('ratedTarget'))
+
+    
+    for obj in VendorInfo.objects.all():
+        if not avg_rating.filter(ratedTarget=int(obj.id)) and int(rating) <= 3 :
+            result |= VendorInfo.objects.filter(id=obj.id)
 
     rating_query = "rating >= " + str(rating)
     return result, rating_query
