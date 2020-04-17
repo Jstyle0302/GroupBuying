@@ -1029,7 +1029,7 @@ def fill_restaurant_info(obj):
     restaurant['rating'] = rating_proc(obj)
 
     # TBD
-    restaurant['price'] = 5
+    restaurant['price'] = obj.min_order
     if obj.image:
         restaurant['image'] = obj.image.url
     else:
@@ -1233,8 +1233,8 @@ def sorting(request):
                                              reverse=True)
 
     if ('sort_by_price' in request.POST):
-        print('price\n')
-        last_context = last_context
+        last_context['restaurants'] = sorted(last_context['restaurants'],
+                                             key=lambda i: i['price'])
 
     cache.set('context', last_context)
     last_context['restaurants'] = last_context['restaurants'][0:PAGESIZE_CONSTANT()]
