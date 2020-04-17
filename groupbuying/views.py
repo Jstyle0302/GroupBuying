@@ -397,7 +397,25 @@ def profile_page(request, user_id):
     customerInfo = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
     context['username'] = customerInfo.name
     context['description'] = customerInfo.description
-    context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
+    '''
+    last_context['restaurants'] = sorted(last_context['restaurants'],
+                                             key=lambda i: i['price'])
+    '''
+    OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
+
+    context['orders'] = []
+    i = 0
+    for orderUnit in reversed(OrderUnits):
+        if i >= 5:
+            break
+        order = {}
+        order['shop_name'] = orderUnit.orderbundle.vendor.name
+        order['orderbundle_id'] = orderUnit.orderbundle.id
+        #order['shop_id']  = int(orderUnit.orderbundle.vendor.id)
+        context['orders'].append(order)
+        i += 1
+
+    #print(context['orders']['shop_id'])
     context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
     context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
