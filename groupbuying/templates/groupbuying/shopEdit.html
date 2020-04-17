@@ -302,7 +302,7 @@ Shops
             <div class="mx-auto text-center">
               <h4 class="border-bottom"><em>Menu</em></h4>
               <h5>{{category}}<i
-                id="<h5>{{category.id}}<i" class="far fa-edit btn" data-toggle="modal" data-target="#menuModal" data-whatever="{{category}}"></i>
+                id="{{category.id}}" class="far fa-edit btn" data-toggle="modal" data-target="#menuModal" data-whatever="{{category}}"></i>
               </h5>              
             </div>
           </div>
@@ -431,8 +431,8 @@ Shops
       <div class="modal-body">
         <form action="{% url 'update_vendor_name' %}" method="POST">
           <div class="form-group" id="modal-vendor-name">
-            <label for="menu-name">New Shop Name</label>
-            <input type="text" class="form-control" id="menu-name", name='vendor_name'>
+            <label for="shop-name">New Shop Name</label>
+            <input type="text" class="form-control" id="shop-name", name='vendor_name'>
           </div>
           <input type="hidden" id="modal-vendor-id" name="vendor_id" value="">
           {% csrf_token %}

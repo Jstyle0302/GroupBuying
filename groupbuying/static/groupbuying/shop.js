@@ -41,7 +41,7 @@ $('#dishModal').on('show.bs.modal', function (event) {
 $('#menuModal').on('show.bs.modal', function (event) {
   var button = $(event.relatedTarget)
   var name = button.data('whatever')
-  var id = button.data('id')
+  var id = button.attr('id')
   var modal = $(this)
   modal.find('#modal-menu-name input').val(name);
   modal.find('#modal-menu-id').val(id);
@@ -50,7 +50,7 @@ $('#menuModal').on('show.bs.modal', function (event) {
 $('#vendorModal').on('show.bs.modal', function (event) {
   var button = $(event.relatedTarget)
   var name = button.data('whatever')
-  var id = button.data('id')
+  var id = button.attr('id')
   var modal = $(this)
   modal.find('#modal-vendor-name input').val(name);
   modal.find('#modal-vendor-id').val(id);
