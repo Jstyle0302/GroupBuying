@@ -80,9 +80,14 @@ def orderList_page(request):
         order = {
             'order_id': orderUnit.orderbundle.id,
             'name': orderUnit.orderbundle.vendor.name,
-            'description': orderUnit.orderbundle.vendor.description,
-            'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
+            'description': orderUnit.orderbundle.vendor.description
         }
+
+        if orderUnit.orderbundle.vendor.image:
+            order['image'] = orderUnit.orderbundle.vendor.image.url
+        else:
+            order['image'] = orderUnit.orderbundle.vendor.image_url_OAuth
+
         context['orders'].append(order)
         orderbundleId.append(orderUnit.orderbundle.id)
 
