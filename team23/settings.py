@@ -32,7 +32,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'groupbuyingTeam23@gmail.com'
 EMAIL_HOST_PASSWORD = '1qaz2wsx#E'
 EMAIL_USE_TLS = 'True'
-EMAIL_POST = '587'
+EMAIL_PORT = 587
 
 # Application definition
 # To install social_django: pip install social-auth-app-django

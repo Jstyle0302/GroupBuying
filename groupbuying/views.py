@@ -66,7 +66,7 @@ def home_page(request):
     context['recommends'] = context['recent']
     return render(request, 'groupbuying/home.html', context)
 
-
+@login_required
 def orderList_page(request):
     context = {}
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
