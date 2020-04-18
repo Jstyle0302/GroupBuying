@@ -29,7 +29,7 @@ urlpatterns = [
     path('complete_order', views.complete_order, name='complete_order'),
     # customer features
     path('profile-<str:user_id>', views.profile_page, name='profile'),
-    path('update_customer_info/<str:user_id>',
+    path('update_customer_info-<str:user_id>',
          views.update_customer_info, name='update_customer_info'),
     path('other', views.other_page, name='other'),
     path('order/<str:order_id>', views.order_page, name='order'),

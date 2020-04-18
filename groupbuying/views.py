@@ -1101,12 +1101,34 @@ def update_customer_info(request, user_id):
                 cur_customer_info.content_type = form.cleaned_data['image'].content_type
             form.save()
 
-    context['username'] = cur_customer_info.name
-    context['description'] = cur_customer_info.description
-    context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
-    context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
-    context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
-    context['customerInfo'] = cur_customer_info
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
+    context['username'] = customerInfo.name
+    context['description'] = customerInfo.description
+
+    OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
+
+    context['orders'] = []
+    i = 0
+    for orderUnit in reversed(OrderUnits):
+        if i >= 5:
+            break
+        if orderUnit.isPaid == False:
+            continue
+        order = {}
+        order['shop_name'] = orderUnit.orderbundle.vendor.name
+        order['orderbundle_id'] = orderUnit.orderbundle.id
+        #order['shop_id']  = int(orderUnit.orderbundle.vendor.id)
+        context['orders'].append(order)
+        i += 1
+
+    context['subcribes'] = []
+    for favoriteVendor in customerInfo.subscription.all():
+        subcribes = {}
+        subcribes['shop_name'] = (favoriteVendor.name)
+        subcribes['shop_id'] = (favoriteVendor.id)
+        context['subcribes'].append(subcribes)
+
+    context['customerInfo'] = customerInfo
     return render(request, 'groupbuying/profile.html', context)
 
 
