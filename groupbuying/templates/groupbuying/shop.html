@@ -105,7 +105,10 @@ Shops
                     <button type="submit" class="btn btn-danger"><i class="fas fa-heart"></i> Add to favorite</button>
                     {% csrf_token %}
                   </form>
-                  <button type="button" class="btn btn-warning"><i class="fas fa-heart"></i> Remove from favorite</button>
+                  <form method="post" action="{% url 'remove_from_favorite' vendorInfo.id %}" >
+                    <button type="submit" class="btn btn-warning"><i class="fas fa-heart"></i> Remove from favorite</button>
+                    {% csrf_token %}
+                  </form>
               </div>
             </div>
           </div>

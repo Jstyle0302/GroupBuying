@@ -437,8 +437,45 @@ def add_to_favorite(request, shop_id):
 
 def remove_from_favorite(request, shop_id):
     context = {}
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
+    context['username'] = customerInfo.name
+    context['description'] = customerInfo.description
+    vendor = VendorInfo.objects.filter(Q(id=str(shop_id)))[0]
+    context['username'] = customerInfo.name
 
-    return context
+    customerInfo.subscription.remove(vendor)
+    customerInfo.save()
+
+    OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
+
+    context['orders'] = []
+    i = 0
+    for orderUnit in reversed(OrderUnits):
+        if i >= 5:
+            break
+        if orderUnit.isPaid == False:
+            continue
+        order = {}
+        order['shop_name'] = orderUnit.orderbundle.vendor.name
+        order['orderbundle_id'] = orderUnit.orderbundle.id
+        #order['shop_id']  = int(orderUnit.orderbundle.vendor.id)
+        context['orders'].append(order)
+        i += 1
+
+    context['subcribes'] = []
+    for favoriteVendor in customerInfo.subscription.all():
+        subcribes = {}
+        subcribes['shop_name'] = (favoriteVendor.name)
+        subcribes['shop_id'] = (favoriteVendor.id)
+        context['subcribes'].append(subcribes)
+
+    #print(context['orders']['shop_id'])
+    context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
+    #context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
+    context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+    context['customerInfo'] = customerInfo
+
+    return render(request, 'groupbuying/profile.html', context)
 
 
 @login_required
