@@ -631,7 +631,10 @@ def get_shopPage_context(request, shop_id):
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
-    context['tags'] = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
+    #context['tags'] = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
+    tag_re = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
+    if tag_re[0] != '':
+        context['tags'] = tag_re
     # context['tags'] = cur_vendor_info.tagList.split(',')
     context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
     context['vendorInfo'] = cur_vendor_info
@@ -684,7 +687,10 @@ def get_shopEditPage_context(request):
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
     # context['tags'] = cur_vendor_info.tagList.split(',')
-    context['tags'] = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
+    #context['tags'] = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
+    tag_re = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
+    if tag_re[0] != '':
+        context['tags'] = tag_re
     context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
