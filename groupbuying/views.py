@@ -394,18 +394,10 @@ def checkout_to_shopper(request, order_id):
 
     return redirect('home')
 
-
-def add_to_favorite(request, shop_id):
+def gen_context_profile(customerInfo):
     context = {}
-    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
     context['username'] = customerInfo.name
     context['description'] = customerInfo.description
-    vendor = VendorInfo.objects.filter(Q(id=str(shop_id)))[0]
-    context['username'] = customerInfo.name
-
-    customerInfo.subscription.add(vendor)
-    customerInfo.save()
-
     OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
 
     context['orders'] = []
@@ -430,6 +422,16 @@ def add_to_favorite(request, shop_id):
         context['subcribes'].append(subcribes)
 
     context['customerInfo'] = customerInfo
+    return context
+
+def add_to_favorite(request, shop_id):
+    context = {}
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
+    vendor = VendorInfo.objects.filter(Q(id=str(shop_id)))[0]
+    customerInfo.subscription.add(vendor)
+    customerInfo.save()
+
+    context = gen_context_profile(customerInfo)
 
     return render(request, 'groupbuying/profile.html', context)
 
@@ -437,38 +439,11 @@ def add_to_favorite(request, shop_id):
 def remove_from_favorite(request, shop_id):
     context = {}
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
-    context['username'] = customerInfo.name
-    context['description'] = customerInfo.description
     vendor = VendorInfo.objects.filter(Q(id=str(shop_id)))[0]
-    context['username'] = customerInfo.name
-
     customerInfo.subscription.remove(vendor)
     customerInfo.save()
 
-    OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
-
-    context['orders'] = []
-    i = 0
-    for orderUnit in reversed(OrderUnits):
-        if i >= 5:
-            break
-        if orderUnit.isPaid == False:
-            continue
-        order = {}
-        order['shop_name'] = orderUnit.orderbundle.vendor.name
-        order['orderbundle_id'] = orderUnit.orderbundle.id
-        #order['shop_id']  = int(orderUnit.orderbundle.vendor.id)
-        context['orders'].append(order)
-        i += 1
-
-    context['subcribes'] = []
-    for favoriteVendor in customerInfo.subscription.all():
-        subcribes = {}
-        subcribes['shop_name'] = (favoriteVendor.name)
-        subcribes['shop_id'] = (favoriteVendor.id)
-        context['subcribes'].append(subcribes)
-
-    context['customerInfo'] = customerInfo
+    context = gen_context_profile(customerInfo)
 
     return render(request, 'groupbuying/profile.html', context)
 
@@ -477,36 +452,7 @@ def remove_from_favorite(request, shop_id):
 def profile_page(request, user_id):
     context = {}
     customerInfo = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
-    context['username'] = customerInfo.name
-    context['description'] = customerInfo.description
-    '''
-    last_context['restaurants'] = sorted(last_context['restaurants'],
-                                             key=lambda i: i['price'])
-    '''
-    OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
-
-    context['orders'] = []
-    i = 0
-    for orderUnit in reversed(OrderUnits):
-        if i >= 5:
-            break
-        if orderUnit.isPaid == False:
-            continue
-        order = {}
-        order['shop_name'] = orderUnit.orderbundle.vendor.name
-        order['orderbundle_id'] = orderUnit.orderbundle.id
-        #order['shop_id']  = int(orderUnit.orderbundle.vendor.id)
-        context['orders'].append(order)
-        i += 1
-
-    context['subcribes'] = []
-    for favoriteVendor in customerInfo.subscription.all():
-        subcribes = {}
-        subcribes['shop_name'] = (favoriteVendor.name)
-        subcribes['shop_id'] = (favoriteVendor.id)
-        context['subcribes'].append(subcribes)
-
-    context['customerInfo'] = customerInfo
+    context = gen_context_profile(customerInfo)
 
     return render(request, 'groupbuying/profile.html', context)
 
@@ -1101,34 +1047,7 @@ def update_customer_info(request, user_id):
                 cur_customer_info.content_type = form.cleaned_data['image'].content_type
             form.save()
 
-    customerInfo = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
-    context['username'] = customerInfo.name
-    context['description'] = customerInfo.description
-
-    OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
-
-    context['orders'] = []
-    i = 0
-    for orderUnit in reversed(OrderUnits):
-        if i >= 5:
-            break
-        if orderUnit.isPaid == False:
-            continue
-        order = {}
-        order['shop_name'] = orderUnit.orderbundle.vendor.name
-        order['orderbundle_id'] = orderUnit.orderbundle.id
-        #order['shop_id']  = int(orderUnit.orderbundle.vendor.id)
-        context['orders'].append(order)
-        i += 1
-
-    context['subcribes'] = []
-    for favoriteVendor in customerInfo.subscription.all():
-        subcribes = {}
-        subcribes['shop_name'] = (favoriteVendor.name)
-        subcribes['shop_id'] = (favoriteVendor.id)
-        context['subcribes'].append(subcribes)
-
-    context['customerInfo'] = customerInfo
+    context = gen_context_profile(cur_customer_info)
     return render(request, 'groupbuying/profile.html', context)
 
 
