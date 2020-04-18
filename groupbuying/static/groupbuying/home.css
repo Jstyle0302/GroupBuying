@@ -1,4 +1,5 @@
+{% load static%}
 .banner {
-    background-image: url(https://static.toiimg.com/photo/72023714.cms);
+    background-image: url('home_slide.jpg');
     background-size: 100%;
 }

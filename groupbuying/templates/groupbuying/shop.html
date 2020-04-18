@@ -2,7 +2,8 @@
 
 {% block headFiles %}
 {% load static %}
-		<link href="{% static 'groupbuying/shop.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'groupbuying/shop.css' %}" rel="stylesheet" type="text/css">
+    <script src="{% static 'groupbuying/shop.js' %}" type="text/javascript"></script>
 {% endblock %}
 
 {% block pageName %}
@@ -19,12 +20,19 @@ Shops
   This order is raised by {{user.username}}.
   {% endif %}
 </div>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'search' %}">Search</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{vendorInfo.name}}</li>
+  </ol>
+</nav>
 <div class="row">
   <div class="col-3">
     <div class="card">
       <div class="card-body">
         <div class="list-group list-group-flush text-center font-weight-bold" id="list-tab" role="tablist">
-          <h4 class="text-uppercase font-italic text-muted">{{shop_name}}</h4>
+          <h4 class="text-uppercase font-italic text-muted">{{vendorInfo.name}}</h4>
           <a class="list-group-item list-group-item-action active" id="list-profile-list" data-toggle="tab"
             href="#list-profile" role="tab" aria-controls="profile">
             <h5>Profile</h5>
@@ -93,6 +101,8 @@ Shops
                 <p class="text-monospace">Shopping limit: $ {{ vendorInfo.min_order }}</p>
                 <textarea name="description" cols="70" rows="3" readonly id="id_description"
                   class="card-text col mb-2 form-control form-control-lg">{{ vendorInfo.description }}</textarea>
+                  <button type="button" class="btn btn-danger"><i class="fas fa-heart"></i> Add to favorite</button>
+                  <button type="button" class="btn btn-warning"><i class="fas fa-heart"></i> Remove from favorite</button>
               </div>
             </div>
           </div>
@@ -189,9 +199,9 @@ Shops
 
                         <input type="hidden" name="product_id" value={{ dish_info.id }}>
                         <div class="form-row">
-                          <i class="fas fa-minus-circle btn btn-default"></i>
-                          <input type="number" name="product_number" value="1" class="form-control-sm">
-                          <i class="fas fa-plus-circle btn btn-default"></i>
+                          <button type="button" class="fas fa-minus-circle btn btn-default" onclick="minusProduct('dish-{{ dish_info.id }}')"></button>
+                          <input type="number" name="product_number" value="1" class="form-control-sm" id="dish-{{ dish_info.id }}">
+                          <button type="button" class="fas fa-plus-circle btn btn-default" onclick="addProduct('dish-{{ dish_info.id }}')"></button>
                           <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
                         </div>
                         {% csrf_token %}
