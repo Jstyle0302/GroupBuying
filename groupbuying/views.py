@@ -250,7 +250,7 @@ def order_page(request, order_id):
         buyer=customerInfo,
         product=product,
         quantity=int(request.POST['product_number']),
-        comment='omg',
+        comment='',
         orderTime=datetime.datetime.now(),
         orderDate=datetime.datetime.now(),
         deliverTime=datetime.datetime.now(),
