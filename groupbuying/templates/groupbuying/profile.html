@@ -31,7 +31,7 @@ Profile
             {% if subcribes %}
             <ul class="list-group list-group-flush">
                 {% for subcribe in subcribes%}
-                <li class="list-group-item"><a href="/{{subcribe}}">{{subcribe}}</a></li>
+                <li class="list-group-item"><a href="{% url 'shop' subcribe.shop_id %}">{{subcribe.shop_name}}</a></li>
                 {% endfor %}
             </ul>
             {% endif %}
@@ -42,7 +42,7 @@ Profile
             <div class="row no-gutters">
                 <div class="col-3 align-self-center">
                     {% if customerInfo.image.url %}
-                    <img id="id_user_picture" class="card-img img-thumbnail" src="../{{ customerInfo.image.url }}">
+                    <img id="id_user_picture" class="card-img img-thumbnail" src="{{ customerInfo.image.url }}">
                     {% else %}
                     <img id="id_user_picture" class="card-img img-thumbnail" src='https://i.stack.imgur.com/l60Hf.png'>    
                     {% endif %}

@@ -28,7 +28,7 @@ urlpatterns = [
     path('update_product', views.update_product, name='update_product'),
     path('complete_order', views.complete_order, name='complete_order'),
     # customer features
-    path('profile/<str:user_id>', views.profile_page, name='profile'),
+    path('profile-<str:user_id>', views.profile_page, name='profile'),
     path('update_customer_info/<str:user_id>',
          views.update_customer_info, name='update_customer_info'),
     path('other', views.other_page, name='other'),
@@ -42,4 +42,6 @@ urlpatterns = [
     path('checkout_to_shopper/<str:order_id>',
          views.checkout_to_shopper, name='checkout_to_shopper'),
     path('rating_star', views.rating_star, name='rating_star'),
+    path('add_to_favorite-<str:shop_id>', views.add_to_favorite, name='add_to_favorite'),
+    path('remove_from_favorite-<str:shop_id>', views.remove_from_favorite, name='remove_from_favorite'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

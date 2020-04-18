@@ -8,25 +8,6 @@ from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 '''
 
-
-class CustomerInfo(models.Model):
-    # CustomerInfo.name is different from UserProefile.firstName or
-    # UserProefile.lastName, can be user name or vendor name
-    name = models.CharField(max_length=50)
-    email = models.CharField(max_length=50)
-    description = models.CharField(max_length=500, default='', blank=True)
-    address = models.CharField(max_length=100)
-    phoneNum = models.CharField(max_length=16)
-    image = models.ImageField(blank=False, null=True,
-                              upload_to='img/', default='default.jpeg')
-    content_type = models.CharField(max_length=50, default="")
-    customer_id = models.IntegerField(null=True)
-
-    def __str__(self):
-        return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
-            ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
-
-
 class VendorInfo(models.Model):
     # VendorInfo.name is different from UserProefile.firstName or
     # UserProefile.lastName, can be user name or vendor name
@@ -47,6 +28,25 @@ class VendorInfo(models.Model):
             ' address = ' + str(self.address) + ' phoneNum = ' + str(self.phoneNum) + \
             ' min_order = ' + str(self.min_order) + " vendor_id = " + str(self.vendor_id) + \
             ' tagList = ' + str(self.tagList)
+
+
+class CustomerInfo(models.Model):
+    # CustomerInfo.name is different from UserProefile.firstName or
+    # UserProefile.lastName, can be user name or vendor name
+    name = models.CharField(max_length=50)
+    email = models.CharField(max_length=50)
+    description = models.CharField(max_length=500, default='', blank=True)
+    address = models.CharField(max_length=100)
+    phoneNum = models.CharField(max_length=16)
+    image = models.ImageField(blank=False, null=True,
+                              upload_to='img/', default='default.jpeg')
+    content_type = models.CharField(max_length=50, default="")
+    customer_id = models.IntegerField(null=True)
+    subscription = models.ManyToManyField(VendorInfo, related_name='follower', symmetrical=False,blank=False, null=True)
+
+    def __str__(self):
+        return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
+            ',address=' + str(self.address) + ',phoneNum=' + str(self.phoneNum)
 
 
 class UserProfile(models.Model):
