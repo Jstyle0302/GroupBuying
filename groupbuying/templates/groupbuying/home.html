@@ -70,9 +70,10 @@ Login
   </div>
   {% endfor %}
 </div>
-<div class="row align-items-center content mt-2">
+<div class="row align-items-center content mt-2 mb-2">
   <div class="col-md-6 order-2 order-md-1">
-    <img src="https://static.toiimg.com/photo/72023714.cms" alt="" class="img-fluid">
+    {% load static %}
+    <img src="{% static 'groupbuying/home_foods.png' %}" alt="" class="img-fluid">
   </div>
   <div class="col-md-6 text-center order-1 order-md-2">
     <div class="row justify-content-center">
