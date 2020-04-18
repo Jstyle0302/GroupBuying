@@ -2,7 +2,8 @@
 
 {% block headFiles %}
 {% load static %}
-		<link href="{% static 'groupbuying/shop.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'groupbuying/shop.css' %}" rel="stylesheet" type="text/css">
+    <script src="{% static 'groupbuying/shop.js' %}" type="text/javascript"></script>
 {% endblock %}
 
 {% block pageName %}
@@ -198,9 +199,9 @@ Shops
 
                         <input type="hidden" name="product_id" value={{ dish_info.id }}>
                         <div class="form-row">
-                          <i class="fas fa-minus-circle btn btn-default"></i>
-                          <input type="number" name="product_number" value="1" class="form-control-sm">
-                          <i class="fas fa-plus-circle btn btn-default"></i>
+                          <button type="button" class="fas fa-minus-circle btn btn-default" onclick="minusProduct('dish-{{ dish_info.id }}')"></button>
+                          <input type="number" name="product_number" value="1" class="form-control-sm" id="dish-{{ dish_info.id }}">
+                          <button type="button" class="fas fa-plus-circle btn btn-default" onclick="addProduct('dish-{{ dish_info.id }}')"></button>
                           <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
                         </div>
                         {% csrf_token %}
