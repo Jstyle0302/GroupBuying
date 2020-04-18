@@ -199,8 +199,10 @@ def show_order_page(request, order_id, from_profile):
         subOrder = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
-            'price': orderUnit.product.price
+            'price': orderUnit.product.price,
         }
+        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
+        
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -350,6 +352,8 @@ def checkout_to_shopper(request, order_id):
             'count': orderUnit.quantity,
             'price': orderUnit.product.price
         }
+        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
+        
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
