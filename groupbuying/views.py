@@ -617,6 +617,7 @@ def get_reviews(vendor_id):
         tmp_review_dict['id'] = rating.id
         tmp_review_dict['created_by'] = {'username': rating.rater.name}
         tmp_review_dict['creation_time'] = rating.createTime
+        tmp_review_dict['creation_date'] = rating.createDate
         tmp_review_dict['post'] = rating.comment
         tmp_review_dict['rating'] = rating.rating
         posts.append(dict(tmp_review_dict))
@@ -1037,7 +1038,7 @@ def rating_star(request):
         rating = request.POST['rating']
     else:
         return redirect('shop/' + str(request.POST['shop_id']))
-        
+
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
     # target_info = VendorInfo.objects.filter(id=str(request.user.id)).first() # TODO: correct?
@@ -1050,6 +1051,7 @@ def rating_star(request):
         new_rating = Rating(rating=float(rating),
                             comment=request.POST['comment'],
                             createTime=datetime.datetime.now(),
+                            createDate=datetime.datetime.now(),
                             rater=customer_info,
                             ratedTarget=target_info)
         new_rating.save()
@@ -1057,6 +1059,7 @@ def rating_star(request):
         old_rating.rating = float(rating)
         old_rating.comment = request.POST['comment']
         old_rating.createTime = datetime.datetime.now()
+        old_rating.createDate = datetime.datetime.now()
         old_rating.save()
 
     return redirect('shop/' + str(request.POST['shop_id']))

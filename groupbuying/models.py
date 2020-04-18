@@ -89,6 +89,7 @@ class Rating(models.Model):
     rating = models.FloatField()
     comment = models.CharField(max_length=500, default="")
     createTime = models.TimeField()
+    createDate = models.DateField()
     rater = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     ratedTarget = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
 
