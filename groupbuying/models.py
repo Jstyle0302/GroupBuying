@@ -31,14 +31,13 @@ class VendorInfo(models.Model):
     # VendorInfo.name is different from UserProefile.firstName or
     # UserProefile.lastName, can be user name or vendor name
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=500)
+    description = models.CharField(blank=True, max_length=500)
     email = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
     phoneNum = models.CharField(max_length=16)
-    tagList = models.CharField(max_length=200)
-    min_order = models.IntegerField(null=True)
-    image = models.ImageField(blank=False, null=True,
-                              upload_to='img/')  # Note: use ImageField?
+    tagList = models.CharField(blank=True, max_length=200)
+    min_order = models.IntegerField(blank=True, default=0, null=True)
+    image = models.ImageField(blank=True, null=True, upload_to='img/')
     image_url_OAuth = models.URLField(max_length=200)
     content_type = models.CharField(max_length=50, default="")
     vendor_id = models.IntegerField(null=True)
