@@ -145,7 +145,6 @@ def send_email_page(request, order_id):
         context['receipt']['orders'].append(dictOrder)
 
     context['receipt']['summary']['total'] = total_price
-    orderbundle.total_price = total_price
 
     subject = str(request.user.username) + "'s order at " + \
         orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")"
@@ -153,10 +152,9 @@ def send_email_page(request, order_id):
     plain_message = strip_tags(html_message)
     from_email = 'groupbuyingTeam23@gmail.com'
     to_email = [request.user.email]
-
+    
     send_mail(subject, plain_message, from_email, to_email,
               html_message=html_message, fail_silently=False)
-
     ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
 
     return redirect('shop')
@@ -386,6 +384,9 @@ def checkout_to_shopper(request, order_id):
     send_mail(subject, plain_message, from_email, to_email,
               html_message=html_message, fail_silently=False)
 
+    orderbundle.totalPrice = total_price
+    orderbundle.save()
+
     ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
 
     return redirect('home')
@@ -515,7 +516,7 @@ def get_orders(vendor_id):
 
             tmp_summary['summary'] = dict(tmp_order)
             tmp_orderbundle_dict['receipt'] = dict(tmp_summary)
-            # print("orderbundle.total_price = {0}".format(orderbundle.totalPrice))
+            print("orderbundle.total_price = {0}".format(orderbundle.totalPrice))
 
             tmp_orderbundle_dict['receipt']['summary']['total'] = orderbundle.totalPrice
             if orderbundle.isCompleted:
