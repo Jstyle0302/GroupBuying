@@ -87,6 +87,7 @@ Profile
                     </tbody>
                 </table>
 
+                {% if from_profile != 1 %}   
                 {% if order_unit_id and checkout_to_holder%}
                 <form method="post" action="{% url 'checkout_to_holder' order_unit_id %}">
                 {% endif %}
@@ -117,6 +118,7 @@ Profile
 
                 {% csrf_token %}
                 </form>
+                {% endif %}
                 </li>
             </ul>
         </div>

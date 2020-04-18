@@ -160,10 +160,13 @@ def send_email_page(request, order_id):
     return redirect('shop')
 
 
-def show_order_page(request, order_id):
+def show_order_page(request, order_id, from_profile):
     context = {}
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
+
+    if int(from_profile) == 1:
+        context['from_profile'] = 1
 
     if orderbundle.holder.id == request.user.id:
         context['isFounder'] = True

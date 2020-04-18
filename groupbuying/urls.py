@@ -35,7 +35,7 @@ urlpatterns = [
     path('order/<str:order_id>', views.order_page, name='order'),
     path('orderList', views.orderList_page, name='orderList'),
     path('share/<str:order_id>', views.share_page, name='share'),
-    path('show_order/<str:order_id>', views.show_order_page, name='show_order'),
+    path('show_order/<str:order_id>-<str:from_profile>', views.show_order_page, name='show_order'),
     path('send_email/<str:order_id>', views.send_email_page, name='send_email'),
     path('checkout_to_holder/<str:order_unit_id>',
          views.checkout_to_holder, name='checkout_to_holder'),
