@@ -549,7 +549,7 @@ def get_shopPage_context(request, shop_id):
 
 def get_shopEditPage_context(request):
     context = {}
-    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    cur_vendor_info = VendorInfo.objects.get(pk=int(request.user.id))
 
     # if True:
     #    cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
