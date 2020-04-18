@@ -1035,7 +1035,9 @@ def rating_star(request):
     rating = ''
     if 'rating' in request.POST and request.POST['rating']:
         rating = request.POST['rating']
-
+    else:
+        return redirect('shop/' + str(request.POST['shop_id']))
+        
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
     # target_info = VendorInfo.objects.filter(id=str(request.user.id)).first() # TODO: correct?
