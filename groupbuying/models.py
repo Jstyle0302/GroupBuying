@@ -68,12 +68,12 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=200)
+    description = models.CharField(blank=True, max_length=200)
     price = models.FloatField()
     sellerId = models.CharField(max_length=10)  # Note: == vendor.id?
     isAvailable = models.BooleanField(default=True)
     saleVolume = models.IntegerField()
-    image = models.ImageField(blank=False, upload_to='img/')
+    image = models.ImageField(blank=True, upload_to='img/')
     content_type = models.CharField(max_length=50, default="")
     vendor = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     category = models.ForeignKey(

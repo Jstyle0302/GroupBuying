@@ -311,7 +311,11 @@ Shops
               <li class="list-group-item menu">
                 <div class="row no-gutters">
                   <div class="col-3 align-self-center">
-                    <img src="{{ dish_info.image.url }}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
+                    {% if dish_info.image != "" %}
+                      <img src="{{ dish_info.image.url }}" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
+                    {% else %}
+                      <img src="https://www.cmu.edu/stugov/gsa/logo_square.png" class="card-img px-1 rounded mx-auto" alt="{{ dish }}">
+                    {% endif %}      
                   </div>
                   <div class="col-9">
                     <h4 class="card-title"><span id="product-name-{{dish_info.id}}">{{ dish }}</span><i

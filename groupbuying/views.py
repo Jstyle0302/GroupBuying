@@ -500,25 +500,28 @@ def get_orders(vendor_id):
     # orderbundle.orderunit_set.all() # reverse lookup
 
     for orderbundle in orderbundles:
-        tmp_order = {'order': []}
-        tmp_summary = {}
-        tmp_orderbundle_dict = {'order_id': orderbundle.id}
-        orderUnits = OrderUnit.objects.filter(orderbundle=orderbundle)
+        if orderbundle.isPaid:
+            tmp_order = {'order': []}
+            tmp_summary = {}
+            tmp_orderbundle_dict = {'order_id': orderbundle.id}
+            orderUnits = OrderUnit.objects.filter(orderbundle=orderbundle)
 
-        for orderUnit in orderUnits:
-            tmp_orderUnit_dict = {}
-            tmp_orderUnit_dict['product'] = orderUnit.product.name
-            tmp_orderUnit_dict['count'] = orderUnit.quantity
-            tmp_orderUnit_dict['price'] = orderUnit.product.price
-            tmp_order['order'].append(dict(tmp_orderUnit_dict))
+            for orderUnit in orderUnits:
+                tmp_orderUnit_dict = {}
+                tmp_orderUnit_dict['product'] = orderUnit.product.name
+                tmp_orderUnit_dict['count'] = orderUnit.quantity
+                tmp_orderUnit_dict['price'] = orderUnit.product.price
+                tmp_order['order'].append(dict(tmp_orderUnit_dict))
 
-        tmp_summary['summary'] = dict(tmp_order)
-        tmp_orderbundle_dict['receipt'] = dict(tmp_summary)
+            tmp_summary['summary'] = dict(tmp_order)
+            tmp_orderbundle_dict['receipt'] = dict(tmp_summary)
+            # print("orderbundle.total_price = {0}".format(orderbundle.totalPrice))
 
-        if orderbundle.isCompleted:
-            finished.append(dict(tmp_orderbundle_dict))
-        else:
-            incompleted.append(dict(tmp_orderbundle_dict))
+            tmp_orderbundle_dict['receipt']['summary']['total'] = orderbundle.totalPrice
+            if orderbundle.isCompleted:
+                finished.append(dict(tmp_orderbundle_dict))
+            else:
+                incompleted.append(dict(tmp_orderbundle_dict))
 
     return incompleted, finished
 
@@ -656,42 +659,42 @@ def shopEdit_page(request):
     #     }
     # }]
 
-    context['menu'] = {
-        'Coffee': {
-            'dishes': {
-                'Cappuccino': {
-                    'id': 1,
-                    'price': 5,
-                    'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
-                    'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-                },
-                'Cold brew': {
-                    'id': 2,
-                    'price': 6,
-                    'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
-                    'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-                }
-            },
-            'id':2
-        },
-        'Tea': {
-            'dishes': {
-                'Green Tea': {
-                    'id': 3,
-                    'price': 4,
-                    'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
-                    'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-                },
-                'Chai Latte': {
-                    'id': 4,
-                    'price': 4.5,
-                    'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
-                    'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-                }
-            },
-            'id': 1
-        }
-    }
+    # context['menu'] = {
+    #     'Coffee': {
+    #         'dishes': {
+    #             'Cappuccino': {
+    #                 'id': 1,
+    #                 'price': 5,
+    #                 'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
+    #                 'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
+    #             },
+    #             'Cold brew': {
+    #                 'id': 2,
+    #                 'price': 6,
+    #                 'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
+    #                 'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
+    #             }
+    #         },
+    #         'id':2
+    #     },
+    #     'Tea': {
+    #         'dishes': {
+    #             'Green Tea': {
+    #                 'id': 3,
+    #                 'price': 4,
+    #                 'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
+    #                 'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
+    #             },
+    #             'Chai Latte': {
+    #                 'id': 4,
+    #                 'price': 4.5,
+    #                 'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
+    #                 'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
+    #             }
+    #         },
+    #         'id': 1
+    #     }
+    # }
 
     # context['finished'] = context['incompleted']
 
@@ -758,7 +761,7 @@ def update_category_name(request):
     elif 'menu_id' not in request.POST or not request.POST['menu_id']:
         errors.append('You must provide menu id')
     else:
-        cur_category = Category.objects.get(pk=int(request.POST['menu_id']))
+        cur_category = Category.objects.filter(pk=int(request.POST['menu_id']))[0]
         cur_category.name = request.POST['new_menu_name']
         cur_category.save()
 
