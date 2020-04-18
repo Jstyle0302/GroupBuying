@@ -19,12 +19,19 @@ Shops
   This order is raised by {{user.username}}.
   {% endif %}
 </div>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'search' %}">Search</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{vendorInfo.name}}</li>
+  </ol>
+</nav>
 <div class="row">
   <div class="col-3">
     <div class="card">
       <div class="card-body">
         <div class="list-group list-group-flush text-center font-weight-bold" id="list-tab" role="tablist">
-          <h4 class="text-uppercase font-italic text-muted">{{shop_name}}</h4>
+          <h4 class="text-uppercase font-italic text-muted">{{vendorInfo.name}}</h4>
           <a class="list-group-item list-group-item-action active" id="list-profile-list" data-toggle="tab"
             href="#list-profile" role="tab" aria-controls="profile">
             <h5>Profile</h5>
