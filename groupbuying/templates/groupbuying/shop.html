@@ -101,14 +101,18 @@ Shops
                 <p class="text-monospace">Shopping limit: $ {{ vendorInfo.min_order }}</p>
                 <textarea name="description" cols="70" rows="3" readonly id="id_description"
                   class="card-text col mb-2 form-control form-control-lg">{{ vendorInfo.description }}</textarea>
+                  {% if is_subscribe == 0 %}
                   <form method="post" action="{% url 'add_to_favorite' vendorInfo.id %}" >
                     <button type="submit" class="btn btn-danger"><i class="fas fa-heart"></i> Add to favorite</button>
                     {% csrf_token %}
                   </form>
+                  {% endif %}
+                  {% if is_subscribe == 1 %}
                   <form method="post" action="{% url 'remove_from_favorite' vendorInfo.id %}" >
                     <button type="submit" class="btn btn-warning"><i class="fas fa-heart"></i> Remove from favorite</button>
                     {% csrf_token %}
                   </form>
+                  {% endif %}  
               </div>
             </div>
           </div>
