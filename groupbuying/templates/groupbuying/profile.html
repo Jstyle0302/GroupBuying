@@ -21,7 +21,7 @@ Profile
             {% if orders %}
             <ul class="list-group list-group-flush">
                 {% for order in orders %}
-                <li class="list-group-item"><a id="id_profile_link_{{follower.username}}" href="{% url 'show_order' order.orderbundle_id 1%}?_id={{order.orderbundle_id}}">{{order.shop_name}}
+                <li class="list-group-item"><a id="id_profile_link_{{follower.username}}" href="{% url 'show_order' order.orderbundle_id 1%}?_id={{order.orderbundle_id}}">{{order.shop_name}}</a>
                 {% endfor %}
             </ul>
             {% endif %}
