@@ -420,10 +420,11 @@ def add_to_favorite(request, shop_id):
         i += 1
 
     context['subcribes'] = []
-    context['subcribes_shop_id'] = []
     for favoriteVendor in customerInfo.subscription.all():
-        context['subcribes'].append(favoriteVendor.name)
-        context['subcribes_shop_id'].append(favoriteVendor.id)
+        subcribes = {}
+        subcribes['shop_name'] = (favoriteVendor.name)
+        subcribes['shop_id'] = (favoriteVendor.id)
+        context['subcribes'].append(subcribes)
 
     #print(context['orders']['shop_id'])
     context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
