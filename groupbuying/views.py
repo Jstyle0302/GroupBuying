@@ -426,10 +426,6 @@ def add_to_favorite(request, shop_id):
         subcribes['shop_id'] = (favoriteVendor.id)
         context['subcribes'].append(subcribes)
 
-    #print(context['orders']['shop_id'])
-    context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
-    #context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
-    context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     context['customerInfo'] = customerInfo
 
     return render(request, 'groupbuying/profile.html', context)
@@ -469,10 +465,6 @@ def remove_from_favorite(request, shop_id):
         subcribes['shop_id'] = (favoriteVendor.id)
         context['subcribes'].append(subcribes)
 
-    #print(context['orders']['shop_id'])
-    context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
-    #context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
-    context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     context['customerInfo'] = customerInfo
 
     return render(request, 'groupbuying/profile.html', context)
@@ -511,10 +503,6 @@ def profile_page(request, user_id):
         subcribes['shop_id'] = (favoriteVendor.id)
         context['subcribes'].append(subcribes)
 
-    #print(context['orders']['shop_id'])
-    context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
-    #context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
-    context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
     context['customerInfo'] = customerInfo
 
     return render(request, 'groupbuying/profile.html', context)

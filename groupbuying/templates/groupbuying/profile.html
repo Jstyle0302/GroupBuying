@@ -26,16 +26,6 @@ Profile
             </ul>
             {% endif %}
         </div>
-        <div class="card">
-            <div class="card-header"><strong>Subscribes</strong></div>
-            {% if subcribes %}
-            <ul class="list-group list-group-flush">
-                {% for subcribe in subcribes%}
-                <li class="list-group-item"><a href="{% url 'shop' subcribe.shop_id %}">{{subcribe.shop_name}}</a></li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
     </div>
     <div class="col-9">
         <div class="card">
@@ -73,11 +63,11 @@ Profile
             </div>
         </div>
         <div class="card mt-3">
-            <div class="card-header"><strong>You are following</strong></div>
-            {% if followers %}
+            <div class="card-header"><strong>Subscribes</strong></div>
+            {% if subcribes %}
             <ul class="list-group list-group-flush">
-                {% for follower in followers %}
-                <li class="list-group-item"><a id="id_profile_link_{{follower.username}}" href="/">{{follower}}</a></li>
+                {% for subcribe in subcribes%}
+                <li class="list-group-item"><a href="{% url 'shop' subcribe.shop_id %}">{{subcribe.shop_name}}</a></li>
                 {% endfor %}
             </ul>
             {% endif %}
