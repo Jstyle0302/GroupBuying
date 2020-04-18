@@ -96,26 +96,14 @@ def orderList_page(request):
 
 def share_page(request, order_id):
     context = {}
-    context['shop_name'] = "Starbucks"
-    context['description'] = "Very expensive and unhealthy food."
-    context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
-    context['menu'] = {
-        'all': {
-
-        }
-    }
-
-    context['productForm'] = ProductForm()
-    context['vendorForm'] = VendorInfoForm()
-    context['description'] = "Hi Shine, please insert the vendor's description here"
-    context['categories'] = Category.objects.all()
-    context['products'] = Product.objects.all()
-    context['vendorInfo'] = VendorInfo.objects.all()  # TODO: delte lated
-    # context = {'categories': categories, 'products': products, 'errors': errors}
+    context = {}
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
+    shop_id = orderbundle.vendor.id
+    context = get_shopPage_context(request, shop_id)
+
     context['founder'] = orderbundle.holder.name
     context['order_id'] = order_id
-
+    
     return render(request, 'groupbuying/shop.html', context)
 
 
@@ -196,6 +184,7 @@ def show_order_page(request, order_id):
     context['receipt']['summary'] = {}
     context['receipt']['summary']['order'] = []
     context['checkout_to_shopper'] = 1
+    context['min_order'] = orderbundle.vendor.min_order
 
     for orderUnit in orderUnits:
 
@@ -408,7 +397,27 @@ def profile_page(request, user_id):
     customerInfo = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
     context['username'] = customerInfo.name
     context['description'] = customerInfo.description
-    context['orders'] = ['Pizza Hut', 'Cold Stone', 'Jeff']
+    '''
+    last_context['restaurants'] = sorted(last_context['restaurants'],
+                                             key=lambda i: i['price'])
+    '''
+    OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
+
+    context['orders'] = []
+    i = 0
+    for orderUnit in reversed(OrderUnits):
+        if i >= 5:
+            break
+        if orderUnit.isPaid == False:
+            continue
+        order = {}
+        order['shop_name'] = orderUnit.orderbundle.vendor.name
+        order['orderbundle_id'] = orderUnit.orderbundle.id
+        #order['shop_id']  = int(orderUnit.orderbundle.vendor.id)
+        context['orders'].append(order)
+        i += 1
+
+    #print(context['orders']['shop_id'])
     context['followers'] = ['Shine', 'Charles', 'Ari', 'En-ting', 'Ting']
     context['subcribes'] = ['Starbucks', 'Pandas', 'Subway']
     context['photo'] = "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
@@ -1029,7 +1038,11 @@ def fill_restaurant_info(obj):
     restaurant['rating'] = rating_proc(obj)
 
     # TBD
-    restaurant['price'] = 5
+    if not obj.min_order:
+        restaurant['price'] = 0
+    else:
+        restaurant['price'] = obj.min_order    
+
     if obj.image:
         restaurant['image'] = obj.image.url
     else:
@@ -1108,6 +1121,9 @@ def fill_context_filter_query_rules(context, fitler_query):
     for tag in fitler_query.tag:
         context['query_rules'].append(tag)
 
+    if fitler_query.price != '':
+        context['query_rules'].append(fitler_query.price)
+
     cache.set('context', context)
 
     return context
@@ -1128,7 +1144,7 @@ def filtering(request):
         result = VendorInfo.objects.all()
         search_text = ''
 
-    result = filter_by_price(request, result)
+    result, fitler_query.price = filter_by_price(request, result)
     result, fitler_query.rating = filter_by_rating(request, result)
     result, fitler_query.tag = filter_by_tag(request, result)
 
@@ -1152,8 +1168,14 @@ def filter_by_price(request, prev_result):
             min_order__lte=price)
     else:
         result = prev_result
-        
-    return result
+
+    for obj in prev_result:
+        if not obj.min_order:
+            result |= VendorInfo.objects.filter(id=obj.id)
+
+    price_query = "price <= " + str(price)
+
+    return result, price_query
 
 
 def filter_by_rating(request, prev_result):
@@ -1174,11 +1196,20 @@ def filter_by_rating(request, prev_result):
 
     avg_rating = Rating.objects.values('ratedTarget').annotate(
         avg_rating=Avg('rating')).order_by('ratedTarget')
+
+
     avg_rating_filtered = avg_rating.filter(rating__gte=rating)
+
+
     result = prev_result.filter(
         id__in=avg_rating_filtered.values('ratedTarget'))
 
-    rating_query = "rating >=" + str(rating)
+    
+    for obj in prev_result:
+        if not avg_rating.filter(ratedTarget=int(obj.id)) and int(rating) <= 3 :
+            result |= VendorInfo.objects.filter(id=obj.id)
+
+    rating_query = "rating >= " + str(rating)
     return result, rating_query
 
 
@@ -1228,8 +1259,8 @@ def sorting(request):
                                              reverse=True)
 
     if ('sort_by_price' in request.POST):
-        print('price\n')
-        last_context = last_context
+        last_context['restaurants'] = sorted(last_context['restaurants'],
+                                             key=lambda i: i['price'])
 
     cache.set('context', last_context)
     last_context['restaurants'] = last_context['restaurants'][0:PAGESIZE_CONSTANT()]

@@ -95,9 +95,11 @@ Profile
                 {% endif %}
 
                 {% if isFounder %}
+                {% if checkout_to_shopper and  receipt.summary.total < min_order %}
                 <div class="alert alert-danger" role="alert">
-                    Sorry your order shoud over the shopping limt, or you cannot checkout!(Shine to do)
+                    Sorry your order should be higher than the shopping limit: {{min_order}} dollars, or you cannot checkout!
                 </div>
+                {% endif %}
                     <div class="form-group">
                         <label for="orderDescription">Some words for shop owner</label>
                         <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
