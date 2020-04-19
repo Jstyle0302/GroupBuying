@@ -536,7 +536,8 @@ def complete_order(request):
         new_statistic = Statistic(year = cur_time.year,
                                   month = cur_time.month,
                                   sales = cur_order.totalPrice,
-                                  expense = 0)
+                                  expense = 0,
+                                  vendor=cur_order.vendor)
         new_statistic.save()
 
     return redirect('shop_edit')
@@ -544,7 +545,7 @@ def complete_order(request):
 
 def get_statistic_json(request):
     cur_time = datetime.datetime.now()
-    response_text = serializers.serialize('json', Statistic.objects.all().filter(year = cur_time.year))
+    response_text = serializers.serialize('json', Statistic.objects.all().filter(year = cur_time.year, vendor__id=request.user.id))
 
     return HttpResponse(response_text, content_type='application/json')
 
