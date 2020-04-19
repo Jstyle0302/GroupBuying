@@ -677,7 +677,7 @@ def get_shopPage_context(request, shop_id):
 
 def get_shopEditPage_context(request):
     context = {}
-    cur_vendor_info = VendorInfo.objects.get(pk=int(request.user.id))
+    cur_vendor_info = VendorInfo.objects.get(pk=request.user.id)
 
     # if True:
     #    cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
@@ -1517,7 +1517,7 @@ def register_action(request):
                                     description="Why nunu why",
                                     address=form.cleaned_data['address'],
                                     phoneNum=form.cleaned_data['cell_phone'],
-                                    customer_id=request.user.id)
+                                    customer_id=new_user.id)
     new_customerInfo.save()
 
     new_vendorInfo = VendorInfo(name=form.cleaned_data['username'],
@@ -1525,7 +1525,8 @@ def register_action(request):
                                 description="test",
                                 address=form.cleaned_data['address'],
                                 phoneNum=form.cleaned_data['cell_phone'],
-                                vendor_id=request.user.id)
+                                vendor_id=new_user.id)
+
     new_vendorInfo.save()
 
     new_userProfile = UserProfile(user=new_user,
