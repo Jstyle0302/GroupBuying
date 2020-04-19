@@ -1249,9 +1249,10 @@ def filtering(request):
 
 
 def filter_by_price(request, prev_result):
+    price_query = ''
     if ('price_filter' not in request.POST
             or not request.POST['price_filter']):
-        return prev_result, rating_query
+        return prev_result, price_query
     price = int(request.POST['price_filter'])
 
     if price < 100:
