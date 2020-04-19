@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-# from django.contrib.postgres.fields import JSONField
+from jsonfield import JSONField
+# from django.contrib.postgres.fields import JSONField # not support sqlite
 
 '''
 # install the following packages if compile error with PhoneNumberField
@@ -91,6 +92,7 @@ class Statistic(models.Model):
     month = models.IntegerField()
     sales = models.FloatField(default=0)
     expense = models.FloatField(default=0)
+    productSales = JSONField(null=True)
     vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
 
 class Rating(models.Model):
