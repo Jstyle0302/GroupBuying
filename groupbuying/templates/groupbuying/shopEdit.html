@@ -97,14 +97,14 @@ Shops
                     </a>
                   {% endif %}
                 {% endfor %}
-                <div class="dropdown">
+                <!-- <div class="dropdown">
                   <input type="text" class="form-control" placeholder="Search.." id="myInput" onkeyup="filterFunction()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <div class="dropdown-menu" aria-labelledby="myInput" id="myDropdown">
                     <a class="dropdown-item" href="#dinner">Dinner</a>
                     <a class="dropdown-item" href="#lunch">Lunch</a>
                     <a class="dropdown-item" href="#snack">Snack</a>
                   </div>
-                </div>
+                </div> -->
                 <form action="{% url 'update_vendor_info' %}" method="POST" class="form-group"
                   enctype="multipart/form-data">
                   {% csrf_token %}
