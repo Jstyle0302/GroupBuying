@@ -61,11 +61,11 @@ google.charts.setOnLoadCallback(drawLineChart);
 
 function drawLineChart() {
   var data = google.visualization.arrayToDataTable([
-    ['Year', 'Sales', 'Expenses'],
-    ['2004',  1000,      400],
-    ['2005',  1170,      460],
-    ['2006',  660,       1120],
-    ['2007',  1030,      540]
+    ['Month', 'Sales', 'Expenses'],
+    ['Jan.',  1000,      400],
+    ['Feb.',  1170,      460],
+    ['Mar.',  660,       1120],
+    ['Apr.',  1030,      540]
   ]);
 
   var options = {
@@ -85,11 +85,11 @@ google.charts.setOnLoadCallback(drawBarChart);
 
 function drawBarChart() {
   var data = google.visualization.arrayToDataTable([
-    ['Year', 'Coffee', 'Tea', 'Cake'],
-    ['2014', 1000, 400, 200],
-    ['2015', 1170, 460, 250],
-    ['2016', 660, 1120, 300],
-    ['2017', 1030, 540, 350]
+    ['Month', 'Coffee', 'Tea', 'Cake'],
+    ['Jan.', 1000, 400, 200],
+    ['Feb.', 1170, 460, 250],
+    ['Mar.', 660, 1120, 300],
+    ['Apr.', 1030, 540, 350]
   ]);
 
   var options = {

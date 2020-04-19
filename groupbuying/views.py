@@ -526,6 +526,10 @@ def complete_order(request):
     return redirect('shop_edit')
     # return render(request, 'groupbuying/shopEdit.html', context)
 
+def get_statistic_json(request):
+    response_text = serializers.serialize('json', Item.objects.all())
+
+    return HttpResponse(response_text, content_type='application/json')
 
 def get_orders(vendor_id):
     incompleted = []

@@ -84,6 +84,11 @@ class Product(models.Model):
             ',price=' + str(self.price) + ',seller_id=' + \
             self.sellerId + ',isAvailable=' + str(self.isAvailable)
 
+class Statistic(models.Model):
+    year = models.IntegerField()
+    month = models.IntegerField()
+    sales = models.FloatField()
+    expense = models.FloatField()
 
 class Rating(models.Model):
     rating = models.FloatField()
@@ -96,7 +101,7 @@ class Rating(models.Model):
 class OrderBundle(models.Model):
     holder = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
-    totalPrice = models.IntegerField(default=0)
+    totalPrice = models.FloatField(default=0)
     isCompleted = models.BooleanField(default=False)
     isPaid = models.BooleanField(default=False)
 
