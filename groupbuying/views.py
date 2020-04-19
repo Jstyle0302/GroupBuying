@@ -35,6 +35,15 @@ from django.utils.html import strip_tags
 def PAGESIZE_CONSTANT():
     return 5
 
+def handler404(request, *args, **argv):
+    context = {}
+    # context['error'] = "Sorry page not found!! Sad"
+    return render(request,'groupbuying/404.html',context)
+
+
+def handler500(request, *args, **argv):
+    return render(request,'groupbuying/404.html')
+
 
 def home_page(request):
     context = {}
