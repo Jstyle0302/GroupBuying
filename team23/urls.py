@@ -22,3 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('groupbuying/', include('groupbuying.urls')),
 ]
+
+handler404 = 'groupbuying.views.handler404'
+handler500 = 'groupbuying.views.handler500'
