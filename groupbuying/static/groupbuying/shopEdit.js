@@ -68,9 +68,9 @@ function updateStatistic(items) {
   var total_products = []
   var lineChart = [
     ['Month', 'Sales', 'Expenses'],
-    ['Jan',  200,      100],
-    ['Feb',  300,      200],
-    ['Mar',  400,      300],
+    ['Jan',  400,      200],
+    ['Feb',  800,      400],
+    ['Mar',  1200,     600],
     ['Apr',  0,      0],
     ['May',  0,      0],
     ['Jun',  0,      0],
