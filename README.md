@@ -7,8 +7,9 @@ Proposal link: https://docs.google.com/document/d/1NdTe2fYgq8__nJ3FEP98KG_uEWeCL
 
 
 How to run groupbuying
-1. Install OAuth libaray: pip install social-auth-app-django
-2. Run: python manage.py runserver --insecure
+1. pip install social-auth-app-django (OAuth libaray)
+2. pip install jsonfield
+3. Run: python manage.py runserver --insecure
 
 (Optional for https)
 1. Install SSL server libaray: pip install django-sslserver
