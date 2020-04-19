@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.http import HttpResponse, Http404
 from django.http import HttpResponseForbidden
 from django.conf import settings
+from django.http import JsonResponse
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -528,9 +529,38 @@ def get_menu(vendor_id):
 
     return menu
 
+def get_product_sales(order_bundle_id, pre_json):
+    # load prev_json data as dict
+    product_sale_dict = {}
+    if pre_json != None:
+        product_sale_dict = pre_json
+        #product_sale_dict = json.load(pre_json)
+
+    # value: str -> float
+    for key in product_sale_dict:
+        product_sale_dict[key] = float(product_sale_dict[key])
+
+    # update json data
+    cur_order = OrderBundle.objects.get(pk=int(order_bundle_id))
+    cur_order_units = OrderUnit.objects.filter(orderbundle=cur_order)
+    for order in cur_order_units:
+        if order.product.name in product_sale_dict:
+            product_sale_dict[order.product.name] += float(order.quantity) * float(order.product.price)
+        else:
+            product_sale_dict[order.product.name] = float(order.quantity) * float(order.product.price)
+    
+    # print(JsonResponse(product_sale_dict))
+    # return JsonResponse(product_sale_dict)
+    # print(json.dumps(product_sale_dict))
+    # return json.dumps(product_sale_dict)
+    # print(product_sale_dict)
+    print(product_sale_dict)
+    return dict(product_sale_dict)
+    
 
 def complete_order(request):
     errors = []
+    cur_order = None
     if 'order_id' not in request.POST or not request.POST['order_id']:
         errors.append('You must have provide the order id')
     else:
@@ -538,17 +568,21 @@ def complete_order(request):
         cur_order.isCompleted = True
         cur_order.save()
     
+    # Add total sales to statistic
     cur_time = datetime.datetime.now()
-    cur_statistic = Statistic.objects.filter(year=cur_time.year, month=cur_time.month)
+    cur_statistic = Statistic.objects.filter(year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
+    # print(type(cur_statistic[0].productSales))
     if len(cur_statistic) > 0:
         cur_statistic[0].sales += cur_order.totalPrice
+        cur_statistic[0].productSales = get_product_sales(request.POST['order_id'], cur_statistic[0].productSales)
         cur_statistic[0].save()
     else:
         new_statistic = Statistic(year = cur_time.year,
                                   month = cur_time.month,
                                   sales = cur_order.totalPrice,
                                   expense = 0,
-                                  vendor=cur_order.vendor)
+                                  productSales=get_product_sales(request.POST['order_id'], None),
+                                  vendor = cur_order.vendor)
         new_statistic.save()
 
     return redirect('shop_edit')
@@ -556,7 +590,7 @@ def complete_order(request):
 
 def get_statistic_json(request):
     cur_time = datetime.datetime.now()
-    response_text = serializers.serialize('json', Statistic.objects.all().filter(year = cur_time.year, vendor__id=request.user.id))
+    response_text = serializers.serialize('json', Statistic.objects.all().filter(year=cur_time.year, vendor__id=request.user.id))
 
     return HttpResponse(response_text, content_type='application/json')
 
