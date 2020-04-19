@@ -11,6 +11,10 @@ def create_profile(backend, user, response, *args, **kwargs):
                                     description="",
                                     address=response.get('locale'),
                                     customer_id=user.id)
+    
+    if backend.name == "google-oauth2":
+        new_customerInfo.image_url_OAuth = response.get('picture')
+
     new_customerInfo.save()
 
     new_vendorInfo = VendorInfo(name=response.get('name'),
@@ -19,8 +23,8 @@ def create_profile(backend, user, response, *args, **kwargs):
                                 address=response.get('locale'),
                                 min_order=0,
                                 vendor_id=user.id)
-
-    if backend.name == "google-oauth2":
+    
+    if backend.name == "google-oauth2":    
         new_vendorInfo.image_url_OAuth = response.get('picture')
 
     new_vendorInfo.save()

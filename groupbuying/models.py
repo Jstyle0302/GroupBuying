@@ -41,6 +41,7 @@ class CustomerInfo(models.Model):
     phoneNum = models.CharField(max_length=16)
     image = models.ImageField(blank=False, null=True,
                               upload_to='img/', default='default.jpeg')
+    image_url_OAuth = models.URLField(max_length=200)
     content_type = models.CharField(max_length=50, default="")
     customer_id = models.IntegerField(null=True)
     subscription = models.ManyToManyField(VendorInfo, related_name='follower', symmetrical=False,blank=False, null=True)

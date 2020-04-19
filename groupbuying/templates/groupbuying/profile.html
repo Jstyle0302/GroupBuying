@@ -31,11 +31,15 @@ Profile
         <div class="card">
             <div class="row no-gutters">
                 <div class="col-3 align-self-center">
-                    {% if customerInfo.image.url %}
-                    <img id="id_user_picture" class="card-img img-thumbnail" src="{{ customerInfo.image.url }}">
+                    {% if customerInfo.image != "" %}
+                    
+                    <img id="id_user_picture" class="card-img img-thumbnail" src="{{customerInfo.image.url}}"
+                      alt="Default image" onerror="this.onerror=null;this.src='https://i.stack.imgur.com/l60Hf.png';">
                     {% else %}
-                    <img id="id_user_picture" class="card-img img-thumbnail" src='https://i.stack.imgur.com/l60Hf.png'>    
-                    {% endif %}
+                    <p>123455</p>
+                    <img id="id_user_picture" class="card-img img-thumbnail" src="{{ customerInfo.image_url_OAuth }}" ;"
+                      alt="Default image" onerror="this.onerror=null;this.src='https://i.stack.imgur.com/l60Hf.png';">
+                    {% endif %}      
                 </div>
                 <div class="col-9 align-self-center">
                     <div class="card-body">
