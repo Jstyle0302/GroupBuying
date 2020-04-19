@@ -1097,8 +1097,11 @@ def rating_proc(obj):
 
 
 def search_text_proc(search_text):
-    search_result = VendorInfo.objects.filter(Q(name__contains=search_text) | Q(
-        address__contains=search_text) | Q(tagList__contains=search_text))
+    if search_text == "":
+        search_result = VendorInfo.objects.all()
+    else:    
+        search_result = VendorInfo.objects.filter(Q(name__contains=search_text) | Q(
+            address__contains=search_text) | Q(tagList__contains=search_text))
 
     return search_result
 
@@ -1351,7 +1354,7 @@ def search_page(request):
     if request.method == 'GET':
         return render(request, 'groupbuying/search.html', context)
 
-    if ('search_text' not in request.POST or not request.POST['search_text']):
+    if ('search_text' not in request.POST):
         errors.append('Empty text. Please must enter restaurant info.')
         return render(request, 'groupbuying/search.html', context)
 
