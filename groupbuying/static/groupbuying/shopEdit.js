@@ -129,7 +129,7 @@ function drawLineChart(arr) {
 
 
 google.charts.load('current', {'packages':['bar']});
-google.charts.setOnLoadCallback(drawBarChart);
+// google.charts.setOnLoadCallback(drawBarChart);
 
 function drawBarChart(total_products, items) {
   var keys = Object.keys(total_products);
@@ -184,29 +184,29 @@ function drawBarChart(total_products, items) {
 
 
 // google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawPieChart);
+// google.charts.setOnLoadCallback(drawPieChart);
 
-function drawPieChart() {
+// function drawPieChart() {
 
-  var data = google.visualization.arrayToDataTable([
-    ['Customers', 'Number'],
-    ['Under 20',     11],
-    ['21 to 30',      2],
-    ['31 to 40',  2],
-    ['41 to 50', 2],
-    ['Above 51',    7]
-  ]);
+//   var data = google.visualization.arrayToDataTable([
+//     ['Customers', 'Number'],
+//     ['Under 20',     11],
+//     ['21 to 30',      2],
+//     ['31 to 40',  2],
+//     ['41 to 50', 2],
+//     ['Above 51',    7]
+//   ]);
 
-  var options = {
-    legend: {position:'labeled',alignment:'end'},
-    height: 500,
-    width: 800
-  };
+//   var options = {
+//     legend: {position:'labeled',alignment:'end'},
+//     height: 500,
+//     width: 800
+//   };
 
-  var chart = new google.visualization.PieChart(document.getElementById('statistics_pie'));
+//   var chart = new google.visualization.PieChart(document.getElementById('statistics_pie'));
 
-  chart.draw(data, options);
-}
+//   chart.draw(data, options);
+// }
 
 /* End for shop.html */
 window.onload = getStatistic;
