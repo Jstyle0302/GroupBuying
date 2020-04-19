@@ -1421,6 +1421,8 @@ def search_page(request):
 def login_action(request):
     context = {}
 
+    if request.user.is_authenticated:
+        return redirect(reverse('home'))
     # Just display the registration form if this is a GET request.
     if request.method == 'GET':
         context['form'] = LoginForm()
@@ -1439,6 +1441,7 @@ def login_action(request):
                             password=form.cleaned_data['password'])
 
     login(request, new_user)
+
     return redirect(reverse('home'))
 
 
