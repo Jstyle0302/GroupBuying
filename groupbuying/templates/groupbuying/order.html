@@ -19,7 +19,10 @@ Profile
         <div class="card">
             <div class="card-header">
                 Order Number: {{order_id}}, Order shop: {{shop}}, Order founder: {{founder}}
-                <h6 class="card-subtitle mb-2 text-muted">Want to group others? Forward this link for them:<a href="{% url 'share' order_id %}?_id={{order_id}}">groupbuying.com?order={{order_id}}</a></h6>
+                <h6 class="card-subtitle mb-2 text-muted">Want to group others? Forward this link for them:<a id="shareLink"
+                        href="{{request.scheme}}://{{request.get_host}}{% url 'share' order_id %}?_id={{order_id}}">groupbuying.com?order={{order_id}}</a>
+                </h6>
+                <div id="qrcode"></div>
             </div>
 
             {% for order in receipt.orders %}
@@ -34,94 +37,104 @@ Profile
                                 <th scope="col">Count</th>
                                 <th scope="col">Price</th>
                             </tr>
-                            <tbody>
-                                {% for item in order.order %}
-                                <tr>
-                                    <th scope="row">{{forloop.counter}}</th>
-                                    <td>{{item.product}}</td>
-                                    <td>{{item.count}}</td>
-                                    <td>{{item.price}}</td>
-                                </tr>
-                                {% endfor %}
-                                <tr>
-                                    <th scope="row">Total</th>
-                                    <td></td>
-                                    <td></td>
-                                    <td>{{order.total}}</td>
-                                </tr>
-                            </tbody>
+                        <tbody>
+                            {% for item in order.order %}
+                            <tr>
+                                <th scope="row">{{forloop.counter}}</th>
+                                <td>{{item.product}}</td>
+                                <td>{{item.count}}</td>
+                                <td>{{item.price}}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <th scope="row">Total</th>
+                                <td></td>
+                                <td></td>
+                                <td>{{order.total}}</td>
+                            </tr>
+                        </tbody>
                         </thead>
                     </table>
-                    <textarea readonly class="form-control" id="orderDescription" rows="3">{{order.description}}</textarea>
+                    <textarea readonly class="form-control" id="orderDescription"
+                        rows="3">{{order.description}}</textarea>
                 </li>
             </ul>
             {% endfor %}
 
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                <h3 class="card-title">Summary</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Product</th>
-                            <th scope="col">Count</th>
-                            <th scope="col">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in receipt.summary.order %}
-                        <tr>
-                            <th scope="row">{{forloop.counter}}</th>
-                            <td>{{item.product}}</td>
-                            <td>{{item.count}}</td>
-                            <td>{{item.price}}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr>
-                            <th scope="row">Total</th>
-                            <td></td>
-                            <td></td>
-                            <td class="bg-warning text-dark">{{receipt.summary.total}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <h3 class="card-title">Summary</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Count</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in receipt.summary.order %}
+                            <tr>
+                                <th scope="row">{{forloop.counter}}</th>
+                                <td>{{item.product}}</td>
+                                <td>{{item.count}}</td>
+                                <td>{{item.price}}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <th scope="row">Total</th>
+                                <td></td>
+                                <td></td>
+                                <td class="bg-warning text-dark">{{receipt.summary.total}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                {% if from_profile != 1 %}   
-                {% if order_unit_id and checkout_to_holder%}
-                <form method="post" action="{% url 'checkout_to_holder' order_unit_id %}">
-                {% endif %}
-                {% if checkout_to_shopper %}
-                <form method="post" action="{% url 'checkout_to_shopper' order_id %}">
-                {% endif %}
-
-                {% if isFounder %}
-                {% if checkout_to_shopper and  receipt.summary.total < min_order %}
-                <div class="alert alert-danger" role="alert">
-                    Sorry your order should be higher than the shopping limit: {{min_order}} dollars, or you cannot checkout!
-                </div>
-                {% endif %}
-                    <div class="form-group">
-                        <label for="orderDescription">Some words for shop owner</label>
-                        <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-sm">Check out</button>
-                {% else %}
+                    {% if from_profile != 1 %}
                     {% if order_unit_id and checkout_to_holder%}
-                    <div class="form-group">
-                        <label for="orderDescription">Some words for order founder</label>
-                        <textarea class="form-control" name ="orderDescription" id="orderDescription" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-sm">Check out</button>
-                    {% endif %}
-                {% endif %}
+                    <form method="post" action="{% url 'checkout_to_holder' order_unit_id %}">
+                        {% endif %}
+                        {% if checkout_to_shopper %}
+                        <form method="post" action="{% url 'checkout_to_shopper' order_id %}">
+                            {% endif %}
 
-                {% csrf_token %}
-                </form>
-                {% endif %}
+                            {% if isFounder %}
+                            {% if checkout_to_shopper and  receipt.summary.total < min_order %}
+                            <div class="alert alert-danger" role="alert">
+                                Sorry your order should be higher than the shopping limit: {{min_order}} dollars, or you
+                                cannot checkout!
+                            </div>
+                            {% endif %}
+                            <div class="form-group">
+                                <label for="orderDescription">Some words for shop owner</label>
+                                <textarea class="form-control" name="orderDescription" id="orderDescription"
+                                    rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Check out</button>
+                            {% else %}
+                            {% if order_unit_id and checkout_to_holder%}
+                            <div class="form-group">
+                                <label for="orderDescription">Some words for order founder</label>
+                                <textarea class="form-control" name="orderDescription" id="orderDescription"
+                                    rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Check out</button>
+                            {% endif %}
+                            {% endif %}
+
+                            {% csrf_token %}
+                        </form>
+                        {% endif %}
                 </li>
             </ul>
         </div>
     </div>
 </div>
+{% endblock %}
+
+
+{% block footer %}
+{% load static %}
+<script src="{% static 'groupbuying/order.js' %}" type="text/javascript"></script>
 {% endblock %}
