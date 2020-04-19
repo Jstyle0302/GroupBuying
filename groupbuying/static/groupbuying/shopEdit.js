@@ -55,18 +55,60 @@ $('#vendorModal').on('show.bs.modal', function (event) {
   modal.find('#modal-vendor-id').val(id);
 })
 
+// Sends a new request to update the to-do list
+function getStatistic() {
+  $.ajax({
+      url: "/groupbuying/get_statistic_json",
+      dataType : "json",
+      success: updateStatistic
+  });
+}
+
+function updateStatistic(items) {
+  // Removes the old to-do list items
+  // console.log(items)
+  // var json_data = items
+  // var result = [];
+  var lineChart = [
+    ['Month', 'Sales', 'Expenses'],
+    ['Jan',  200,      100],
+    ['Feb',  300,      200],
+    ['Mar',  400,      300],
+    ['Apr',  0,      0],
+    ['May',  0,      0],
+    ['Jun',  0,      0],
+    ['Jul',  0,      0],
+    ['Aug',  0,      0],
+    ['Sep',  0,      0],
+    ['Oct',  0,      0],
+    ['Nov',  0,      0],
+    ['Dec',  0,      0]];
+
+  for (var i in items) {
+    var year = items[i].fields.year;
+    var month = items[i].fields.month;
+    var sales = items[i].fields.sales;
+    var expense = items[i].fields.expense;
+    lineChart[month][1] += sales;
+    lineChart[month][2] += expense;
+  }
+  drawLineChart(lineChart);
+
+}
+
 // google.js
 google.charts.load('current', {'packages':['corechart','bar']});
 google.charts.setOnLoadCallback(drawLineChart);
 
-function drawLineChart() {
-  var data = google.visualization.arrayToDataTable([
-    ['Month', 'Sales', 'Expenses'],
-    ['Jan.',  1000,      400],
-    ['Feb.',  1170,      460],
-    ['Mar.',  660,       1120],
-    ['Apr.',  1030,      540]
-  ]);
+function drawLineChart(arr) {
+  // var data = google.visualization.arrayToDataTable([
+  //   ['Month', 'Sales', 'Expenses'],
+  //   ['Jan.',  1000,      400],
+  //   ['Feb.',  1170,      460],
+  //   ['Mar.',  660,       1120],
+  //   ['Apr.',  1030,      540]
+  // ]);
+  var data = google.visualization.arrayToDataTable(arr)
 
   var options = {
     curveType: 'function',
@@ -130,3 +172,4 @@ function drawPieChart() {
 }
 
 /* End for shop.html */
+window.onload = getStatistic;

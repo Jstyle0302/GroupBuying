@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+# from django.contrib.postgres.fields import JSONField
 
 '''
 # install the following packages if compile error with PhoneNumberField
@@ -87,8 +88,8 @@ class Product(models.Model):
 class Statistic(models.Model):
     year = models.IntegerField()
     month = models.IntegerField()
-    sales = models.FloatField()
-    expense = models.FloatField()
+    sales = models.FloatField(default=0)
+    expense = models.FloatField(default=0)
 
 class Rating(models.Model):
     rating = models.FloatField()

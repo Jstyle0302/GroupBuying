@@ -38,7 +38,6 @@ class ProductForm(forms.ModelForm):
 
 
 class VendorInfoForm(forms.ModelForm):
-    # image = forms.ImageField(required=False)
     class Meta:
         model = VendorInfo
         fields = ['min_order', 'tagList', 'description', 'image']

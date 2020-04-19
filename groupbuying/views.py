@@ -23,7 +23,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.cache import cache
 
 from groupbuying.forms import LoginForm, RegistrationForm, ProductForm, VendorInfoForm, CustomerInfoForm
-from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle, Category
+from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserProfile, OrderUnit, OrderBundle, Category, Statistic
 from django.db.models import Q
 from django.db.models import Avg
 from functools import reduce
@@ -380,6 +380,8 @@ def checkout_to_shopper(request, order_id):
         total_price += order['price']
 
     context['receipt']['summary']['total'] = total_price
+    orderbundle.totalPrice = total_price
+    orderbundle.save()
 
     subject = str(request.user.username) + "'s order at " + \
         orderbundle.vendor.name + "(order_id:" + str(orderbundle.id) + ")"
@@ -391,8 +393,6 @@ def checkout_to_shopper(request, order_id):
     send_mail(subject, plain_message, from_email, to_email,
               html_message=html_message, fail_silently=False)
 
-    orderbundle.totalPrice = total_price
-    orderbundle.save()
 
     ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
 
@@ -517,19 +517,28 @@ def complete_order(request):
         cur_order = OrderBundle.objects.get(pk=int(request.POST['order_id']))
         cur_order.isCompleted = True
         cur_order.save()
-
-    # context = get_shopEditPage_context(request)
-    # context['errors'] = errors
-
-    # return redirect('shop_edit', kwargs=context)
     
+    cur_time = datetime.datetime.now()
+    cur_statistic = Statistic.objects.filter(year=cur_time.year, month=cur_time.month)
+    if len(cur_statistic) > 0:
+        cur_statistic[0].sales += cur_order.totalPrice
+        cur_statistic[0].save()
+    else:
+        new_statistic = Statistic(year = cur_time.year,
+                                  month = cur_time.month,
+                                  sales = cur_order.totalPrice,
+                                  expense = 0)
+        new_statistic.save()
+
     return redirect('shop_edit')
-    # return render(request, 'groupbuying/shopEdit.html', context)
+
 
 def get_statistic_json(request):
-    response_text = serializers.serialize('json', Item.objects.all())
+    cur_time = datetime.datetime.now()
+    response_text = serializers.serialize('json', Statistic.objects.all().filter(year = cur_time.year))
 
     return HttpResponse(response_text, content_type='application/json')
+
 
 def get_orders(vendor_id):
     incompleted = []
@@ -554,7 +563,7 @@ def get_orders(vendor_id):
 
             tmp_summary['summary'] = dict(tmp_order)
             tmp_orderbundle_dict['receipt'] = dict(tmp_summary)
-            print("orderbundle.total_price = {0}".format(orderbundle.totalPrice))
+            # print("orderbundle.total_price = {0}".format(orderbundle.totalPrice))
 
             tmp_orderbundle_dict['receipt']['summary']['total'] = orderbundle.totalPrice
             if orderbundle.isCompleted:
@@ -752,7 +761,8 @@ def shopEdit_page(request):
     # }
 
     # context['finished'] = context['incompleted']
-
+    # cur = datetime.datetime.now()
+    # print(cur.year, cur.month, type(cur.year), type(cur.month))
     context = get_shopEditPage_context(request)
 
     # return redirect(reverse('shop_edit', kwargs=context))

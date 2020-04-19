@@ -3,7 +3,6 @@ from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserPr
 
 
 def create_profile(backend, user, response, *args, **kwargs):
-    print(user.id)
     if len(CustomerInfo.objects.filter(customer_id=user.id))>0:
         return
 
