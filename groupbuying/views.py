@@ -47,32 +47,43 @@ def handler500(request, *args, **argv):
 
 def home_page(request):
     context = {}
-    context['recent'] = [{
+
+    search_result = search_text_proc("")
+    context['restaurants'] = []
+    context['categories'] = []
+    context['query_rules'] = []
+    context['rating'] = []
+    context['categories'] = get_all_tags()
+
+    for obj in search_result:
+        restaurant = fill_restaurant_info(obj)
+        context['restaurants'].append(restaurant)
+        context['rating'].append(restaurant['rating'])
+
+
+    context['restaurants'] = sorted(context['restaurants'],
+                                             key=lambda i: i['rating'],
+                                             reverse=True)
+    print(context['restaurants'])        
+    context['recommends'] = []
+    dict_recommand = {}
+    i = 0
+    for obj in  context['restaurants']:
+        if i >= 3:
+            break
+        dict_recommand = {
             # 'order_id': orderUnit.orderbundle.id,
             # 'name': orderUnit.orderbundle.vendor.name,
             # 'description': orderUnit.orderbundle.vendor.description,
-            'order_id': 1,
-            'name': 'Starbuck',
-            'description': 'Coffee shop',
-            'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
-    },{
-            # 'order_id': orderUnit.orderbundle.id,
-            # 'name': orderUnit.orderbundle.vendor.name,
-            # 'description': orderUnit.orderbundle.vendor.description,
-            'order_id': 2,
-            'name': 'Starbuck',
-            'description': 'Coffee shop',
-            'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
-    },{
-            # 'order_id': orderUnit.orderbundle.id,
-            # 'name': orderUnit.orderbundle.vendor.name,
-            # 'description': orderUnit.orderbundle.vendor.description,
-            'order_id': 3,
-            'name': 'Starbuck',
-            'description': 'Coffee shop',
-            'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png"
-    }]
-    context['recommends'] = context['recent']
+            'id': obj['id'],
+            'name': obj['name'],
+            'description': obj['description'],
+            'image': obj['image']
+        }
+        context['recommends'].append(dict_recommand)  
+        i += 1
+
+
     return render(request, 'groupbuying/home.html', context)
 
 @login_required
@@ -1327,12 +1338,10 @@ def sorting(request):
         last_search_text = last_context['last_search_text']
 
     if ('sort_by_name' in request.POST):
-        print('name\n')
         last_context['restaurants'] = sorted(last_context['restaurants'],
                                              key=lambda i: i['name'].lower())
 
     if ('sort_by_rating' in request.POST):
-        print('rating\n')
         last_context['restaurants'] = sorted(last_context['restaurants'],
                                              key=lambda i: i['rating'],
                                              reverse=True)

@@ -48,14 +48,13 @@ Login
     <div class="card-body">
       <h5 class="card-title">{{shop.name}}</h5>
       <p class="card-text">{{shop.description}}</p>
-      <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
-      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+      <p><a class="btn btn-secondary" href="{% url 'shop' shop.id %}" role="button">View details »</a></p>
     </div>
   </div>
   {% endfor %}
 </div>
 <h3 class="pb-3 mb-4 font-italic border-bottom">
-  Your recently orders
+  
 </h3>
 <div class="card-deck mb-4 justify-content-around">
   {% for shop in recent %}
@@ -79,7 +78,7 @@ Login
     <div class="row justify-content-center">
       <div class="col-10 col-lg-8 blurb mb-5 mb-md-0">
         <h2>Group buying</h2>
-        <p class="lead">Are you hungry? <a href="">Order now.</a></p>
+        <p class="lead">Are you hungry? <a href="{% url 'search' %}">Order now.</a></p>
       </div>
     </div>
   </div>
