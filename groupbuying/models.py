@@ -91,6 +91,7 @@ class Statistic(models.Model):
     month = models.IntegerField()
     sales = models.FloatField(default=0)
     expense = models.FloatField(default=0)
+    vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
 
 class Rating(models.Model):
     rating = models.FloatField()
