@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
+    # Account management
     path('', views.home_page, name='home'),
     path('login', views.login_action, name='login'),
     path('logout', views.logout_action, name='logout'),
@@ -27,6 +28,7 @@ urlpatterns = [
     path('add_product', views.add_product, name='add_product'),
     path('update_product', views.update_product, name='update_product'),
     path('complete_order', views.complete_order, name='complete_order'),
+    path('get_statistic_json', views.get_statistic_json, name='get_statistic_json'),
     # customer features
     path('profile-<str:user_id>', views.profile_page, name='profile'),
     path('update_customer_info-<str:user_id>',
