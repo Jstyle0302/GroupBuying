@@ -44,7 +44,7 @@ class CustomerInfo(models.Model):
     image_url_OAuth = models.URLField(max_length=200)
     content_type = models.CharField(max_length=50, default="")
     customer_id = models.IntegerField(null=True)
-    subscription = models.ManyToManyField(VendorInfo, related_name='follower', symmetrical=False,blank=False, null=True)
+    subscription = models.ManyToManyField(VendorInfo, related_name='follower', symmetrical=False,blank=True)
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
