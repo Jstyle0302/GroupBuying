@@ -78,7 +78,13 @@ Login
     <div class="row justify-content-center">
       <div class="col-10 col-lg-8 blurb mb-5 mb-md-0">
         <h2>Group buying</h2>
-        <p class="lead">Are you hungry? <a href="{% url 'search' %}">Order now.</a></p>
+        <p class="lead">Are you hungry?</p>
+          <form id = "order_now" action="{% url 'search' %}" method="post">
+            <input type="hidden" value="" name = "search_text">
+            <a class="lead" href="#" onclick="document.forms['order_now'].submit();"> Order now.</a> 
+            {% csrf_token %}    
+          </form>
+        
       </div>
     </div>
   </div>
