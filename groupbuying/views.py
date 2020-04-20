@@ -114,7 +114,7 @@ def orderList_page(request):
 
     return render(request, 'groupbuying/orderList.html', context)
 
-
+@login_required
 def share_page(request, order_id):
     context = {}
     context = {}
@@ -127,7 +127,7 @@ def share_page(request, order_id):
     
     return render(request, 'groupbuying/shop.html', context)
 
-
+@login_required
 def send_email_page(request, order_id):
     context = {}
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
@@ -180,6 +180,7 @@ def send_email_page(request, order_id):
 
     return redirect('shop')
 
+@login_required
 def remove_orderUnit(request, order_unit_id):
     context = {}
     toBeRemoved_orderUnit = OrderUnit.objects.filter(Q(id=str(order_unit_id)))[0]
@@ -253,6 +254,7 @@ def remove_orderUnit(request, order_unit_id):
 
     return render(request, 'groupbuying/order.html', context)
 
+@login_required
 def show_order_page(request, order_id, from_profile):
     context = {}
     orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
@@ -571,6 +573,7 @@ def checkout_to_shopper(request, order_id):
 
     return redirect('home')
 
+@login_required
 def gen_context_profile(customerInfo):
     context = {}
     context['username'] = customerInfo.name
@@ -604,6 +607,7 @@ def gen_context_profile(customerInfo):
     context['customerInfo'] = customerInfo
     return context
 
+@login_required
 def add_to_favorite(request, shop_id):
     context = {}
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
@@ -615,7 +619,7 @@ def add_to_favorite(request, shop_id):
 
     return render(request, 'groupbuying/profile.html', context)
 
-
+@login_required
 def remove_from_favorite(request, shop_id):
     context = {}
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
