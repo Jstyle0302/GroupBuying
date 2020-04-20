@@ -287,7 +287,7 @@ def show_order_page(request, order_id, from_profile):
 
     orderbundle = orderbundle[0]    
 
-    if orderbundle.isPaid == True:
+    if (orderbundle.isPaid == True) and (int(from_profile) != 1):
         return redirect('home') 
 
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
