@@ -559,17 +559,20 @@ def gen_context_profile(customerInfo):
     context['username'] = customerInfo.name
     context['description'] = customerInfo.description
     OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
-
+    
     context['orders'] = []
     i = 0
+    orderbundle_id_list = []
+    
     for orderUnit in reversed(OrderUnits):
-        if i >= 5:
+        if i >= 5 or orderUnit.orderbundle.id in orderbundle_id_list:
             break
         #if orderUnit.isPaid == False:
         #    continue
         order = {}
         order['shop_name'] = orderUnit.orderbundle.vendor.name
         order['orderbundle_id'] = orderUnit.orderbundle.id
+        orderbundle_id_list.append(orderUnit.orderbundle.id)
         #order['shop_id']  = int(orderUnit.orderbundle.vendor.id)
         context['orders'].append(order)
         i += 1
