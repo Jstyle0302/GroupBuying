@@ -593,7 +593,7 @@ def checkout_to_shopper(request, order_id):
 
     return redirect('home')
 
-@login_required
+
 def gen_context_profile(customerInfo):
     context = {}
     context['username'] = customerInfo.name
