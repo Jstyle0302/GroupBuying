@@ -63,7 +63,7 @@ Profile
                         rows="3">{{order.description}}
                     </textarea>
                     <br>
-                    {% if order.orderUnitId and order.userid == user.id %}
+                    {% if order.orderUnitId and order.userid == user.id and from_profile != 1 %}
                     <form method="post" action="{% url 'remove_orderUnit' order.orderUnitId %}">
                         <button type="submit" class="btn btn-primary btn-sm">Remove order</button>
                         {% csrf_token %}
@@ -139,13 +139,11 @@ Profile
 
                         {% csrf_token %}
                     </form>
-                    {% endif %}
-
                     <form method="post" style="display:inline" action="{% url 'share' order_id %}">
                         <button type="submit" class="btn btn-primary btn-sm">Continue shopping</button>
                         {% csrf_token %}
                     </form>
-
+                    {% endif %}
                 </li>
             </ul>
         </div>
