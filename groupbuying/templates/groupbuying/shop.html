@@ -43,23 +43,9 @@ Shops
           </a>
           <h4 class="text-uppercase font-italic text-muted mt-5">Menu</h4>
           {% for category in menu %}
-          {% if forloop.counter == 1 %}
           <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="tab"
             href="#list-{{category}}" role="tab" aria-controls="{{category}}">
             <h5>{{category}}</h5>
-          </a>
-          {% else %}
-          <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="tab"
-            href="#list-{{category}}" role="tab" aria-controls="{{category}}">
-            <h5>{{category}}</h5>
-          </a>
-          {% endif %}
-          {% endfor %}
-          <!-- test start -->
-          {% for category in categories %}
-          <a class="list-group-item list-group-item-action" id="list-{{category}}-list" data-toggle="tab"
-            href="#list-{{category}}" role="tab" aria-controls="{{category}}">
-            <h5>{{category.name}}</h5>
           </a>
           {% endfor %}
         </div>

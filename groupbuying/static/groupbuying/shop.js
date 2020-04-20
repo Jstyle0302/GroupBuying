@@ -2,9 +2,12 @@
 $(function(){
   var url = window.location.href;
   var activeTab = url.substring(url.indexOf("#") + 1);
-  $(".tab-pane").removeClass("active in");
-  $("#" + activeTab).addClass("active in");
-  $('a[href="#'+ activeTab +'"]').tab('show');
+  var target = $("#" + activeTab);
+  if (target.length == 1) {
+    $(".tab-pane").removeClass("active in");
+    target.addClass("active in");
+    $('a[href="#'+ activeTab +'"]').tab('show');
+  }
 });
 
 // Buttons for add or minus product.
