@@ -354,7 +354,7 @@ def order_page(request, order_id):
     context = {}
     if 'product_id' not in request.POST or not request.POST['product_id'] or \
             'product_number' not in request.POST or not request.POST['product_number']:
-        return render(request, 'groupbuying/order.html', context)
+        return redirect('home')
 
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
     product = Product.objects.filter(Q(id=str(request.POST['product_id'])))[0]
