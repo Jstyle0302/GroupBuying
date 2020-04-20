@@ -660,18 +660,14 @@ def get_shopPage_context(request, shop_id):
     context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
     context['vendorInfo'] = cur_vendor_info
 
-    is_subscribe = CustomerInfo.objects.filter(Q(id=str(request.user.id)) & \
-    Q(subscription=cur_vendor_info))
+    if request.user.id:
+        is_subscribe = CustomerInfo.objects.filter(Q(id=str(request.user.id)) & \
+        Q(subscription=cur_vendor_info))
 
-    if is_subscribe:
-        context['is_subscribe'] = 1
-    else:
-        context['is_subscribe'] = 0    
-    #iii = customerInfo.object.filter(subscription=cur_vendor_info)
-   # print(iii)
-    # context['productForm'] = ProductForm()
-    # context['vendorForm'] = VendorInfoForm(
-    #     initial={'description': cur_vendor_info.description}, instance=cur_vendor_info)
+        if is_subscribe:
+            context['is_subscribe'] = 1
+        else:
+            context['is_subscribe'] = 0    
 
     return context
 
