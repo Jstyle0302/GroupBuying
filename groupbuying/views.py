@@ -277,7 +277,9 @@ def remove_orderUnit(request, order_unit_id):
 @login_required
 def show_order_page(request, order_id, from_profile):
     context = {}
-    orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
+    orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))
+    if not orderbundle:
+        return redirect('home')
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
 
     if int(from_profile) == 1:
