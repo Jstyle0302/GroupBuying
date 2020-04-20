@@ -211,6 +211,7 @@ def remove_orderUnit(request, order_unit_id):
             continue
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
+        dictOrder['userid'] = (orderUnit.buyer.id)
         dictOrder['order'] = []
         dictOrder['description'] = orderUnit.comment
         dictOrder['orderUnitId'] = orderUnit.id
@@ -287,6 +288,7 @@ def show_order_page(request, order_id, from_profile):
         dictOrder['username'] = (orderUnit.buyer.name)
         dictOrder['order'] = []
         dictOrder['description'] = orderUnit.comment
+        dictOrder['userid'] = (orderUnit.buyer.id)
         dictOrder['orderUnitId'] = orderUnit.id
         subOrder = {
             'product': orderUnit.product.name,
@@ -385,6 +387,7 @@ def order_page(request, order_id):
         dictOrder['username'] = (orderUnit.buyer.name)
         dictOrder['order'] = []
         dictOrder['description'] = orderUnit.comment
+        dictOrder['userid'] = (orderUnit.buyer.id)
         dictOrder['orderUnitId'] = orderUnit.id
         subOrder = {
             'product': orderUnit.product.name,
@@ -563,7 +566,7 @@ def gen_context_profile(customerInfo):
     context['orders'] = []
     i = 0
     orderbundle_id_list = []
-    
+
     for orderUnit in reversed(OrderUnits):
         if i >= 5 or orderUnit.orderbundle.id in orderbundle_id_list:
             break

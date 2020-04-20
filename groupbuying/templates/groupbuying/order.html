@@ -63,7 +63,7 @@ Profile
                         rows="3">{{order.description}}
                     </textarea>
                     <br>
-                    {% if order.orderUnitId %}
+                    {% if order.orderUnitId and order.userid == user.id %}
                     <form method="post" action="{% url 'remove_orderUnit' order.orderUnitId %}">
                         <button type="submit" class="btn btn-primary btn-sm">Remove order</button>
                         {% csrf_token %}
