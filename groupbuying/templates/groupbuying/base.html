@@ -57,9 +57,11 @@
 								<a id="id_nav_home" class="dropdown-item" href="{% url 'home' %}">Home</a>
 								<a id="id_nav_shopper_profile" class="dropdown-item" href="{% url 'shop_edit' %}">shopper Profile</a>
 								<a id="id_nav_user_profile" class="dropdown-item" href="{% url 'profile' user.id %}">User Profile</a>
-								<a id="id_nav_user_profile" class="dropdown-item" href="{% url 'other' %}">Other Profile(demo)</a>
+								<a id="id_nav_user_profile" class="dropdown-item" href="{% url 'search' %}">Search Page</a>
+								{% if user.is_authenticated %}
 								<div class="dropdown-divider"></div>
 								<a id="id_nav_logout" class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+								{% endif %}
 							</div>
 						</li>
 					</ul>
