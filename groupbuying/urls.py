@@ -48,4 +48,6 @@ urlpatterns = [
     path('remove_from_favorite-<str:shop_id>', views.remove_from_favorite, name='remove_from_favorite'),
     path('remove_orderUnit-<str:order_unit_id>',
          views.remove_orderUnit, name='remove_orderUnit'),
+     path('delete_orderbundle-<str:order_id>',
+         views.delete_orderbundle, name='delete_orderbundle'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -106,43 +106,49 @@ Profile
 
                 
                     {% if from_profile != 1 %}
-                    {% if order_unit_id and checkout_to_holder%}
-                    <!--<form method="post" style="display:inline" action="{% url 'checkout_to_holder' order_unit_id %}"> -->
-                    {% endif %}
-                    {% if checkout_to_shopper %}
-                    <form method="post" style="display:inline" action="{% url 'checkout_to_shopper' order_id %}">
-                        {% endif %}
-
-                        {% if isFounder %}
-                        {% if checkout_to_shopper and  receipt.summary.total < min_order %}
-                        <div class="alert alert-danger" role="alert">
-                            Sorry your order should be higher than the shopping limit: {{min_order}} dollars, or you
-                            cannot checkout!
-                        </div>
-                        {% endif %}
-                        <div class="form-group">
-                            <label for="orderDescription">Some words for shop owner</label>
-                            <textarea class="form-control" name="orderDescription" id="orderDescription"
-                                rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-sm">Check out</button>
-                        {% else %}
                         {% if order_unit_id and checkout_to_holder%}
-                        <div class="form-group">
-                            <label for="orderDescription">Some words for order founder</label>
-                            <textarea class="form-control" name="orderDescription" id="orderDescription"
-                                rows="3"></textarea>
-                        </div>
-                        <!--<button type="submit" class="btn btn-primary btn-sm">Check out</button> -->
+                        <!--<form method="post" style="display:inline" action="{% url 'checkout_to_holder' order_unit_id %}"> -->
                         {% endif %}
-                        {% endif %}
+                        {% if checkout_to_shopper %}
+                        <form method="post" style="display:inline" action="{% url 'checkout_to_shopper' order_id %}">
+                            {% endif %}
+
+                            {% if isFounder %}
+                                {% if checkout_to_shopper and  receipt.summary.total < min_order %}
+                                <div class="alert alert-danger" role="alert">
+                                    Sorry your order should be higher than the shopping limit: {{min_order}} dollars, or you
+                                    cannot checkout!
+                                </div>
+                                {% endif %}
+                                <div class="form-group">
+                                    <label for="orderDescription">Some words for shop owner</label>
+                                    <textarea class="form-control" name="orderDescription" id="orderDescription"
+                                        rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">Check out</button>
+                                {% else %}
+                                {% if order_unit_id and checkout_to_holder%}
+                                <div class="form-group">
+                                    <label for="orderDescription">Some words for order founder</label>
+                                    <textarea class="form-control" name="orderDescription" id="orderDescription"
+                                        rows="3"></textarea>
+                                </div>
+                                <!--<button type="submit" class="btn btn-primary btn-sm">Check out</button> -->
+                                {% endif %}
+                            {% endif %}
 
                         {% csrf_token %}
-                    </form>
-                    <form method="post" style="display:inline" action="{% url 'share' order_id %}">
-                        <button type="submit" class="btn btn-primary btn-sm">Continue shopping</button>
+                        </form>
+                        <form method="post" style="display:inline" action="{% url 'share' order_id %}">
+                            <button type="submit" class="btn btn-primary btn-sm">Continue shopping</button>
+                            {% csrf_token %}
+                        </form>
+                        {% if isFounder %}
+                        <form method="post" style="display:inline" action="{% url 'delete_orderbundle' order_id %}">
+                            <button type="submit" class="btn btn-primary btn-sm">Delete Order</button>
                         {% csrf_token %}
-                    </form>
+                        </form>
+                        {% endif %}
                     {% endif %}
                 </li>
             </ul>

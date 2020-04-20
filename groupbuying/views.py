@@ -468,6 +468,20 @@ def checkout_to_holder(request, order_unit_id):
     return redirect('home')
 
 
+
+@login_required
+def delete_orderbundle(request, order_id):
+    context = {}
+    orderbundle = OrderBundle.objects.filter(Q(id=str(order_id)))[0]
+    orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
+
+    for orderUnit in orderUnits:
+        orderUnit.delete()
+
+    orderbundle.delete()
+
+    return redirect('home')
+
 @login_required
 def checkout_to_shopper(request, order_id):
     context = {}
