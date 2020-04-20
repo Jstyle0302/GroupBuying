@@ -114,7 +114,7 @@ Profile
                             {% endif %}
 
                             {% if isFounder %}
-                                {% if checkout_to_shopper and  receipt.summary.total < min_order %}
+                                {% if receipt.summary.total < min_order %}
                                 <div class="alert alert-danger" role="alert">
                                     Sorry your order should be higher than the shopping limit: {{min_order}} dollars, or you
                                     cannot checkout!
@@ -125,8 +125,10 @@ Profile
                                     <textarea class="form-control" name="orderDescription" id="orderDescription"
                                         rows="3"></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm">Check out</button>
-                                {% else %}
+                                {% if receipt.summary.total >= min_order %}
+                                    <button type="submit" class="btn btn-primary btn-sm">Check out</button>
+                                {% endif %}
+                            {% else %}
                                 {% if order_unit_id and checkout_to_holder%}
                                 <div class="form-group">
                                     <label for="orderDescription">Some words for order founder</label>

@@ -413,6 +413,7 @@ def order_page(request, order_id):
     context['receipt']['orders'] = []
     context['receipt']['summary'] = {}
     context['receipt']['summary']['order'] = []
+    context['min_order'] = orderbundle.vendor.min_order
     #context['checkout_to_shopper'] = 1
     #context['min_order'] = orderbundle.vendor.min_order
 
