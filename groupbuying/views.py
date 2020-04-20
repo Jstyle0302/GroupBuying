@@ -203,7 +203,11 @@ def send_email_page(request, order_id):
 @login_required
 def remove_orderUnit(request, order_unit_id):
     context = {}
-    toBeRemoved_orderUnit = OrderUnit.objects.filter(Q(id=str(order_unit_id)))[0]
+    toBeRemoved_orderUnit = OrderUnit.objects.filter(Q(id=str(order_unit_id)))
+    if not toBeRemoved_orderUnit:
+        return redirect('home')
+
+    toBeRemoved_orderUnit = toBeRemoved_orderUnit[0]    
     orderbundle = toBeRemoved_orderUnit.orderbundle
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
 
