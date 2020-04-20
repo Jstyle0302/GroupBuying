@@ -46,4 +46,6 @@ urlpatterns = [
     path('rating_star', views.rating_star, name='rating_star'),
     path('add_to_favorite-<str:shop_id>', views.add_to_favorite, name='add_to_favorite'),
     path('remove_from_favorite-<str:shop_id>', views.remove_from_favorite, name='remove_from_favorite'),
+    path('remove_orderUnit-<str:order_unit_id>',
+         views.remove_orderUnit, name='remove_orderUnit'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

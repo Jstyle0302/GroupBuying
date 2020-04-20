@@ -60,8 +60,15 @@ Profile
                         </thead>
                     </table>
                     <textarea readonly class="form-control" id="orderDescription"
-                        rows="3">{{order.description}}</textarea>
+                        rows="3">{{order.description}}
+                    </textarea>
+                    <br>
+                    <form method="post" action="{% url 'remove_orderUnit' order.orderUnitId %}">
+                        <button type="submit" class="btn btn-primary btn-sm">Remove order</button>
+                        {% csrf_token %}
+                    </form>
                 </li>
+                
             </ul>
             {% endfor %}
 

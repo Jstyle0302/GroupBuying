@@ -180,6 +180,77 @@ def send_email_page(request, order_id):
 
     return redirect('shop')
 
+def remove_orderUnit(request, order_unit_id):
+    context = {}
+    toBeRemoved_orderUnit = OrderUnit.objects.filter(Q(id=str(order_unit_id)))[0]
+    orderbundle = toBeRemoved_orderUnit.orderbundle
+    customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
+
+    if orderbundle.holder.id == request.user.id:
+        context['isFounder'] = True
+        orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
+
+    else:
+        context['isFounder'] = False
+        orderUnits = OrderUnit.objects.filter(
+            Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
+
+    context['order_id'] = orderbundle.id
+    context['shop'] = orderbundle.vendor.name
+    context['founder'] = orderbundle.holder.name
+    context['receipt'] = {}
+    context['receipt']['orders'] = []
+    context['receipt']['summary'] = {}
+    context['receipt']['summary']['order'] = []
+    context['checkout_to_shopper'] = 1
+    context['min_order'] = orderbundle.vendor.min_order
+
+    for orderUnit in orderUnits:
+
+        if orderUnit.isPaid == False or orderUnit == toBeRemoved_orderUnit:
+            continue
+        dictOrder = {}
+        dictOrder['username'] = (orderUnit.buyer.name)
+        dictOrder['order'] = []
+        dictOrder['description'] = orderUnit.comment
+        dictOrder['orderUnitId'] = orderUnit.id
+        subOrder = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price,
+        }
+        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
+        
+        summary = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+        }
+
+        dictOrder['order'].append(subOrder)
+        context['receipt']['orders'].append(dictOrder)
+
+        is_product_exist = 0
+        for order in context['receipt']['summary']['order']:
+            if orderUnit.product.name in order['product']:
+                is_product_exist = 1
+                order['count'] = str(
+                    int(order['count']) + int(orderUnit.quantity))
+
+        if is_product_exist == 0:
+            context['receipt']['summary']['order'].append(summary)
+
+    total_price = 0
+
+    for order in context['receipt']['summary']['order']:
+        order['price'] = (int(order['count']) * int(order['price']))
+        total_price += order['price']
+
+    context['receipt']['summary']['total'] = total_price
+
+    toBeRemoved_orderUnit.delete()
+
+    return render(request, 'groupbuying/order.html', context)
 
 def show_order_page(request, order_id, from_profile):
     context = {}
@@ -216,7 +287,7 @@ def show_order_page(request, order_id, from_profile):
         dictOrder['username'] = (orderUnit.buyer.name)
         dictOrder['order'] = []
         dictOrder['description'] = orderUnit.comment
-
+        dictOrder['orderUnitId'] = orderUnit.id
         subOrder = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
