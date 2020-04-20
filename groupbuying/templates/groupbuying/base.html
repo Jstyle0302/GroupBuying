@@ -31,7 +31,6 @@
         			</button>
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav ml-auto">
-						{% block navBar %}
 						<form class="form-inline my-2 my-lg-0" method="post" action="{% url 'search' %}">
 							<input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name = "search_text">
 							{% csrf_token %}
@@ -63,7 +62,6 @@
 								<a id="id_nav_logout" class="dropdown-item" href="{% url 'logout' %}">Logout</a>
 							</div>
 						</li>
-						{% endblock %}
 					</ul>
 				</div>
 			</div>
