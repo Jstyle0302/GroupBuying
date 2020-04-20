@@ -109,6 +109,7 @@ class OrderBundle(models.Model):
     totalPrice = models.FloatField(default=0)
     isCompleted = models.BooleanField(default=False)
     isPaid = models.BooleanField(default=False)
+    customer = models.ManyToManyField(CustomerInfo, related_name='order', symmetrical=False, blank=True)
 
     def __str__(self):
         return 'id=' + str(self.id) + ',buyer=' + self.buyer + \

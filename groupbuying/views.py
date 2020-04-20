@@ -92,8 +92,28 @@ def orderList_page(request):
     context = {}
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
     orderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
+    orderBundles = OrderBundle.objects.filter(Q(customer=customerInfo))
+
     context['orders'] = []
-    orderbundleId = []
+    #orderbundleId = []
+    for orderBundle in orderBundles:
+        if orderBundle.isPaid == True:
+            continue
+
+        order = {
+            'order_id': orderBundle.id,
+            'name': orderBundle.vendor.name,
+            'description': orderBundle.vendor.description
+        }
+
+        if orderBundle.vendor.image:
+            order['image'] = orderBundle.vendor.image.url
+        else:
+            order['image'] = orderBundle.vendor.image_url_OAuth
+
+        context['orders'].append(order)
+
+    '''
     for orderUnit in orderUnits.distinct():
         if orderUnit.orderbundle.id in orderbundleId or orderUnit.orderbundle.isPaid == True:
             continue
@@ -111,7 +131,7 @@ def orderList_page(request):
 
         context['orders'].append(order)
         orderbundleId.append(orderUnit.orderbundle.id)
-
+    '''
     return render(request, 'groupbuying/orderList.html', context)
 
 @login_required
@@ -361,7 +381,7 @@ def order_page(request, order_id):
     )
     new_orderUnit.save()
 
-
+    new_orderbundle.customer.add(customerInfo)
     orderbundle = new_orderbundle
 
     if orderbundle.holder.id == request.user.id:
