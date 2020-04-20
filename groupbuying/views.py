@@ -207,7 +207,7 @@ def remove_orderUnit(request, order_unit_id):
 
     for orderUnit in orderUnits:
 
-        if orderUnit.isPaid == False or orderUnit == toBeRemoved_orderUnit:
+        if orderUnit == toBeRemoved_orderUnit:
             continue
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
@@ -281,8 +281,8 @@ def show_order_page(request, order_id, from_profile):
 
     for orderUnit in orderUnits:
 
-        if orderUnit.isPaid == False:
-            continue
+        #if orderUnit.isPaid == False:
+        #    continue
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
         dictOrder['order'] = []
@@ -352,17 +352,81 @@ def order_page(request, order_id):
         orderDate=datetime.datetime.now(),
         deliverTime=datetime.datetime.now(),
         deliverDate=datetime.datetime.now(),
-        isPaid=False,
+        isPaid=True,
         orderbundle=new_orderbundle
     )
     new_orderUnit.save()
 
+
+    orderbundle = new_orderbundle
+
+    if orderbundle.holder.id == request.user.id:
+        print('tt')
+        context['isFounder'] = True
+        orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
+
+    else:
+        context['isFounder'] = False
+        orderUnits = OrderUnit.objects.filter(
+            Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
+
+    #context['order_id'] = orderbundle.id
+    #context['shop'] = orderbundle.vendor.name
+    #context['founder'] = orderbundle.holder.name
+    context['receipt'] = {}
+    context['receipt']['orders'] = []
+    context['receipt']['summary'] = {}
+    context['receipt']['summary']['order'] = []
+    #context['checkout_to_shopper'] = 1
+    #context['min_order'] = orderbundle.vendor.min_order
+
+    for orderUnit in orderUnits:
+        dictOrder = {}
+        dictOrder['username'] = (orderUnit.buyer.name)
+        dictOrder['order'] = []
+        dictOrder['description'] = orderUnit.comment
+        dictOrder['orderUnitId'] = orderUnit.id
+        subOrder = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price,
+        }
+        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
+        
+        summary = {
+            'product': orderUnit.product.name,
+            'count': orderUnit.quantity,
+            'price': orderUnit.product.price
+        }
+
+        dictOrder['order'].append(subOrder)
+        context['receipt']['orders'].append(dictOrder)
+
+        is_product_exist = 0
+        for order in context['receipt']['summary']['order']:
+            if orderUnit.product.name in order['product']:
+                is_product_exist = 1
+                order['count'] = str(
+                    int(order['count']) + int(orderUnit.quantity))
+
+        if is_product_exist == 0:
+            context['receipt']['summary']['order'].append(summary)
+
+    total_price = 0
+
+    for order in context['receipt']['summary']['order']:
+        order['price'] = (int(order['count']) * int(order['price']))
+        total_price += order['price']
+
+    context['receipt']['summary']['total'] = total_price
+
     context['checkout_to_holder'] = 1
-    context['isFounder'] = True
+    #context['isFounder'] = True
     context['order_id'] = new_orderbundle.id
     context['order_unit_id'] = new_orderUnit.id
     context['shop'] = vendorInfo.name
     context['founder'] = new_orderbundle.holder.name
+    '''
     context['receipt'] = {
         'orders': [{
             'username': new_orderUnit.buyer.name,
@@ -382,7 +446,7 @@ def order_page(request, order_id):
             'total': int(request.POST['product_number']) * int(product.price)
         }
     }
-
+    '''
     return render(request, 'groupbuying/order.html', context)
 
 
@@ -501,8 +565,8 @@ def gen_context_profile(customerInfo):
     for orderUnit in reversed(OrderUnits):
         if i >= 5:
             break
-        if orderUnit.isPaid == False:
-            continue
+        #if orderUnit.isPaid == False:
+        #    continue
         order = {}
         order['shop_name'] = orderUnit.orderbundle.vendor.name
         order['orderbundle_id'] = orderUnit.orderbundle.id
