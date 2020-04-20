@@ -4,6 +4,15 @@ $('#list-tab a').on('click', function (e) {
     $(this).tab('show')
   })
 
+// Active tab via url
+$(function(){
+  var url = window.location.href;
+  var activeTab = url.substring(url.indexOf("#") + 1);
+  $(".tab-pane").removeClass("active in");
+  $("#" + activeTab).addClass("active in");
+  $('a[href="#'+ activeTab +'"]').tab('show');
+});
+
 // Tag
 function filterFunction() {
   var input, filter, ul, li, a, i;
