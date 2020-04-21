@@ -763,9 +763,8 @@ def complete_order(request):
         cur_order.isCompleted = True
         cur_order.save()
     
-    # cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
-    cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
-    cur_vendor_info.prev_page = "#list-orders"
+    # cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
+    # cur_vendor_info.prev_page = "#list-orders"
 
     # Add total sales to statistic
     cur_time = datetime.datetime.now()
