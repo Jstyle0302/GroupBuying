@@ -1028,7 +1028,7 @@ def rating_star(request):
         return redirect('shop/' + str(request.POST['shop_id']))
 
     if 'comment' not in request.POST:
-        return redirect('home')
+        return redirect('shop/' + str(request.POST['shop_id']))
 
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
