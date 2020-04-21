@@ -73,9 +73,6 @@ def home_page(request):
         if i >= 3:
             break
         dict_recommand = {
-            # 'order_id': orderUnit.orderbundle.id,
-            # 'name': orderUnit.orderbundle.vendor.name,
-            # 'description': orderUnit.orderbundle.vendor.description,
             'id': obj['id'],
             'name': obj['name'],
             'description': obj['description'],
@@ -95,7 +92,6 @@ def orderList_page(request):
     orderBundles = OrderBundle.objects.filter(Q(customer=customerInfo))
 
     context['orders'] = []
-    #orderbundleId = []
     for orderBundle in orderBundles:
         if orderBundle.isPaid == True:
             continue
@@ -113,25 +109,6 @@ def orderList_page(request):
 
         context['orders'].append(order)
 
-    '''
-    for orderUnit in orderUnits.distinct():
-        if orderUnit.orderbundle.id in orderbundleId or orderUnit.orderbundle.isPaid == True:
-            continue
-
-        order = {
-            'order_id': orderUnit.orderbundle.id,
-            'name': orderUnit.orderbundle.vendor.name,
-            'description': orderUnit.orderbundle.vendor.description
-        }
-
-        if orderUnit.orderbundle.vendor.image:
-            order['image'] = orderUnit.orderbundle.vendor.image.url
-        else:
-            order['image'] = orderUnit.orderbundle.vendor.image_url_OAuth
-
-        context['orders'].append(order)
-        orderbundleId.append(orderUnit.orderbundle.id)
-    '''
     return render(request, 'groupbuying/orderList.html', context)
 
 @login_required
@@ -196,7 +173,6 @@ def send_email_page(request, order_id):
     
     send_mail(subject, plain_message, from_email, to_email,
               html_message=html_message, fail_silently=False)
-    ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
 
     return redirect('shop')
 
@@ -231,7 +207,6 @@ def remove_orderUnit(request, order_unit_id):
     context['min_order'] = orderbundle.vendor.min_order
 
     for orderUnit in orderUnits:
-
         if orderUnit == toBeRemoved_orderUnit:
             continue
         dictOrder = {}
@@ -315,9 +290,6 @@ def show_order_page(request, order_id, from_profile):
     context['min_order'] = orderbundle.vendor.min_order
 
     for orderUnit in orderUnits:
-
-        #if orderUnit.isPaid == False:
-        #    continue
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
         dictOrder['order'] = []
@@ -406,16 +378,11 @@ def order_page(request, order_id):
         orderUnits = OrderUnit.objects.filter(
             Q(buyer=customerInfo) & Q(orderbundle=orderbundle))
 
-    #context['order_id'] = orderbundle.id
-    #context['shop'] = orderbundle.vendor.name
-    #context['founder'] = orderbundle.holder.name
     context['receipt'] = {}
     context['receipt']['orders'] = []
     context['receipt']['summary'] = {}
     context['receipt']['summary']['order'] = []
     context['min_order'] = orderbundle.vendor.min_order
-    #context['checkout_to_shopper'] = 1
-    #context['min_order'] = orderbundle.vendor.min_order
 
     for orderUnit in orderUnits:
         dictOrder = {}
@@ -459,32 +426,11 @@ def order_page(request, order_id):
     context['receipt']['summary']['total'] = total_price
 
     context['checkout_to_holder'] = 1
-    #context['isFounder'] = True
     context['order_id'] = new_orderbundle.id
     context['order_unit_id'] = new_orderUnit.id
     context['shop'] = vendorInfo.name
     context['founder'] = new_orderbundle.holder.name
-    '''
-    context['receipt'] = {
-        'orders': [{
-            'username': new_orderUnit.buyer.name,
-            'order': [{
-                'product': product.name,
-                'count': request.POST['product_number'],
-                'price': product.price
-            }],
-            'total': int(request.POST['product_number']) * int(product.price)
-        }],
-        'summary': {
-            'order': [{
-                'product': product.name,
-                'count': request.POST['product_number'],
-                'price': product.price
-            }],
-            'total': int(request.POST['product_number']) * int(product.price)
-        }
-    }
-    '''
+
     return render(request, 'groupbuying/order.html', context)
 
 
@@ -497,9 +443,7 @@ def checkout_to_holder(request, order_unit_id):
 
     orderUnit.isPaid = True
     orderUnit.save()
-    # print("checkout_to_holder")
-    # print(order_unit_id)
-    # print(orderUnit.isPaid)
+
     return redirect('home')
 
 
@@ -601,9 +545,6 @@ def checkout_to_shopper(request, order_id):
     send_mail(subject, plain_message, from_email, to_email,
               html_message=html_message, fail_silently=False)
 
-
-    ## send_mail(subject, plain_message, from_email, [request.user.email], fail_silently=False)
-
     return redirect('home')
 
 
@@ -620,13 +561,12 @@ def gen_context_profile(customerInfo):
     for orderUnit in reversed(OrderUnits):
         if i >= 5 or orderUnit.orderbundle.id in orderbundle_id_list:
             break
-        #if orderUnit.isPaid == False:
-        #    continue
+
         order = {}
         order['shop_name'] = orderUnit.orderbundle.vendor.name
         order['orderbundle_id'] = orderUnit.orderbundle.id
         orderbundle_id_list.append(orderUnit.orderbundle.id)
-        #order['shop_id']  = int(orderUnit.orderbundle.vendor.id)
+
         context['orders'].append(order)
         i += 1
 
@@ -1284,8 +1224,7 @@ def rating_star(request):
 @login_required
 def update_customer_info(request, user_id):
     context = {}
-    errors = []  # A list to record messages for any errors we encounter.
-    #cur_customer_info = CustomerInfo.objects.filter(Q(id=str(user_id)))[0]
+    errors = []  
     cur_customer_info = CustomerInfo.objects.filter(id=str(user_id)).first()
 
     if 'description' in request.POST and request.POST['description']:
@@ -1350,7 +1289,6 @@ def fill_restaurant_info(obj):
     # rating
     restaurant['rating'] = rating_proc(obj)
 
-    # TBD
     if not obj.min_order:
         restaurant['price'] = 0
     else:
@@ -1394,7 +1332,6 @@ def fill_restaurant_context_info(search_result, search_text, page):
     context['page_size'] = page_size
     context['current_page'] = page
 
-    #search_result = search_result[(page-1)*PAGESIZE_CONSTANT():page*PAGESIZE_CONSTANT()]
     for obj in search_result:
         restaurant = fill_restaurant_info(obj)
         context['restaurants'].append(restaurant)
@@ -1466,7 +1403,7 @@ def filtering(request):
     context['restaurants'] = context['restaurants'][(
         0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
     cache.set('search_result', result)
-    # cache.set('context',context)
+
     return render(request, 'groupbuying/search.html', context)
 
 
@@ -1601,43 +1538,6 @@ def search_page(request):
         0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
     # cache.set('context',context)
     return render(request, 'groupbuying/search.html', context)
-    '''
-    context['pages'] = range(1,10)
-    context['current_page'] = 1
-    context['categories'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
-    context['restaurants'] = []
-    restaurant1 = {
-        'id': 1,
-        'name': 'Starbucks',
-        'description': 'Starbucks was established in 1971 by three local businessmen to sell high quality whole beans coffee. In 1981 when Howard Schultz visited the store he plan to build a strong company and expand high quality coffee business with the name of Starbucks.',
-        'image': "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png",
-        'categories': ['Drinks','Snack'],
-        'rating': 4,
-        'price' : 5
-    }
-    restaurant2 = {
-        'id': 2,
-        'name': 'Pandas Express',
-        'description': 'Panda Express is a fast food restaurant chain which serves American Chinese cuisine. With over 2,200 locations, it is the largest Asian segment restaurant chain in the United States, where it was founded and is mainly located (in addition to other countries and territories in North America and Asia).',
-        'image': "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Panda_Express_logo.svg/1200px-Panda_Express_logo.svg.png",
-        'categories': ['Lunch','Dinner'],
-        'rating': 5,
-        'price' : 12
-    }
-    restaurant3 = {
-        'id': 3,
-        'name': 'Mcdonald',
-        'description': 'McDonalds.com is your hub for everything McDonald\'s. Find out more about our menu items and promotions today!',
-        'image': "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/McDonald%27s_Golden_Arches.svg/1200px-McDonald%27s_Golden_Arches.svg.png",
-        'categories': ['Fast-food'],
-        'rating': 2,
-        'price' : 7
-    }
-    context['restaurants'].append(restaurant1)
-    context['restaurants'].append(restaurant2)
-    context['restaurants'].append(restaurant3)
-    return render(request, 'groupbuying/search.html',context)
-    '''
 
 
 def login_action(request):
