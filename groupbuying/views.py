@@ -36,14 +36,15 @@ from django.utils.html import strip_tags
 def PAGESIZE_CONSTANT():
     return 5
 
+
 def handler404(request, *args, **argv):
     context = {}
 
-    return render(request,'groupbuying/404.html',context)
+    return render(request, 'groupbuying/404.html', context)
 
 
 def handler500(request, *args, **argv):
-    return render(request,'groupbuying/404.html')
+    return render(request, 'groupbuying/404.html')
 
 
 def home_page(request):
@@ -61,15 +62,14 @@ def home_page(request):
         context['restaurants'].append(restaurant)
         context['rating'].append(restaurant['rating'])
 
-
     context['restaurants'] = sorted(context['restaurants'],
-                                             key=lambda i: i['rating'],
-                                             reverse=True)
-    print(context['restaurants'])        
+                                    key=lambda i: i['rating'],
+                                    reverse=True)
+    print(context['restaurants'])
     context['recommends'] = []
     dict_recommand = {}
     i = 0
-    for obj in  context['restaurants']:
+    for obj in context['restaurants']:
         if i >= 3:
             break
         dict_recommand = {
@@ -78,11 +78,11 @@ def home_page(request):
             'description': obj['description'],
             'image': obj['image']
         }
-        context['recommends'].append(dict_recommand)  
+        context['recommends'].append(dict_recommand)
         i += 1
 
-
     return render(request, 'groupbuying/home.html', context)
+
 
 @login_required
 def orderList_page(request):
@@ -111,6 +111,7 @@ def orderList_page(request):
 
     return render(request, 'groupbuying/orderList.html', context)
 
+
 @login_required
 def share_page(request, order_id):
     context = {}
@@ -121,8 +122,9 @@ def share_page(request, order_id):
 
     context['founder'] = orderbundle.holder.name
     context['order_id'] = order_id
-    
+
     return render(request, 'groupbuying/shop.html', context)
+
 
 @login_required
 def send_email_page(request, order_id):
@@ -169,11 +171,12 @@ def send_email_page(request, order_id):
     plain_message = strip_tags(html_message)
     from_email = 'groupbuyingTeam23@gmail.com'
     to_email = [request.user.email]
-    
+
     send_mail(subject, plain_message, from_email, to_email,
               html_message=html_message, fail_silently=False)
 
     return redirect('shop')
+
 
 @login_required
 def remove_orderUnit(request, order_unit_id):
@@ -182,7 +185,7 @@ def remove_orderUnit(request, order_unit_id):
     if not toBeRemoved_orderUnit:
         return redirect('home')
 
-    toBeRemoved_orderUnit = toBeRemoved_orderUnit[0]    
+    toBeRemoved_orderUnit = toBeRemoved_orderUnit[0]
     orderbundle = toBeRemoved_orderUnit.orderbundle
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
 
@@ -219,8 +222,9 @@ def remove_orderUnit(request, order_unit_id):
             'count': orderUnit.quantity,
             'price': orderUnit.product.price,
         }
-        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
-        
+        dictOrder['total'] = int(orderUnit.quantity) * \
+            int(orderUnit.product.price)
+
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -252,6 +256,7 @@ def remove_orderUnit(request, order_unit_id):
 
     return render(request, 'groupbuying/order.html', context)
 
+
 @login_required
 def show_order_page(request, order_id, from_profile):
     context = {}
@@ -259,10 +264,10 @@ def show_order_page(request, order_id, from_profile):
     if not orderbundle:
         return redirect('home')
 
-    orderbundle = orderbundle[0]    
+    orderbundle = orderbundle[0]
 
     if (orderbundle.isPaid == True) and (int(from_profile) != 1):
-        return redirect('home') 
+        return redirect('home')
 
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
 
@@ -300,8 +305,9 @@ def show_order_page(request, order_id, from_profile):
             'count': orderUnit.quantity,
             'price': orderUnit.product.price,
         }
-        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
-        
+        dictOrder['total'] = int(orderUnit.quantity) * \
+            int(orderUnit.product.price)
+
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -395,8 +401,9 @@ def order_page(request, order_id):
             'count': orderUnit.quantity,
             'price': orderUnit.product.price,
         }
-        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
-        
+        dictOrder['total'] = int(orderUnit.quantity) * \
+            int(orderUnit.product.price)
+
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -446,7 +453,6 @@ def checkout_to_holder(request, order_unit_id):
     return redirect('home')
 
 
-
 @login_required
 def delete_orderbundle(request, order_id):
     context = {}
@@ -460,6 +466,7 @@ def delete_orderbundle(request, order_id):
 
     return redirect('home')
 
+
 @login_required
 def checkout_to_shopper(request, order_id):
     context = {}
@@ -467,7 +474,7 @@ def checkout_to_shopper(request, order_id):
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
     orderbundle.isPaid = True
     orderbundle.save()
-    
+
     if orderbundle.holder.id == request.user.id:
         context['isFounder'] = True
         orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
@@ -503,8 +510,9 @@ def checkout_to_shopper(request, order_id):
             'count': orderUnit.quantity,
             'price': orderUnit.product.price
         }
-        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
-        
+        dictOrder['total'] = int(orderUnit.quantity) * \
+            int(orderUnit.product.price)
+
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -552,7 +560,7 @@ def gen_context_profile(customerInfo):
     context['username'] = customerInfo.name
     context['description'] = customerInfo.description
     OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
-    
+
     context['orders'] = []
     i = 0
     orderbundle_id_list = []
@@ -579,6 +587,7 @@ def gen_context_profile(customerInfo):
     context['customerInfo'] = customerInfo
     return context
 
+
 @login_required
 def add_to_favorite(request, shop_id):
     context = {}
@@ -590,6 +599,7 @@ def add_to_favorite(request, shop_id):
     context = gen_context_profile(customerInfo)
 
     return render(request, 'groupbuying/profile.html', context)
+
 
 @login_required
 def remove_from_favorite(request, shop_id):
@@ -632,8 +642,9 @@ def delete_tag(request, tag_name):
     new_tag_list = [tag for tag in old_tag_list if tag != tag_name]
     cur_vendor_info.tagList = str(','.join(new_tag_list))
     cur_vendor_info.save()
-    
+
     return redirect('shop_edit')
+
 
 def get_menu(vendor_id):
     menu = {}
@@ -659,6 +670,7 @@ def get_menu(vendor_id):
 
     return menu
 
+
 def get_product_sales(order_bundle_id, pre_json):
     # load prev_json data as dict
     product_sale_dict = {}
@@ -675,16 +687,19 @@ def get_product_sales(order_bundle_id, pre_json):
     cur_order_units = OrderUnit.objects.filter(orderbundle=cur_order)
     for order in cur_order_units:
         if order.product.name in product_sale_dict:
-            product_sale_dict[order.product.name] += float(order.quantity) * float(order.product.price)
+            product_sale_dict[order.product.name] += float(
+                order.quantity) * float(order.product.price)
         else:
-            product_sale_dict[order.product.name] = float(order.quantity) * float(order.product.price)
-        
+            product_sale_dict[order.product.name] = float(
+                order.quantity) * float(order.product.price)
+
     return dict(product_sale_dict)
 
 
 def get_statistic_json(request):
     cur_time = datetime.datetime.now()
-    response_text = serializers.serialize('json', Statistic.objects.all().filter(year=cur_time.year, vendor__id=request.user.id))
+    response_text = serializers.serialize('json', Statistic.objects.all().filter(
+        year=cur_time.year, vendor__id=request.user.id))
 
     return HttpResponse(response_text, content_type='application/json')
 
@@ -737,6 +752,7 @@ def get_reviews(vendor_id):
 
     return posts
 
+
 def get_shopPage_context(request, shop_id):
     context = {}
     cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=shop_id)
@@ -747,19 +763,21 @@ def get_shopPage_context(request, shop_id):
     if tag_re[0] != '':
         context['tags'] = tag_re
 
-    context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
+    context['incompleted'], context['finished'] = get_orders(
+        cur_vendor_info.vendor_id)
     context['vendorInfo'] = cur_vendor_info
 
     if request.user.id:
-        is_subscribe = CustomerInfo.objects.filter(Q(id=str(request.user.id)) & \
-        Q(subscription=cur_vendor_info))
+        is_subscribe = CustomerInfo.objects.filter(Q(id=str(request.user.id)) &
+                                                   Q(subscription=cur_vendor_info))
 
         if is_subscribe:
             context['is_subscribe'] = 1
         else:
-            context['is_subscribe'] = 0    
+            context['is_subscribe'] = 0
 
     return context
+
 
 def get_shopEditPage_context(request):
     context = {}
@@ -770,7 +788,8 @@ def get_shopEditPage_context(request):
     tag_re = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     if tag_re[0] != '':
         context['tags'] = tag_re
-    context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
+    context['incompleted'], context['finished'] = get_orders(
+        cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
     context['vendorForm'] = VendorInfoForm(
@@ -793,6 +812,7 @@ def shop_page(request, shop_id):
 
     return render(request, 'groupbuying/shop.html', context)
 
+
 @login_required
 def complete_order(request):
     errors = []
@@ -800,31 +820,36 @@ def complete_order(request):
     if 'order_id' not in request.POST or not request.POST['order_id']:
         errors.append('You must have provide the order id')
     else:
-        cur_order = get_object_or_404(OrderBundle, pk=int(request.POST['order_id']))
+        cur_order = get_object_or_404(
+            OrderBundle, pk=int(request.POST['order_id']))
         cur_order.isCompleted = True
         cur_order.save()
 
     # Add total sales to statistic
     cur_time = datetime.datetime.now()
-    cur_statistic = Statistic.objects.filter(year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
+    cur_statistic = Statistic.objects.filter(
+        year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
     if len(cur_statistic) > 0:
         cur_statistic[0].sales += cur_order.totalPrice
-        cur_statistic[0].productSales = get_product_sales(request.POST['order_id'], cur_statistic[0].productSales)
+        cur_statistic[0].productSales = get_product_sales(
+            request.POST['order_id'], cur_statistic[0].productSales)
         cur_statistic[0].save()
     else:
-        new_statistic = Statistic(year = cur_time.year,
-                                  month = cur_time.month,
-                                  sales = cur_order.totalPrice,
-                                  expense = 0,
-                                  productSales=get_product_sales(request.POST['order_id'], None),
-                                  vendor = cur_order.vendor)
+        new_statistic = Statistic(year=cur_time.year,
+                                  month=cur_time.month,
+                                  sales=cur_order.totalPrice,
+                                  expense=0,
+                                  productSales=get_product_sales(
+                                      request.POST['order_id'], None),
+                                  vendor=cur_order.vendor)
         new_statistic.save()
 
     return HttpResponseRedirect(reverse('shop_edit') + "#list-orders")
 
+
 @login_required
 def update_category_name(request):
-    errors = []  # A list to record messages for any errors we encounter.    
+    errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
 
     if 'new_menu_name' not in request.POST or not request.POST['new_menu_name']:
@@ -832,7 +857,8 @@ def update_category_name(request):
     elif 'menu_id' not in request.POST or not request.POST['menu_id']:
         errors.append('You must provide menu id')
     else:
-        cur_category = Category.objects.filter(pk=int(request.POST['menu_id']))[0]
+        cur_category = Category.objects.filter(
+            pk=int(request.POST['menu_id']))[0]
         cur_category.name = request.POST['new_menu_name']
         cur_category.save()
 
@@ -904,6 +930,7 @@ def add_product(request):
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
+
 @login_required
 def update_product(request):
     errors = []  # A list to record messages for any errors we encounter.
@@ -913,7 +940,8 @@ def update_product(request):
         errors.append(
             'You must have at least "name and price" for the product')
     else:
-        cur_product = get_object_or_404(Product, pk=int(request.POST['product_id']))
+        cur_product = get_object_or_404(
+            Product, pk=int(request.POST['product_id']))
         form = ProductForm(request.POST, request.FILES, instance=cur_product)
         if form.is_valid():
             cur_product.name = str(request.POST['name'])
@@ -929,6 +957,7 @@ def update_product(request):
     target_list = "#list-menu-" + cur_product.category.name
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
+
 
 @login_required
 def update_vendor_name(request):
@@ -966,6 +995,7 @@ def update_vendor_info(request):
 
     return HttpResponseRedirect(reverse('shop_edit') + "#list-profile")
 
+
 @login_required
 def rating_star(request):
     rating = ''
@@ -976,11 +1006,12 @@ def rating_star(request):
 
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
-    target_info = get_object_or_404(VendorInfo, pk=int(request.POST['shop_id']))
+    target_info = get_object_or_404(
+        VendorInfo, pk=int(request.POST['shop_id']))
 
     old_rating = Rating.objects.filter(Q(rater=customer_info) & Q(
         ratedTarget=target_info)).first()
-    
+
     if not old_rating:
         new_rating = Rating(rating=float(rating),
                             comment=request.POST['comment'],
@@ -998,10 +1029,11 @@ def rating_star(request):
 
     return redirect('shop/' + request.POST['shop_id'] + "#list-review")
 
+
 @login_required
 def update_customer_info(request, user_id):
     context = {}
-    errors = []  
+    errors = []
     cur_customer_info = CustomerInfo.objects.filter(id=str(user_id)).first()
 
     if 'description' in request.POST and request.POST['description']:
@@ -1049,7 +1081,7 @@ def rating_proc(obj):
 def search_text_proc(search_text):
     if search_text == "":
         search_result = VendorInfo.objects.all()
-    else:    
+    else:
         search_result = VendorInfo.objects.filter(Q(name__contains=search_text) | Q(
             address__contains=search_text) | Q(tagList__contains=search_text))
 
@@ -1069,7 +1101,7 @@ def fill_restaurant_info(obj):
     if not obj.min_order:
         restaurant['price'] = 0
     else:
-        restaurant['price'] = obj.min_order    
+        restaurant['price'] = obj.min_order
 
     if obj.image:
         restaurant['image'] = obj.image.url
@@ -1225,16 +1257,13 @@ def filter_by_rating(request, prev_result):
     avg_rating = Rating.objects.values('ratedTarget').annotate(
         avg_rating=Avg('rating')).order_by('ratedTarget')
 
-
     avg_rating_filtered = avg_rating.filter(rating__gte=rating)
-
 
     result = prev_result.filter(
         id__in=avg_rating_filtered.values('ratedTarget'))
 
-    
     for obj in prev_result:
-        if not avg_rating.filter(ratedTarget=int(obj.id)) and int(rating) <= 3 :
+        if not avg_rating.filter(ratedTarget=int(obj.id)) and int(rating) <= 3:
             result |= VendorInfo.objects.filter(id=obj.id)
 
     rating_query = "rating >= " + str(rating)

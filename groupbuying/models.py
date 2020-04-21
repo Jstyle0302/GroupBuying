@@ -10,6 +10,7 @@ from jsonfield import JSONField
 from phonenumber_field.modelfields import PhoneNumberField
 '''
 
+
 class VendorInfo(models.Model):
     # VendorInfo.name is different from UserProefile.firstName or
     # UserProefile.lastName, can be user name or vendor name
@@ -45,7 +46,8 @@ class CustomerInfo(models.Model):
     image_url_OAuth = models.URLField(max_length=200)
     content_type = models.CharField(max_length=50, default="")
     customer_id = models.IntegerField(null=True)
-    subscription = models.ManyToManyField(VendorInfo, related_name='follower', symmetrical=False,blank=True)
+    subscription = models.ManyToManyField(
+        VendorInfo, related_name='follower', symmetrical=False, blank=True)
 
     def __str__(self):
         return 'id=' + str(self.id) + ',name=' + self.name + ',email=' + self.email + \
@@ -87,6 +89,7 @@ class Product(models.Model):
             ',price=' + str(self.price) + ',seller_id=' + \
             self.sellerId + ',isAvailable=' + str(self.isAvailable)
 
+
 class Statistic(models.Model):
     year = models.IntegerField()
     month = models.IntegerField()
@@ -94,6 +97,7 @@ class Statistic(models.Model):
     expense = models.FloatField(default=0)
     productSales = JSONField(null=True)
     vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
+
 
 class Rating(models.Model):
     rating = models.FloatField()
@@ -103,13 +107,15 @@ class Rating(models.Model):
     rater = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     ratedTarget = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
 
+
 class OrderBundle(models.Model):
     holder = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE)
     vendor = models.ForeignKey(VendorInfo, on_delete=models.CASCADE)
     totalPrice = models.FloatField(default=0)
     isCompleted = models.BooleanField(default=False)
     isPaid = models.BooleanField(default=False)
-    customer = models.ManyToManyField(CustomerInfo, related_name='order', symmetrical=False, blank=True)
+    customer = models.ManyToManyField(
+        CustomerInfo, related_name='order', symmetrical=False, blank=True)
 
     def __str__(self):
         return 'id=' + str(self.id) + ',buyer=' + self.buyer + \
