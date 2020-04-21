@@ -547,7 +547,8 @@ def checkout_to_shopper(request, order_id):
     html_message = render_to_string('groupbuying/order_email.html', context)
     plain_message = strip_tags(html_message)
     from_email = 'groupbuyingTeam23@gmail.com'
-    to_email = [request.user.email]
+    vendor_user = User.objects.filter(Q(id=str(orderbundle.vendor.id)))[0]
+    to_email = [request.user.email, vendor_user.email]
 
     send_mail(subject, plain_message, from_email, to_email,
               html_message=html_message, fail_silently=False)
@@ -845,6 +846,20 @@ def complete_order(request):
                                       request.POST['order_id'], None),
                                   vendor=cur_order.vendor)
         new_statistic.save()
+
+    holder_user = User.objects.filter(Q(id=str(cur_order.vendor.id)))[0]
+    subject = str(holder_user.username) + "'s order at " + \
+        cur_order.vendor.name + "(order_id:" + str(cur_order.id) + ") is completed"
+    context = {}
+    context['order_completed'] = 1  
+    context['founder'] =  holder_user.username
+    html_message = render_to_string('groupbuying/order_email.html', context)
+    plain_message = strip_tags(html_message)
+    from_email = 'groupbuyingTeam23@gmail.com'
+    to_email = [holder_user.email]
+
+    send_mail(subject, plain_message, from_email, to_email,
+              html_message=html_message, fail_silently=False)
 
     return HttpResponseRedirect(reverse('shop_edit') + "#list-orders")
 

@@ -17,8 +17,12 @@
                                 <tr>
                                     <td align="center" valign="top">
                                         <div style="background: #eeeeee;">
-                                            <h3>Hi Mr./ Mrs. {{ founder }}</h3>
-                                            <p>This is your order receipt.</p>
+                                            <h3>Mr./ Mrs. {{ founder }}'s order</h3>
+                                            {% if order_completed == 1 %}
+                                                <p>Your order is completed.</p>    
+                                            {% else %}
+                                                <p>This is the order receipt.</p>
+                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>
@@ -82,6 +86,7 @@
                             </table>
                         </td>
                     </tr>
+                    {% if order_completed != 1 %}
                     <tr>
                         <td align="center" valign="top">
                             <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailFooter">
@@ -134,6 +139,7 @@
                             </table>
                         </td>
                     </tr>
+                    {% endif %}
                 </table>
             </td>
         </tr>
