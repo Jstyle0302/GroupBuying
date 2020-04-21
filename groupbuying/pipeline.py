@@ -3,7 +3,7 @@ from groupbuying.models import Product, CustomerInfo, VendorInfo, Rating, UserPr
 
 
 def create_profile(backend, user, response, *args, **kwargs):
-    if len(CustomerInfo.objects.filter(customer_id=user.id))>0:
+    if len(CustomerInfo.objects.filter(customer_id=user.id)) > 0:
         return
 
     new_customerInfo = CustomerInfo(name=response.get('name'),
@@ -11,7 +11,7 @@ def create_profile(backend, user, response, *args, **kwargs):
                                     description="",
                                     address=response.get('locale'),
                                     customer_id=user.id)
-    
+
     if backend.name == "google-oauth2":
         new_customerInfo.image_url_OAuth = response.get('picture')
 
@@ -23,8 +23,8 @@ def create_profile(backend, user, response, *args, **kwargs):
                                 address=response.get('locale'),
                                 min_order=0,
                                 vendor_id=user.id)
-    
-    if backend.name == "google-oauth2":    
+
+    if backend.name == "google-oauth2":
         new_vendorInfo.image_url_OAuth = response.get('picture')
 
     new_vendorInfo.save()

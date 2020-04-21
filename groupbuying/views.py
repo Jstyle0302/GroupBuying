@@ -36,14 +36,15 @@ from django.utils.html import strip_tags
 def PAGESIZE_CONSTANT():
     return 5
 
+
 def handler404(request, *args, **argv):
     context = {}
-    # context['error'] = "Sorry page not found!! Sad"
-    return render(request,'groupbuying/404.html',context)
+
+    return render(request, 'groupbuying/404.html', context)
 
 
 def handler500(request, *args, **argv):
-    return render(request,'groupbuying/404.html')
+    return render(request, 'groupbuying/404.html')
 
 
 def home_page(request):
@@ -68,7 +69,7 @@ def home_page(request):
     context['recommends'] = []
     dict_recommand = {}
     i = 0
-    for obj in  context['restaurants']:
+    for obj in context['restaurants']:
         if i >= 3:
             break
         dict_recommand = {
@@ -77,11 +78,11 @@ def home_page(request):
             'description': obj['description'],
             'image': obj['image']
         }
-        context['recommends'].append(dict_recommand)  
+        context['recommends'].append(dict_recommand)
         i += 1
 
-
     return render(request, 'groupbuying/home.html', context)
+
 
 @login_required
 def orderList_page(request):
@@ -110,6 +111,7 @@ def orderList_page(request):
 
     return render(request, 'groupbuying/orderList.html', context)
 
+
 @login_required
 def share_page(request, order_id):
     context = {}
@@ -120,8 +122,9 @@ def share_page(request, order_id):
 
     context['founder'] = orderbundle.holder.name
     context['order_id'] = order_id
-    
+
     return render(request, 'groupbuying/shop.html', context)
+
 
 @login_required
 def send_email_page(request, order_id):
@@ -150,7 +153,6 @@ def send_email_page(request, order_id):
     for orderUnit in orderUnits:
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
-        print(orderUnit.buyer.name)
         total_price += int(orderUnit.product.price)*int(orderUnit.quantity)
         dictOrder['order'] = []
         subOrder = {
@@ -169,11 +171,12 @@ def send_email_page(request, order_id):
     plain_message = strip_tags(html_message)
     from_email = 'groupbuyingTeam23@gmail.com'
     to_email = [request.user.email]
-    
+
     send_mail(subject, plain_message, from_email, to_email,
               html_message=html_message, fail_silently=False)
 
     return redirect('shop')
+
 
 @login_required
 def remove_orderUnit(request, order_unit_id):
@@ -182,7 +185,7 @@ def remove_orderUnit(request, order_unit_id):
     if not toBeRemoved_orderUnit:
         return redirect('home')
 
-    toBeRemoved_orderUnit = toBeRemoved_orderUnit[0]    
+    toBeRemoved_orderUnit = toBeRemoved_orderUnit[0]
     orderbundle = toBeRemoved_orderUnit.orderbundle
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
 
@@ -219,8 +222,9 @@ def remove_orderUnit(request, order_unit_id):
             'count': orderUnit.quantity,
             'price': orderUnit.product.price,
         }
-        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
-        
+        dictOrder['total'] = int(orderUnit.quantity) * \
+            int(orderUnit.product.price)
+
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -252,6 +256,7 @@ def remove_orderUnit(request, order_unit_id):
 
     return render(request, 'groupbuying/order.html', context)
 
+
 @login_required
 def show_order_page(request, order_id, from_profile):
     context = {}
@@ -259,10 +264,10 @@ def show_order_page(request, order_id, from_profile):
     if not orderbundle:
         return redirect('home')
 
-    orderbundle = orderbundle[0]    
+    orderbundle = orderbundle[0]
 
     if (orderbundle.isPaid == True) and (int(from_profile) != 1):
-        return redirect('home') 
+        return redirect('home')
 
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
 
@@ -300,8 +305,9 @@ def show_order_page(request, order_id, from_profile):
             'count': orderUnit.quantity,
             'price': orderUnit.product.price,
         }
-        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
-        
+        dictOrder['total'] = int(orderUnit.quantity) * \
+            int(orderUnit.product.price)
+
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -395,8 +401,9 @@ def order_page(request, order_id):
             'count': orderUnit.quantity,
             'price': orderUnit.product.price,
         }
-        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
-        
+        dictOrder['total'] = int(orderUnit.quantity) * \
+            int(orderUnit.product.price)
+
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -446,7 +453,6 @@ def checkout_to_holder(request, order_unit_id):
     return redirect('home')
 
 
-
 @login_required
 def delete_orderbundle(request, order_id):
     context = {}
@@ -460,6 +466,7 @@ def delete_orderbundle(request, order_id):
 
     return redirect('home')
 
+
 @login_required
 def checkout_to_shopper(request, order_id):
     context = {}
@@ -467,7 +474,7 @@ def checkout_to_shopper(request, order_id):
     customerInfo = CustomerInfo.objects.filter(Q(id=str(request.user.id)))[0]
     orderbundle.isPaid = True
     orderbundle.save()
-    
+
     if orderbundle.holder.id == request.user.id:
         context['isFounder'] = True
         orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
@@ -503,8 +510,9 @@ def checkout_to_shopper(request, order_id):
             'count': orderUnit.quantity,
             'price': orderUnit.product.price
         }
-        dictOrder['total'] = int(orderUnit.quantity) * int(orderUnit.product.price)
-        
+        dictOrder['total'] = int(orderUnit.quantity) * \
+            int(orderUnit.product.price)
+
         summary = {
             'product': orderUnit.product.name,
             'count': orderUnit.quantity,
@@ -552,7 +560,7 @@ def gen_context_profile(customerInfo):
     context['username'] = customerInfo.name
     context['description'] = customerInfo.description
     OrderUnits = OrderUnit.objects.filter(Q(buyer=customerInfo))
-    
+
     context['orders'] = []
     i = 0
     orderbundle_id_list = []
@@ -579,6 +587,7 @@ def gen_context_profile(customerInfo):
     context['customerInfo'] = customerInfo
     return context
 
+
 @login_required
 def add_to_favorite(request, shop_id):
     context = {}
@@ -590,6 +599,7 @@ def add_to_favorite(request, shop_id):
     context = gen_context_profile(customerInfo)
 
     return render(request, 'groupbuying/profile.html', context)
+
 
 @login_required
 def remove_from_favorite(request, shop_id):
@@ -627,15 +637,14 @@ def other_page(request):
 def delete_tag(request, tag_name):
     errors = []  # A list to record messages for any errors we encounter.
     cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
-    # cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
 
-    # old_tag_list = cur_vendor_info.tagList.split(',')
     old_tag_list = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     new_tag_list = [tag for tag in old_tag_list if tag != tag_name]
     cur_vendor_info.tagList = str(','.join(new_tag_list))
     cur_vendor_info.save()
-    
+
     return redirect('shop_edit')
+
 
 def get_menu(vendor_id):
     menu = {}
@@ -654,19 +663,19 @@ def get_menu(vendor_id):
             temp_pInfodict['image'] = sub_product.image
             temp_pInfodict['description'] = sub_product.description
             temp_pdict[sub_product.name] = dict(temp_pInfodict)
-            # print(temp_pdict)
+
         temp_dish_dict['dishes'] = dict(temp_pdict)
         temp_dish_dict['id'] = categories.get(name=name).id
         menu[name] = dict(temp_dish_dict)
 
     return menu
 
+
 def get_product_sales(order_bundle_id, pre_json):
     # load prev_json data as dict
     product_sale_dict = {}
     if pre_json != None:
         product_sale_dict = pre_json
-        #product_sale_dict = json.load(pre_json)
 
     # value: str -> float
     for key in product_sale_dict:
@@ -678,23 +687,19 @@ def get_product_sales(order_bundle_id, pre_json):
     cur_order_units = OrderUnit.objects.filter(orderbundle=cur_order)
     for order in cur_order_units:
         if order.product.name in product_sale_dict:
-            product_sale_dict[order.product.name] += float(order.quantity) * float(order.product.price)
+            product_sale_dict[order.product.name] += float(
+                order.quantity) * float(order.product.price)
         else:
-            product_sale_dict[order.product.name] = float(order.quantity) * float(order.product.price)
-    
-    # print(JsonResponse(product_sale_dict))
-    # return JsonResponse(product_sale_dict)
-    # print(json.dumps(product_sale_dict))
-    # return json.dumps(product_sale_dict)
-    # print(product_sale_dict)
-    # print(product_sale_dict)
-    
+            product_sale_dict[order.product.name] = float(
+                order.quantity) * float(order.product.price)
+
     return dict(product_sale_dict)
 
 
 def get_statistic_json(request):
     cur_time = datetime.datetime.now()
-    response_text = serializers.serialize('json', Statistic.objects.all().filter(year=cur_time.year, vendor__id=request.user.id))
+    response_text = serializers.serialize('json', Statistic.objects.all().filter(
+        year=cur_time.year, vendor__id=request.user.id))
 
     return HttpResponse(response_text, content_type='application/json')
 
@@ -704,7 +709,6 @@ def get_orders(vendor_id):
     finished = []
 
     orderbundles = OrderBundle.objects.filter(vendor__id=vendor_id)
-    # orderbundle.orderunit_set.all() # reverse lookup
 
     for orderbundle in orderbundles:
         if orderbundle.isPaid:
@@ -722,7 +726,6 @@ def get_orders(vendor_id):
 
             tmp_summary['summary'] = dict(tmp_order)
             tmp_orderbundle_dict['receipt'] = dict(tmp_summary)
-            # print("orderbundle.total_price = {0}".format(orderbundle.totalPrice))
 
             tmp_orderbundle_dict['receipt']['summary']['total'] = orderbundle.totalPrice
             if orderbundle.isCompleted:
@@ -749,71 +752,44 @@ def get_reviews(vendor_id):
 
     return posts
 
+
 def get_shopPage_context(request, shop_id):
     context = {}
-    # cur_vendor_info = VendorInfo.objects.get(vendor_id=shop_id)
     cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=shop_id)
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
-    #context['tags'] = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     tag_re = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     if tag_re[0] != '':
         context['tags'] = tag_re
-    # context['tags'] = cur_vendor_info.tagList.split(',')
-    context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
+
+    context['incompleted'], context['finished'] = get_orders(
+        cur_vendor_info.vendor_id)
     context['vendorInfo'] = cur_vendor_info
 
     if request.user.id:
-        is_subscribe = CustomerInfo.objects.filter(Q(id=str(request.user.id)) & \
-        Q(subscription=cur_vendor_info))
+        is_subscribe = CustomerInfo.objects.filter(Q(id=str(request.user.id)) &
+                                                   Q(subscription=cur_vendor_info))
 
         if is_subscribe:
             context['is_subscribe'] = 1
         else:
-            context['is_subscribe'] = 0    
+            context['is_subscribe'] = 0
 
     return context
 
+
 def get_shopEditPage_context(request):
     context = {}
-    # cur_vendor_info = VendorInfo.objects.get(pk=request.user.id)
     cur_vendor_info = get_object_or_404(VendorInfo, pk=request.user.id)
-
-    # if True:
-    #    cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
-
-    #     test_product = Product.objects.all()[0]
-    #     new_orderbundle = OrderBundle(holder=cur_cutstome_info, vendor=cur_vendor_info)
-    #     new_orderbundle.save()
-    # new_rating = Rating(rating=float(3.5),
-    #                     comment="TestTest123",
-    #                     createTime=datetime.datetime.now(),
-    #                     rater=cur_cutstome_info,
-    #                     ratedTarget=cur_vendor_info)
-    # new_rating.save()
-    #     new_orderUnit = OrderUnit(
-    #         buyer=cur_cutstome_info,
-    #         product=test_product,
-    #         quantity=2,
-    #         comment='omg TEST',
-    #         orderTime=datetime.datetime.now(),
-    #         orderDate=datetime.datetime.now(),
-    #         deliverTime=datetime.datetime.now(),
-    #         deliverDate=datetime.datetime.now(),
-    #         isPaid=False,
-    #         orderbundle=new_orderbundle
-    #     )
-    #     new_orderUnit.save()
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
-    # context['tags'] = cur_vendor_info.tagList.split(',')
-    #context['tags'] = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     tag_re = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     if tag_re[0] != '':
         context['tags'] = tag_re
-    context['incompleted'], context['finished'] = get_orders(cur_vendor_info.vendor_id)
+    context['incompleted'], context['finished'] = get_orders(
+        cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
     context['vendorInfo'] = cur_vendor_info
     context['vendorForm'] = VendorInfoForm(
@@ -825,151 +801,17 @@ def get_shopEditPage_context(request):
 @login_required
 def shopEdit_page(request):
     context = {}
-    # print(request.GET)
-    # print(request.user.id, type(request.user.id))
-    # print(request.user.social_auth.values_list('provider'))
-    # print(request.user.social_auth.get(user=request.user, provider="google-oauth2"))
-    # instance = UserSocialAuth.objects.get(user=request.user, provider='facebook')
-
-    # context['incompleted'] = [{
-    #     'order_id': 10,
-    #     'receipt': {
-    #         'summary': {
-    #             'order': [{
-    #                 # 'product': orderUnit.product.name,
-    #                 # 'count': orderUnit.quantity,
-    #                 # 'price': orderUnit.product.price
-    #                 'product': 'Coffee',
-    #                 'count': 2,
-    #                 'price': 10
-    #             }, {
-    #                 # 'product': orderUnit.product.name,
-    #                 # 'count': orderUnit.quantity,
-    #                 # 'price': orderUnit.product.price
-    #                 'product': 'Cake',
-    #                 'count': 1,
-    #                 'price': 10
-    #             }],
-    #             'description': "Shine is handsome.",
-    #             'total': 20
-    #         }
-    #     }
-    # }, {
-    #     'order_id': 2,
-    #     'receipt': {
-    #         'summary': {
-    #             'order': [{
-    #                 # 'product': orderUnit.product.name,
-    #                 # 'count': orderUnit.quantity,
-    #                 # 'price': orderUnit.product.price
-    #                 'product': 'Coffee',
-    #                 'count': 2,
-    #                 'price': 10
-    #             }, {
-    #                 # 'product': orderUnit.product.name,
-    #                 # 'count': orderUnit.quantity,
-    #                 # 'price': orderUnit.product.price
-    #                 'product': 'Cake',
-    #                 'count': 1,
-    #                 'price': 10
-    #             }],
-    #             'description': "Shine is handsome.",
-    #             'total': 20
-    #         }
-    #     }
-    # }]
-
-    # context['menu'] = {
-    #     'Coffee': {
-    #         'dishes': {
-    #             'Cappuccino': {
-    #                 'id': 1,
-    #                 'price': 5,
-    #                 'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1200px-A_small_cup_of_coffee.JPG',
-    #                 'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-    #             },
-    #             'Cold brew': {
-    #                 'id': 2,
-    #                 'price': 6,
-    #                 'image': 'https://media3.s-nbcnews.com/j/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p_67dfb6820f7d3898b5486975903c2e51.fit-760w.jpg',
-    #                 'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-    #             }
-    #         },
-    #         'id':2
-    #     },
-    #     'Tea': {
-    #         'dishes': {
-    #             'Green Tea': {
-    #                 'id': 3,
-    #                 'price': 4,
-    #                 'image': 'https://i0.wp.com/images-prod.healthline.com/hlcmsresource/images/AN_images/green-tea-white-mug-1296x728.jpg?w=1155&h=1528',
-    #                 'description': 'It\'s more mellow and less acidic than hot and iced coffee; You get a slow release caffeine hit when compared to hot brewed coffee.'
-    #             },
-    #             'Chai Latte': {
-    #                 'id': 4,
-    #                 'price': 4.5,
-    #                 'image': 'https://globalassets.starbucks.com/assets/b635f407bbcd49e7b8dd9119ce33f76e.jpg?impolicy=1by1_wide_1242',
-    #                 'description': 'Outside Greece and Cyprus, Freddo Cappucino or Cappuccino Freddo is mostly found in coffee shops and delis catering to the Greek expat community.'
-    #             }
-    #         },
-    #         'id': 1
-    #     }
-    # }
-
-    # context['finished'] = context['incompleted']
-    # cur = datetime.datetime.now()
-    # print(cur.year, cur.month, type(cur.year), type(cur.month))
     context = get_shopEditPage_context(request)
 
-    # return redirect(reverse('shop_edit', kwargs=context))
     return render(request, 'groupbuying/shopEdit.html', context)
-
-# @login_required
 
 
 def shop_page(request, shop_id):
     context = {}
-    # context['shop_name'] = "Starbucks"
-    # context['description'] = "Very expensive and unhealthy food."
-    # context['logo'] = "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png"
-    # context['menu'] = {
-    #     'all': {
-
-    #     }
-    # }
-    # context['posts'] = [{
-    #     'id': 1,
-    #     'created_by': {
-    #         'username': 'Shine'
-    #     },
-    #     'creation_time': 'today',
-    #     'post': 'Delicious',
-    #     'rating': 5
-    # }, {
-    #     'id': 2,
-    #     'created_by': {
-    #         'username': 'Yangming'
-    #     },
-    #     'creation_time': 'tomorrow',
-    #     'post': 'Tasty',
-    #     'rating': 4
-    # }]
-
-    # context['productForm'] = ProductForm()
-    # context['vendorForm'] = VendorInfoForm()
-    # context['description'] = "Hi Shine, please insert the vendor's description here"
-    # context['limitCost'] = 5
-    # context['categories'] = Category.objects.all()
-    # context['products'] = Product.objects.all()
-    # # # TODO: get_the correct one
-    # context['vendorInfo'] = VendorInfo.objects.all()
-    # context = {'categories': categories, 'products': products, 'errors': errors}
-
-    # context = get_shopEditPage_context(request)
-    # context['tags'] = ['Drinks','Appetizer','Snack','Fast-food','Lunch','Dinner']
     context = get_shopPage_context(request, shop_id)
 
     return render(request, 'groupbuying/shop.html', context)
+
 
 @login_required
 def complete_order(request):
@@ -977,77 +819,73 @@ def complete_order(request):
     cur_order = None
     if 'order_id' not in request.POST or not request.POST['order_id']:
         errors.append('You must have provide the order id')
-    else:
-        #cur_order = OrderBundle.objects.get(pk=int(request.POST['order_id']))
-        cur_order = get_object_or_404(OrderBundle, pk=int(request.POST['order_id']))
-        cur_order.isCompleted = True
-        cur_order.save()
+        return HttpResponseRedirect(reverse('shop_edit') + "#list-orders")
+
+    cur_order = get_object_or_404(
+        OrderBundle, pk=int(request.POST['order_id']))
+    cur_order.isCompleted = True
+    cur_order.save()
 
     # Add total sales to statistic
     cur_time = datetime.datetime.now()
-    cur_statistic = Statistic.objects.filter(year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
-    # print(type(cur_statistic[0].productSales))
+    cur_statistic = Statistic.objects.filter(
+        year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
+
     if len(cur_statistic) > 0:
         cur_statistic[0].sales += cur_order.totalPrice
-        cur_statistic[0].productSales = get_product_sales(request.POST['order_id'], cur_statistic[0].productSales)
+        cur_statistic[0].productSales = get_product_sales(
+            request.POST['order_id'], cur_statistic[0].productSales)
         cur_statistic[0].save()
     else:
-        new_statistic = Statistic(year = cur_time.year,
-                                  month = cur_time.month,
-                                  sales = cur_order.totalPrice,
-                                  expense = 0,
-                                  productSales=get_product_sales(request.POST['order_id'], None),
-                                  vendor = cur_order.vendor)
+        new_statistic = Statistic(year=cur_time.year,
+                                  month=cur_time.month,
+                                  sales=cur_order.totalPrice,
+                                  expense=0,
+                                  productSales=get_product_sales(
+                                      request.POST['order_id'], None),
+                                  vendor=cur_order.vendor)
         new_statistic.save()
 
     return HttpResponseRedirect(reverse('shop_edit') + "#list-orders")
 
+
 @login_required
 def update_category_name(request):
-    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    # cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
-    
     cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
 
-    # print(request.POST, request.POST['new_menu_name'], request.POST['menu_id'])
     if 'new_menu_name' not in request.POST or not request.POST['new_menu_name']:
         errors.append('You must have enter the new_menu name')
-    elif 'menu_id' not in request.POST or not request.POST['menu_id']:
-        errors.append('You must provide menu id')
-    else:
-        cur_category = Category.objects.filter(pk=int(request.POST['menu_id']))[0]
-        cur_category.name = request.POST['new_menu_name']
-        cur_category.save()
+        return redirect('shop_edit')
 
-    # context = get_shopEditPage_context(request)
-    
-    # return redirect('shop_edit')
-    # return render(request, 'groupbuying/shopEdit.html', context)
+    if 'menu_id' not in request.POST or not request.POST['menu_id']:
+        errors.append('You must provide menu id')
+        return redirect('shop_edit')
+
+    cur_category = Category.objects.filter(
+        pk=int(request.POST['menu_id']))[0]
+    cur_category.name = request.POST['new_menu_name']
+    cur_category.save()
 
     target_list = "#list-menu-" + str(request.POST['new_menu_name'])
+
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 
 @login_required
 def add_category(request):
-    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
 
     # Adds the new item to the database if the request parameter is present
     if 'new_category' not in request.POST or not request.POST['new_category']:
         errors.append('You must enter text to add new category.')
-    else:
-        new_category = Category(name=request.POST['new_category'],
-                                vendor=request.user)
-        new_category.save()
+        return redirect('shop_edit')
 
-    # context = get_shopEditPage_context(request)
-
-    # return redirect('shop_edit')
-    # return render(request, 'groupbuying/shopEdit.html', context)
-
+    new_category = Category(name=request.POST['new_category'],
+                            vendor=request.user)
+    new_category.save()
     target_list = "#list-menu-" + str(request.POST['new_category'])
+
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 
@@ -1063,146 +901,127 @@ def get_product_photo(request, product_id):
 
 @login_required
 def add_product(request):
-    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
 
     if 'name' not in request.POST or not request.POST['name'] or \
             'price' not in request.POST or not request.POST['price']:
         errors.append(
             'You must have at least "name and price" for the product')
+        return redirect('shop_edit')
+
+    if 'description' not in request.POST or 'price' not in request.POST or \
+            'current_category' not in request.POST:
+        errors.append('description or price NOT in form data')
+        return redirect('shop_edit')
+
+    new_product = Product(name=str(request.POST['name']),
+                          description=str(request.POST['description']),
+                          price=float(request.POST['price']),
+                          sellerId=str(request.user.id),
+                          isAvailable=True,
+                          saleVolume=0,
+                          vendor=request.user)
+
+    category = Category.objects.filter(
+        name=str(request.POST['current_category']), vendor=request.user)
+    if len(category) > 0:
+        new_product.category = category[0]
     else:
-        new_product = Product(name=str(request.POST['name']),
-                              description=str(request.POST['description']),
-                              price=float(request.POST['price']),
-                              sellerId=str(request.user.id),
-                              isAvailable=True,
-                              saleVolume=0,
-                              vendor=request.user)
+        print('FAIL: Cannot find correct category')
+        new_product.category = None
 
-        category = Category.objects.filter(
-            name=str(request.POST['current_category']), vendor=request.user)
-        if len(category) > 0:
-            new_product.category = category[0]
-        else:
-            print('FAIL: Cannot find correct category')
-            new_product.category = None
+    form = ProductForm(request.POST, request.FILES, instance=new_product)
+    if form.is_valid():
+        if 'image' in request.FILES:
+            new_product.image = form.cleaned_data['image']
+            new_product.content_type = form.cleaned_data['image'].content_type
+        form.save()
 
-        form = ProductForm(request.POST, request.FILES, instance=new_product)
-        if form.is_valid():
-            if 'image' in request.FILES:
-                new_product.image = form.cleaned_data['image']
-                new_product.content_type = form.cleaned_data['image'].content_type
-            # context['message'] = 'Product #{0} saved.'.format(new_product.id)
-            form.save()
-            # new_product.save()
-
-    # return redirect('shop_edit')
     target_list = "#list-menu-" + str(request.POST['current_category'])
+
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
+
 
 @login_required
 def update_product(request):
-    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
-
     if 'name' not in request.POST or not request.POST['name'] or \
             'price' not in request.POST or not request.POST['price']:
         errors.append(
             'You must have at least "name and price" for the product')
+        return redirect('shop_edit')
+
+    if 'product_id' not in request.POST or 'description' not in request.POST:
+        errors.append('product_id or description NOT in the form data')
+        return redirect('shop_edit')
+
+    cur_product = get_object_or_404(
+        Product, pk=int(request.POST['product_id']))
+
+    form = ProductForm(request.POST, request.FILES, instance=cur_product)
+    if form.is_valid():
+        cur_product.name = str(request.POST['name'])
+        cur_product.price = float(request.POST['price'])
+        cur_product.description = str(request.POST['description'])
+        if 'image' in request.FILES:
+            cur_product.image = form.cleaned_data['image']
+            cur_product.content_type = form.cleaned_data['image'].content_type
+        form.save()
     else:
-        # cur_product = Product.objects.get(pk=str(request.POST['product_id']))
-        cur_product = get_object_or_404(Product, pk=int(request.POST['product_id']))
+        print("FAIL: ProductForm is NOT valid")
 
-        # cur_product = Product.objects.filter(pk=str(product_id))[0] # Note: remember index for filter
-        form = ProductForm(request.POST, request.FILES, instance=cur_product)
-        if form.is_valid():
-            cur_product.name = str(request.POST['name'])
-            cur_product.price = float(request.POST['price'])
-            cur_product.description = str(request.POST['description'])
-            if 'image' in request.FILES:
-                cur_product.image = form.cleaned_data['image']
-                cur_product.content_type = form.cleaned_data['image'].content_type
-            form.save()
-        else:
-            print("FAIL: ProductForm is NOT valid")
-
-    # context['productForm'] = ProductForm()
-    # context['vendorInfo'] = cur_vendor_info
-    # context['vendorForm'] = VendorInfoForm()
-    # context['categories'] = Category.objects.all()
-    # context['products'] = Product.objects.all()
-
-    # return render(request, 'groupbuying/shopEdit.html', context)
     target_list = "#list-menu-" + cur_product.category.name
+
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
+
 
 @login_required
 def update_vendor_name(request):
-    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    # cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
     cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
 
     if 'vendor_name' not in request.POST or not request.POST['vendor_name']:
         errors.append('You must have enter the vendor name')
-    else:
-        cur_vendor_info.name = request.POST['vendor_name']
-        cur_vendor_info.save()
+        return redirect('shop_edit')
 
-    # context = get_shopEditPage_context(request)
+    cur_vendor_info.name = request.POST['vendor_name']
+    cur_vendor_info.save()
 
-    # return render(request, 'groupbuying/shopEdit.html', context)
     return HttpResponseRedirect(reverse('shop_edit') + "#list-profile")
 
 
 @login_required
 def update_vendor_info(request):
-    # context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    # cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
     cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
-    
-    # print(cur_vendor_info.tagList)
-    
-    # if 'description' not in request.POST or not request.POST['description'] or \
-    #         'image' not in request.FILES or not request.FILES['image']:
-    #     errors.append(
-    #         'You must have at least "description and image" for the vendor info')
-    # else:
-    # cur_vendor_info = VendorInfo.objects.filter(userProfile__user__id=request.user.id)[0] # Note: need to check
 
     form = VendorInfoForm(request.POST, request.FILES,
                           instance=cur_vendor_info)
     if not form.is_valid():
         print("FALI: form is NOT valid")
     else:
-        if request.POST['description']:
+        if 'description' in request.POST and request.POST['description']:
             cur_vendor_info.description = request.POST['description']
-        if request.POST['min_order']:
+        if 'min_order' in request.POST and request.POST['min_order']:
             cur_vendor_info.min_order = int(request.POST['min_order'])
-        # if request.POST['tagList']:
-            # print(request.POST['tagList'])
-            # print(cur_vendor_info.tagList)
-            # tmp_tags = re.split('[\*\,\/\+\s]', request.POST['tagList'])
-            # print(tmp_tags)
-            # for tag in tmp_tags:
-            #     if tag != '':
-            #         cur_vendor_info.tagList += ',' + str(tag)
-            # print(cur_vendor_info.tagList)
         if 'image' in request.FILES:
             cur_vendor_info.image = form.cleaned_data['image']
             cur_vendor_info.content_type = form.cleaned_data['image'].content_type
 
         form.save()
 
-    # context = get_shopEditPage_context(request)
-    # print(cur_vendor_info)
-    # return render(request, 'groupbuying/shopEdit.html', context)
     return HttpResponseRedirect(reverse('shop_edit') + "#list-profile")
+
 
 @login_required
 def rating_star(request):
     rating = ''
+    if 'shop_id' in request.POST and request.POST['shop_id']:
+        target_info = get_object_or_404(
+            VendorInfo, pk=int(request.POST['shop_id']))
+    else:
+        return redirect('shop/' + '1')
+
     if 'rating' in request.POST and request.POST['rating']:
         rating = request.POST['rating']
     else:
@@ -1213,13 +1032,10 @@ def rating_star(request):
 
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
-    # target_info = VendorInfo.objects.filter(id=str(request.user.id)).first() # TODO: correct?
-    # target_info = VendorInfo.objects.get(pk=int(request.POST['shop_id']))
-    target_info = get_object_or_404(VendorInfo, pk=int(request.POST['shop_id']))
 
     old_rating = Rating.objects.filter(Q(rater=customer_info) & Q(
         ratedTarget=target_info)).first()
-    
+
     if not old_rating:
         new_rating = Rating(rating=float(rating),
                             comment=request.POST['comment'],
@@ -1236,12 +1052,12 @@ def rating_star(request):
         old_rating.save()
 
     return redirect('shop/' + request.POST['shop_id'] + "#list-review")
-    # return HttpResponseRedirect(reverse('shop' + request.POST['shop_id']) + "#list-review")
+
 
 @login_required
 def update_customer_info(request, user_id):
     context = {}
-    errors = []  
+    errors = []
     cur_customer_info = CustomerInfo.objects.filter(id=str(user_id)).first()
 
     if 'description' in request.POST and request.POST['description']:
@@ -1289,7 +1105,7 @@ def rating_proc(obj):
 def search_text_proc(search_text):
     if search_text == "":
         search_result = VendorInfo.objects.all()
-    else:    
+    else:
         search_result = VendorInfo.objects.filter(Q(name__contains=search_text) | Q(
             address__contains=search_text) | Q(tagList__contains=search_text))
 
@@ -1309,7 +1125,7 @@ def fill_restaurant_info(obj):
     if not obj.min_order:
         restaurant['price'] = 0
     else:
-        restaurant['price'] = obj.min_order    
+        restaurant['price'] = obj.min_order
 
     if obj.image:
         restaurant['image'] = obj.image.url
@@ -1469,16 +1285,13 @@ def filter_by_rating(request, prev_result):
     avg_rating = Rating.objects.values('ratedTarget').annotate(
         avg_rating=Avg('rating')).order_by('ratedTarget')
 
-
     avg_rating_filtered = avg_rating.filter(rating__gte=rating)
-
 
     result = prev_result.filter(
         id__in=avg_rating_filtered.values('ratedTarget'))
 
-    
     for obj in prev_result:
-        if not avg_rating.filter(ratedTarget=int(obj.id)) and int(rating) <= 3 :
+        if not avg_rating.filter(ratedTarget=int(obj.id)) and int(rating) <= 3:
             result |= VendorInfo.objects.filter(id=obj.id)
 
     rating_query = "rating >= " + str(rating)

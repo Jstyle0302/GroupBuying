@@ -155,12 +155,12 @@ Profile
                         {% csrf_token %}
                         </form>
                         <form method="post" style="display:inline" action="{% url 'share' order_id %}">
-                            <button type="submit" class="btn btn-primary btn-sm">Continue shopping</button>
+                            <button type="submit" class="btn btn-warning btn-sm">Continue shopping</button>
                             {% csrf_token %}
                         </form>
                         {% if isFounder %}
                         <form method="post" style="display:inline" action="{% url 'delete_orderbundle' order_id %}">
-                            <button type="submit" class="btn btn-primary btn-sm">Delete Order</button>
+                            <button type="submit" class="btn btn-danger btn-sm">Delete Order</button>
                         {% csrf_token %}
                         </form>
                         {% endif %}
