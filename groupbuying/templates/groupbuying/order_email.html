@@ -41,6 +41,7 @@
                                                     <th scope="col">Count</th>
                                                     <th scope="col">Price</th>
                                                 </tr>
+                                            </thead>
                                             <tbody style="font-size: 15px;color: #808080; font-size: 150%;">
                                                 {% for item in order.order %}
                                                 {% if forloop.counter|divisibleby:"2" == 0 %}
@@ -66,11 +67,13 @@
                                                     <td style="background-color: #FFFFE0;">{{order.total}}</td>
                                                 </tr>
                                             </tbody>
-                                            </thead>
+                                            <tfoot>
+                                                <tr style="height:10vh; text-align: left;">
+                                                  <td colspan="4">Note: {{order.description}}</td>
+                                                </tr>
+                                            </tfoot>
                                         </table>
-                                        <textarea readonly class="form-control" id="orderDescription"
-                                            rows="3">{{order.description}}
-                                        </textarea>
+                                        
                                         <br>
                                     </td>
                                 </tr>
@@ -120,10 +123,12 @@
                                                     </td>
                                                 </tr>
                                             </tbody>
+                                            <tfoot>
+                                                <tr style="height:10vh; text-align: left;">
+                                                  <td colspan="4">Note: {{receipt.description}}</td>
+                                                </tr>
+                                            </tfoot>
                                         </table>
-                                        <textarea readonly class="form-control" id="orderDescription"
-                                            rows="3">{{receipt.description}}
-                                        </textarea>
                                     </td>
                                 </tr>
                             </table>

@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.http import HttpResponse, Http404
 from django.http import HttpResponseForbidden
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -687,7 +687,8 @@ def other_page(request):
 
 def delete_tag(request, tag_name):
     errors = []  # A list to record messages for any errors we encounter.
-    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
+    # cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
 
     # old_tag_list = cur_vendor_info.tagList.split(',')
     old_tag_list = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
@@ -733,7 +734,8 @@ def get_product_sales(order_bundle_id, pre_json):
         product_sale_dict[key] = float(product_sale_dict[key])
 
     # update json data
-    cur_order = OrderBundle.objects.get(pk=int(order_bundle_id))
+    cur_order = get_object_or_404(OrderBundle, pk=int(order_bundle_id))
+
     cur_order_units = OrderUnit.objects.filter(orderbundle=cur_order)
     for order in cur_order_units:
         if order.product.name in product_sale_dict:
@@ -746,38 +748,9 @@ def get_product_sales(order_bundle_id, pre_json):
     # print(json.dumps(product_sale_dict))
     # return json.dumps(product_sale_dict)
     # print(product_sale_dict)
-    print(product_sale_dict)
+    # print(product_sale_dict)
+    
     return dict(product_sale_dict)
-    
-
-def complete_order(request):
-    errors = []
-    cur_order = None
-    if 'order_id' not in request.POST or not request.POST['order_id']:
-        errors.append('You must have provide the order id')
-    else:
-        cur_order = OrderBundle.objects.get(pk=int(request.POST['order_id']))
-        cur_order.isCompleted = True
-        cur_order.save()
-    
-    # Add total sales to statistic
-    cur_time = datetime.datetime.now()
-    cur_statistic = Statistic.objects.filter(year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
-    # print(type(cur_statistic[0].productSales))
-    if len(cur_statistic) > 0:
-        cur_statistic[0].sales += cur_order.totalPrice
-        cur_statistic[0].productSales = get_product_sales(request.POST['order_id'], cur_statistic[0].productSales)
-        cur_statistic[0].save()
-    else:
-        new_statistic = Statistic(year = cur_time.year,
-                                  month = cur_time.month,
-                                  sales = cur_order.totalPrice,
-                                  expense = 0,
-                                  productSales=get_product_sales(request.POST['order_id'], None),
-                                  vendor = cur_order.vendor)
-        new_statistic.save()
-
-    return redirect('shop_edit')
 
 
 def get_statistic_json(request):
@@ -839,8 +812,8 @@ def get_reviews(vendor_id):
 
 def get_shopPage_context(request, shop_id):
     context = {}
-    cur_vendor_info = VendorInfo.objects.get(vendor_id=shop_id)
-    # cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
+    # cur_vendor_info = VendorInfo.objects.get(vendor_id=shop_id)
+    cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=shop_id)
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
@@ -865,7 +838,8 @@ def get_shopPage_context(request, shop_id):
 
 def get_shopEditPage_context(request):
     context = {}
-    cur_vendor_info = VendorInfo.objects.get(pk=request.user.id)
+    # cur_vendor_info = VendorInfo.objects.get(pk=request.user.id)
+    cur_vendor_info = get_object_or_404(VendorInfo, pk=request.user.id)
 
     # if True:
     #    cur_cutstome_info = CustomerInfo.objects.get(customer_id=request.user.id)
@@ -1059,11 +1033,45 @@ def shop_page(request, shop_id):
     return render(request, 'groupbuying/shop.html', context)
 
 @login_required
+def complete_order(request):
+    errors = []
+    cur_order = None
+    if 'order_id' not in request.POST or not request.POST['order_id']:
+        errors.append('You must have provide the order id')
+    else:
+        #cur_order = OrderBundle.objects.get(pk=int(request.POST['order_id']))
+        cur_order = get_object_or_404(OrderBundle, pk=int(request.POST['order_id']))
+        cur_order.isCompleted = True
+        cur_order.save()
+
+    # Add total sales to statistic
+    cur_time = datetime.datetime.now()
+    cur_statistic = Statistic.objects.filter(year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
+    # print(type(cur_statistic[0].productSales))
+    if len(cur_statistic) > 0:
+        cur_statistic[0].sales += cur_order.totalPrice
+        cur_statistic[0].productSales = get_product_sales(request.POST['order_id'], cur_statistic[0].productSales)
+        cur_statistic[0].save()
+    else:
+        new_statistic = Statistic(year = cur_time.year,
+                                  month = cur_time.month,
+                                  sales = cur_order.totalPrice,
+                                  expense = 0,
+                                  productSales=get_product_sales(request.POST['order_id'], None),
+                                  vendor = cur_order.vendor)
+        new_statistic.save()
+
+    return HttpResponseRedirect(reverse('shop_edit') + "#list-orders")
+
+@login_required
 def update_category_name(request):
     # context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
-    print(request.POST, request.POST['new_menu_name'], request.POST['menu_id'])
+    # cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    
+    cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
+
+    # print(request.POST, request.POST['new_menu_name'], request.POST['menu_id'])
     if 'new_menu_name' not in request.POST or not request.POST['new_menu_name']:
         errors.append('You must have enter the new_menu name')
     elif 'menu_id' not in request.POST or not request.POST['menu_id']:
@@ -1075,8 +1083,11 @@ def update_category_name(request):
 
     # context = get_shopEditPage_context(request)
     
-    return redirect('shop_edit')
+    # return redirect('shop_edit')
     # return render(request, 'groupbuying/shopEdit.html', context)
+
+    target_list = "#list-menu-" + str(request.POST['new_menu_name'])
+    return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 
 @login_required
@@ -1094,8 +1105,11 @@ def add_category(request):
 
     # context = get_shopEditPage_context(request)
 
-    return redirect('shop_edit')
+    # return redirect('shop_edit')
     # return render(request, 'groupbuying/shopEdit.html', context)
+
+    target_list = "#list-menu-" + str(request.POST['new_category'])
+    return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 
 @login_required
@@ -1135,11 +1149,6 @@ def add_product(request):
             new_product.category = None
 
         form = ProductForm(request.POST, request.FILES, instance=new_product)
-        # form = ImageUploadForm(request.POST, request.FILES)
-
-        # if not form.is_valid():
-        #     form = ProductForm()
-        # else:
         if form.is_valid():
             if 'image' in request.FILES:
                 new_product.image = form.cleaned_data['image']
@@ -1148,10 +1157,9 @@ def add_product(request):
             form.save()
             # new_product.save()
 
-    # context = get_shopEditPage_context(request)
-    # return render(request, 'groupbuying/shopEdit.html', context)
-    
-    return redirect('shop_edit')
+    # return redirect('shop_edit')
+    target_list = "#list-menu-" + str(request.POST['current_category'])
+    return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 @login_required
 def update_product(request):
@@ -1163,7 +1171,8 @@ def update_product(request):
         errors.append(
             'You must have at least "name and price" for the product')
     else:
-        cur_product = Product.objects.get(pk=str(request.POST['product_id']))
+        # cur_product = Product.objects.get(pk=str(request.POST['product_id']))
+        cur_product = get_object_or_404(Product, pk=int(request.POST['product_id']))
 
         # cur_product = Product.objects.filter(pk=str(product_id))[0] # Note: remember index for filter
         form = ProductForm(request.POST, request.FILES, instance=cur_product)
@@ -1185,13 +1194,15 @@ def update_product(request):
     # context['products'] = Product.objects.all()
 
     # return render(request, 'groupbuying/shopEdit.html', context)
-    return redirect('shop_edit')
+    target_list = "#list-menu-" + cur_product.category.name
+    return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 @login_required
 def update_vendor_name(request):
     # context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    # cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
 
     if 'vendor_name' not in request.POST or not request.POST['vendor_name']:
         errors.append('You must have enter the vendor name')
@@ -1202,13 +1213,16 @@ def update_vendor_name(request):
     # context = get_shopEditPage_context(request)
 
     # return render(request, 'groupbuying/shopEdit.html', context)
-    return redirect('shop_edit')
+    return HttpResponseRedirect(reverse('shop_edit') + "#list-profile")
+
 
 @login_required
 def update_vendor_info(request):
     # context = {}
     errors = []  # A list to record messages for any errors we encounter.
-    cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    # cur_vendor_info = VendorInfo.objects.get(vendor_id=request.user.id)
+    cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
+    
     # print(cur_vendor_info.tagList)
     
     # if 'description' not in request.POST or not request.POST['description'] or \
@@ -1245,7 +1259,7 @@ def update_vendor_info(request):
     # context = get_shopEditPage_context(request)
     # print(cur_vendor_info)
     # return render(request, 'groupbuying/shopEdit.html', context)
-    return redirect('shop_edit')
+    return HttpResponseRedirect(reverse('shop_edit') + "#list-profile")
 
 @login_required
 def rating_star(request):
@@ -1258,8 +1272,9 @@ def rating_star(request):
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
     # target_info = VendorInfo.objects.filter(id=str(request.user.id)).first() # TODO: correct?
-    target_info = VendorInfo.objects.get(pk=int(request.POST['shop_id']))
-    
+    # target_info = VendorInfo.objects.get(pk=int(request.POST['shop_id']))
+    target_info = get_object_or_404(VendorInfo, pk=int(request.POST['shop_id']))
+
     old_rating = Rating.objects.filter(Q(rater=customer_info) & Q(
         ratedTarget=target_info)).first()
     
@@ -1278,8 +1293,8 @@ def rating_star(request):
         old_rating.createDate = datetime.datetime.now()
         old_rating.save()
 
-    return redirect('shop/' + str(request.POST['shop_id']))
-
+    return redirect('shop/' + request.POST['shop_id'] + "#list-review")
+    # return HttpResponseRedirect(reverse('shop' + request.POST['shop_id']) + "#list-review")
 
 @login_required
 def update_customer_info(request, user_id):
