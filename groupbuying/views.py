@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.http import HttpResponse, Http404
 from django.http import HttpResponseForbidden
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -748,42 +748,9 @@ def get_product_sales(order_bundle_id, pre_json):
     # print(json.dumps(product_sale_dict))
     # return json.dumps(product_sale_dict)
     # print(product_sale_dict)
-    print(product_sale_dict)
+    # print(product_sale_dict)
+    
     return dict(product_sale_dict)
-    
-
-def complete_order(request):
-    errors = []
-    cur_order = None
-    if 'order_id' not in request.POST or not request.POST['order_id']:
-        errors.append('You must have provide the order id')
-    else:
-        #cur_order = OrderBundle.objects.get(pk=int(request.POST['order_id']))
-        cur_order = get_object_or_404(OrderBundle, pk=int(request.POST['order_id']))
-        cur_order.isCompleted = True
-        cur_order.save()
-    
-    # cur_vendor_info = get_object_or_404(VendorInfo, vendor_id=request.user.id)
-    # cur_vendor_info.prev_page = "#list-orders"
-
-    # Add total sales to statistic
-    cur_time = datetime.datetime.now()
-    cur_statistic = Statistic.objects.filter(year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
-    # print(type(cur_statistic[0].productSales))
-    if len(cur_statistic) > 0:
-        cur_statistic[0].sales += cur_order.totalPrice
-        cur_statistic[0].productSales = get_product_sales(request.POST['order_id'], cur_statistic[0].productSales)
-        cur_statistic[0].save()
-    else:
-        new_statistic = Statistic(year = cur_time.year,
-                                  month = cur_time.month,
-                                  sales = cur_order.totalPrice,
-                                  expense = 0,
-                                  productSales=get_product_sales(request.POST['order_id'], None),
-                                  vendor = cur_order.vendor)
-        new_statistic.save()
-
-    return redirect('shop_edit')
 
 
 def get_statistic_json(request):
@@ -1066,6 +1033,37 @@ def shop_page(request, shop_id):
     return render(request, 'groupbuying/shop.html', context)
 
 @login_required
+def complete_order(request):
+    errors = []
+    cur_order = None
+    if 'order_id' not in request.POST or not request.POST['order_id']:
+        errors.append('You must have provide the order id')
+    else:
+        #cur_order = OrderBundle.objects.get(pk=int(request.POST['order_id']))
+        cur_order = get_object_or_404(OrderBundle, pk=int(request.POST['order_id']))
+        cur_order.isCompleted = True
+        cur_order.save()
+
+    # Add total sales to statistic
+    cur_time = datetime.datetime.now()
+    cur_statistic = Statistic.objects.filter(year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
+    # print(type(cur_statistic[0].productSales))
+    if len(cur_statistic) > 0:
+        cur_statistic[0].sales += cur_order.totalPrice
+        cur_statistic[0].productSales = get_product_sales(request.POST['order_id'], cur_statistic[0].productSales)
+        cur_statistic[0].save()
+    else:
+        new_statistic = Statistic(year = cur_time.year,
+                                  month = cur_time.month,
+                                  sales = cur_order.totalPrice,
+                                  expense = 0,
+                                  productSales=get_product_sales(request.POST['order_id'], None),
+                                  vendor = cur_order.vendor)
+        new_statistic.save()
+
+    return HttpResponseRedirect(reverse('shop_edit') + "#list-orders")
+
+@login_required
 def update_category_name(request):
     # context = {}
     errors = []  # A list to record messages for any errors we encounter.
@@ -1085,8 +1083,11 @@ def update_category_name(request):
 
     # context = get_shopEditPage_context(request)
     
-    return redirect('shop_edit')
+    # return redirect('shop_edit')
     # return render(request, 'groupbuying/shopEdit.html', context)
+
+    target_list = "#list-menu-" + str(request.POST['new_menu_name'])
+    return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 
 @login_required
@@ -1104,8 +1105,11 @@ def add_category(request):
 
     # context = get_shopEditPage_context(request)
 
-    return redirect('shop_edit')
+    # return redirect('shop_edit')
     # return render(request, 'groupbuying/shopEdit.html', context)
+
+    target_list = "#list-menu-" + str(request.POST['new_category'])
+    return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 
 @login_required
@@ -1145,11 +1149,6 @@ def add_product(request):
             new_product.category = None
 
         form = ProductForm(request.POST, request.FILES, instance=new_product)
-        # form = ImageUploadForm(request.POST, request.FILES)
-
-        # if not form.is_valid():
-        #     form = ProductForm()
-        # else:
         if form.is_valid():
             if 'image' in request.FILES:
                 new_product.image = form.cleaned_data['image']
@@ -1158,10 +1157,9 @@ def add_product(request):
             form.save()
             # new_product.save()
 
-    # context = get_shopEditPage_context(request)
-    # return render(request, 'groupbuying/shopEdit.html', context)
-    
-    return redirect('shop_edit')
+    # return redirect('shop_edit')
+    target_list = "#list-menu-" + str(request.POST['current_category'])
+    return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 @login_required
 def update_product(request):
@@ -1196,7 +1194,8 @@ def update_product(request):
     # context['products'] = Product.objects.all()
 
     # return render(request, 'groupbuying/shopEdit.html', context)
-    return redirect('shop_edit')
+    target_list = "#list-menu-" + cur_product.category.name
+    return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
 @login_required
 def update_vendor_name(request):
@@ -1214,7 +1213,8 @@ def update_vendor_name(request):
     # context = get_shopEditPage_context(request)
 
     # return render(request, 'groupbuying/shopEdit.html', context)
-    return redirect('shop_edit')
+    return HttpResponseRedirect(reverse('shop_edit') + "#list-profile")
+
 
 @login_required
 def update_vendor_info(request):
@@ -1259,7 +1259,7 @@ def update_vendor_info(request):
     # context = get_shopEditPage_context(request)
     # print(cur_vendor_info)
     # return render(request, 'groupbuying/shopEdit.html', context)
-    return redirect('shop_edit')
+    return HttpResponseRedirect(reverse('shop_edit') + "#list-profile")
 
 @login_required
 def rating_star(request):
@@ -1293,8 +1293,8 @@ def rating_star(request):
         old_rating.createDate = datetime.datetime.now()
         old_rating.save()
 
-    return redirect('shop/' + str(request.POST['shop_id']))
-
+    return redirect('shop/' + request.POST['shop_id'] + "#list-review")
+    # return HttpResponseRedirect(reverse('shop' + request.POST['shop_id']) + "#list-review")
 
 @login_required
 def update_customer_info(request, user_id):
