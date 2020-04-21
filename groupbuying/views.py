@@ -983,9 +983,9 @@ def update_vendor_info(request):
     if not form.is_valid():
         print("FALI: form is NOT valid")
     else:
-        if request.POST['description']:
+        if 'description' in request.POST and request.POST['description']:
             cur_vendor_info.description = request.POST['description']
-        if request.POST['min_order']:
+        if 'min_order' in request.POST and request.POST['min_order']:
             cur_vendor_info.min_order = int(request.POST['min_order'])
         if 'image' in request.FILES:
             cur_vendor_info.image = form.cleaned_data['image']
