@@ -61,11 +61,10 @@ def home_page(request):
         context['restaurants'].append(restaurant)
         context['rating'].append(restaurant['rating'])
 
-
     context['restaurants'] = sorted(context['restaurants'],
                                              key=lambda i: i['rating'],
                                              reverse=True)
-    print(context['restaurants'])        
+    
     context['recommends'] = []
     dict_recommand = {}
     i = 0
@@ -1209,6 +1208,9 @@ def rating_star(request):
     else:
         return redirect('shop/' + str(request.POST['shop_id']))
 
+    if 'comment' not in request.POST:
+        return redirect('home')
+
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
     # target_info = VendorInfo.objects.filter(id=str(request.user.id)).first() # TODO: correct?
@@ -1427,8 +1429,12 @@ def filter_by_price(request, prev_result):
     if ('price_filter' not in request.POST
             or not request.POST['price_filter']):
         return prev_result, price_query
-    price = int(request.POST['price_filter'])
 
+    if str(request.POST['price_filter']).isnumeric():
+        price = int(request.POST['price_filter'])
+    else:
+        price = 0
+        
     if price < 100:
         result = prev_result.filter(
             min_order__lte=price)
