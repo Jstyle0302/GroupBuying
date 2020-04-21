@@ -819,16 +819,18 @@ def complete_order(request):
     cur_order = None
     if 'order_id' not in request.POST or not request.POST['order_id']:
         errors.append('You must have provide the order id')
-    else:
-        cur_order = get_object_or_404(
-            OrderBundle, pk=int(request.POST['order_id']))
-        cur_order.isCompleted = True
-        cur_order.save()
+        return HttpResponseRedirect(reverse('shop_edit') + "#list-orders")
+
+    cur_order = get_object_or_404(
+        OrderBundle, pk=int(request.POST['order_id']))
+    cur_order.isCompleted = True
+    cur_order.save()
 
     # Add total sales to statistic
     cur_time = datetime.datetime.now()
     cur_statistic = Statistic.objects.filter(
         year=cur_time.year, month=cur_time.month, vendor__id=request.user.id)
+
     if len(cur_statistic) > 0:
         cur_statistic[0].sales += cur_order.totalPrice
         cur_statistic[0].productSales = get_product_sales(
@@ -854,13 +856,16 @@ def update_category_name(request):
 
     if 'new_menu_name' not in request.POST or not request.POST['new_menu_name']:
         errors.append('You must have enter the new_menu name')
-    elif 'menu_id' not in request.POST or not request.POST['menu_id']:
+        return redirect('shop_edit')
+
+    if 'menu_id' not in request.POST or not request.POST['menu_id']:
         errors.append('You must provide menu id')
-    else:
-        cur_category = Category.objects.filter(
-            pk=int(request.POST['menu_id']))[0]
-        cur_category.name = request.POST['new_menu_name']
-        cur_category.save()
+        return redirect('shop_edit')
+
+    cur_category = Category.objects.filter(
+        pk=int(request.POST['menu_id']))[0]
+    cur_category.name = request.POST['new_menu_name']
+    cur_category.save()
 
     target_list = "#list-menu-" + str(request.POST['new_menu_name'])
 
@@ -874,11 +879,11 @@ def add_category(request):
     # Adds the new item to the database if the request parameter is present
     if 'new_category' not in request.POST or not request.POST['new_category']:
         errors.append('You must enter text to add new category.')
-    else:
-        new_category = Category(name=request.POST['new_category'],
-                                vendor=request.user)
-        new_category.save()
+        return redirect('shop_edit')
 
+    new_category = Category(name=request.POST['new_category'],
+                            vendor=request.user)
+    new_category.save()
     target_list = "#list-menu-" + str(request.POST['new_category'])
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
@@ -902,29 +907,35 @@ def add_product(request):
             'price' not in request.POST or not request.POST['price']:
         errors.append(
             'You must have at least "name and price" for the product')
+        return redirect('shop_edit')
+
+    if 'description' not in request.POST or 'price' not in request.POST or \
+            'current_category' not in request.POST:
+        errors.append('description or price NOT in form data')
+        return redirect('shop_edit')
+
+    new_product = Product(name=str(request.POST['name']),
+                          description=str(request.POST['description']),
+                          price=float(request.POST['price']),
+                          sellerId=str(request.user.id),
+                          isAvailable=True,
+                          saleVolume=0,
+                          vendor=request.user)
+
+    category = Category.objects.filter(
+        name=str(request.POST['current_category']), vendor=request.user)
+    if len(category) > 0:
+        new_product.category = category[0]
     else:
-        new_product = Product(name=str(request.POST['name']),
-                              description=str(request.POST['description']),
-                              price=float(request.POST['price']),
-                              sellerId=str(request.user.id),
-                              isAvailable=True,
-                              saleVolume=0,
-                              vendor=request.user)
+        print('FAIL: Cannot find correct category')
+        new_product.category = None
 
-        category = Category.objects.filter(
-            name=str(request.POST['current_category']), vendor=request.user)
-        if len(category) > 0:
-            new_product.category = category[0]
-        else:
-            print('FAIL: Cannot find correct category')
-            new_product.category = None
-
-        form = ProductForm(request.POST, request.FILES, instance=new_product)
-        if form.is_valid():
-            if 'image' in request.FILES:
-                new_product.image = form.cleaned_data['image']
-                new_product.content_type = form.cleaned_data['image'].content_type
-            form.save()
+    form = ProductForm(request.POST, request.FILES, instance=new_product)
+    if form.is_valid():
+        if 'image' in request.FILES:
+            new_product.image = form.cleaned_data['image']
+            new_product.content_type = form.cleaned_data['image'].content_type
+        form.save()
 
     target_list = "#list-menu-" + str(request.POST['current_category'])
 
@@ -934,25 +945,30 @@ def add_product(request):
 @login_required
 def update_product(request):
     errors = []  # A list to record messages for any errors we encounter.
-
     if 'name' not in request.POST or not request.POST['name'] or \
             'price' not in request.POST or not request.POST['price']:
         errors.append(
             'You must have at least "name and price" for the product')
+        return redirect('shop_edit')
+
+    if 'product_id' not in request.POST or 'description' not in request.POST:
+        errors.append('product_id or description NOT in the form data')
+        return redirect('shop_edit')
+
+    cur_product = get_object_or_404(
+        Product, pk=int(request.POST['product_id']))
+
+    form = ProductForm(request.POST, request.FILES, instance=cur_product)
+    if form.is_valid():
+        cur_product.name = str(request.POST['name'])
+        cur_product.price = float(request.POST['price'])
+        cur_product.description = str(request.POST['description'])
+        if 'image' in request.FILES:
+            cur_product.image = form.cleaned_data['image']
+            cur_product.content_type = form.cleaned_data['image'].content_type
+        form.save()
     else:
-        cur_product = get_object_or_404(
-            Product, pk=int(request.POST['product_id']))
-        form = ProductForm(request.POST, request.FILES, instance=cur_product)
-        if form.is_valid():
-            cur_product.name = str(request.POST['name'])
-            cur_product.price = float(request.POST['price'])
-            cur_product.description = str(request.POST['description'])
-            if 'image' in request.FILES:
-                cur_product.image = form.cleaned_data['image']
-                cur_product.content_type = form.cleaned_data['image'].content_type
-            form.save()
-        else:
-            print("FAIL: ProductForm is NOT valid")
+        print("FAIL: ProductForm is NOT valid")
 
     target_list = "#list-menu-" + cur_product.category.name
 
@@ -966,9 +982,10 @@ def update_vendor_name(request):
 
     if 'vendor_name' not in request.POST or not request.POST['vendor_name']:
         errors.append('You must have enter the vendor name')
-    else:
-        cur_vendor_info.name = request.POST['vendor_name']
-        cur_vendor_info.save()
+        return redirect('shop_edit')
+
+    cur_vendor_info.name = request.POST['vendor_name']
+    cur_vendor_info.save()
 
     return HttpResponseRedirect(reverse('shop_edit') + "#list-profile")
 
@@ -999,6 +1016,12 @@ def update_vendor_info(request):
 @login_required
 def rating_star(request):
     rating = ''
+    if 'shop_id' in request.POST and request.POST['shop_id']:
+        target_info = get_object_or_404(
+            VendorInfo, pk=int(request.POST['shop_id']))
+    else:
+        return redirect('shop/' + '1')
+
     if 'rating' in request.POST and request.POST['rating']:
         rating = request.POST['rating']
     else:
@@ -1006,8 +1029,6 @@ def rating_star(request):
 
     customer_info = CustomerInfo.objects.filter(
         id=str(request.user.id)).first()
-    target_info = get_object_or_404(
-        VendorInfo, pk=int(request.POST['shop_id']))
 
     old_rating = Rating.objects.filter(Q(rater=customer_info) & Q(
         ratedTarget=target_info)).first()
