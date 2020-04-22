@@ -153,7 +153,7 @@ def send_email_page(request, order_id):
     for orderUnit in orderUnits:
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
-        total_price += int(orderUnit.product.price)*int(orderUnit.quantity)
+        total_price += float(orderUnit.product.price)*int(orderUnit.quantity)
         dictOrder['order'] = []
         subOrder = {
             'product': orderUnit.product.name,
@@ -223,7 +223,7 @@ def remove_orderUnit(request, order_unit_id):
             'price': orderUnit.product.price,
         }
         dictOrder['total'] = int(orderUnit.quantity) * \
-            int(orderUnit.product.price)
+            float(orderUnit.product.price)
 
         summary = {
             'product': orderUnit.product.name,
@@ -306,7 +306,7 @@ def show_order_page(request, order_id, from_profile):
             'price': orderUnit.product.price,
         }
         dictOrder['total'] = int(orderUnit.quantity) * \
-            int(orderUnit.product.price)
+            float(orderUnit.product.price)
 
         summary = {
             'product': orderUnit.product.name,
@@ -330,7 +330,7 @@ def show_order_page(request, order_id, from_profile):
     total_price = 0
 
     for order in context['receipt']['summary']['order']:
-        order['price'] = (int(order['count']) * int(order['price']))
+        order['price'] = (int(order['count']) * float(order['price']))
         total_price += order['price']
 
     context['receipt']['summary']['total'] = total_price
@@ -374,7 +374,6 @@ def order_page(request, order_id):
     orderbundle = new_orderbundle
 
     if orderbundle.holder.id == request.user.id:
-        print('tt')
         context['isFounder'] = True
         orderUnits = OrderUnit.objects.filter(Q(orderbundle=orderbundle))
 
@@ -402,7 +401,7 @@ def order_page(request, order_id):
             'price': orderUnit.product.price,
         }
         dictOrder['total'] = int(orderUnit.quantity) * \
-            int(orderUnit.product.price)
+            float(orderUnit.product.price)
 
         summary = {
             'product': orderUnit.product.name,
@@ -426,7 +425,7 @@ def order_page(request, order_id):
     total_price = 0
 
     for order in context['receipt']['summary']['order']:
-        order['price'] = (int(order['count']) * int(order['price']))
+        order['price'] = (int(order['count']) * float(order['price']))
         total_price += order['price']
 
     context['receipt']['summary']['total'] = total_price
@@ -511,7 +510,7 @@ def checkout_to_shopper(request, order_id):
             'price': orderUnit.product.price
         }
         dictOrder['total'] = int(orderUnit.quantity) * \
-            int(orderUnit.product.price)
+            float(orderUnit.product.price)
 
         summary = {
             'product': orderUnit.product.name,
@@ -535,7 +534,7 @@ def checkout_to_shopper(request, order_id):
     total_price = 0
 
     for order in context['receipt']['summary']['order']:
-        order['price'] = (int(order['count']) * int(order['price']))
+        order['price'] = (int(order['count']) * float(order['price']))
         total_price += order['price']
 
     context['receipt']['summary']['total'] = total_price
