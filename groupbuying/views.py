@@ -63,9 +63,9 @@ def home_page(request):
         context['rating'].append(restaurant['rating'])
 
     context['restaurants'] = sorted(context['restaurants'],
-                                             key=lambda i: i['rating'],
-                                             reverse=True)
-    
+                                    key=lambda i: i['rating'],
+                                    reverse=True)
+
     context['recommends'] = []
     dict_recommand = {}
     i = 0
@@ -849,10 +849,11 @@ def complete_order(request):
 
     holder_user = User.objects.filter(Q(id=str(cur_order.vendor.id)))[0]
     subject = str(holder_user.username) + "'s order at " + \
-        cur_order.vendor.name + "(order_id:" + str(cur_order.id) + ") is completed"
+        cur_order.vendor.name + \
+        "(order_id:" + str(cur_order.id) + ") is completed"
     context = {}
-    context['order_completed'] = 1  
-    context['founder'] =  holder_user.username
+    context['order_completed'] = 1
+    context['founder'] = holder_user.username
     html_message = render_to_string('groupbuying/order_email.html', context)
     plain_message = strip_tags(html_message)
     from_email = 'groupbuyingTeam23@gmail.com'
@@ -899,7 +900,7 @@ def add_category(request):
     new_category = Category(name=request.POST['new_category'],
                             vendor=request.user)
     new_category.save()
-    target_list = "#list-menu-" + str(request.POST['new_category'])
+    target_list = "#list-menu-" + str(request.POST['new_category'].replace(" ", ""))
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
@@ -1265,7 +1266,7 @@ def filter_by_price(request, prev_result):
         price = int(request.POST['price_filter'])
     else:
         price = 0
-        
+
     if price < 100:
         result = prev_result.filter(
             min_order__lte=price)
