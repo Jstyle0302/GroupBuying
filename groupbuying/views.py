@@ -153,7 +153,7 @@ def send_email_page(request, order_id):
     for orderUnit in orderUnits:
         dictOrder = {}
         dictOrder['username'] = (orderUnit.buyer.name)
-        total_price += int(orderUnit.product.price)*int(orderUnit.quantity)
+        total_price += float(orderUnit.product.price) * float(orderUnit.quantity)
         dictOrder['order'] = []
         subOrder = {
             'product': orderUnit.product.name,
@@ -760,8 +760,10 @@ def get_shopPage_context(request, shop_id):
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
+    
     tag_re = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     if tag_re[0] != '':
+        tag_re = [tag for tag in tag_re if tag != '']
         context['tags'] = tag_re
 
     context['incompleted'], context['finished'] = get_orders(
@@ -786,9 +788,12 @@ def get_shopEditPage_context(request):
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
+
     tag_re = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     if tag_re[0] != '':
+        tag_re = [tag for tag in tag_re if tag != '']
         context['tags'] = tag_re
+    
     context['incompleted'], context['finished'] = get_orders(
         cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
