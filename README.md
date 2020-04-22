@@ -1,6 +1,8 @@
 # team23
 Website link: http://ec2-18-191-21-131.us-east-2.compute.amazonaws.com/groupbuying/
 
+Final presentaion: https://docs.google.com/presentation/d/1BDxbyl8OHBT2B5KBGfb4mzyAbBk8woZhDKaLX5LLz2Y/edit?usp=sharing
+
 Sprint #1 Presentation link: https://docs.google.com/presentation/d/1a4ASrTPqu-wAwuPuVu2xb9VW79v-2UeRojcAiPfRZDA/edit?usp=sharing
 
 Proposal link: https://docs.google.com/document/d/1NdTe2fYgq8__nJ3FEP98KG_uEWeCL9cmPIb3NeHwVME/edit?usp=sharing
