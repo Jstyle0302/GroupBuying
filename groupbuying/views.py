@@ -821,11 +821,9 @@ def shop_page(request, shop_id):
 
 def random_shop(request):
     total_shops_num = len(VendorInfo.objects.all())
-    shop_id = random.randint(0, total_shops_num)
-    context = {}
-    context = get_shopPage_context(request, shop_id)
+    shop_id = random.randint(1, total_shops_num)
 
-    return render(request, 'groupbuying/shop.html', context)
+    return redirect('shop/' + str(shop_id))
 
 
 @login_required
