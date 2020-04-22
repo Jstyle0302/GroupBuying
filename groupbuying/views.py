@@ -1,6 +1,7 @@
 import json
 import operator
 import math
+import random
 import datetime
 import re
 
@@ -759,7 +760,7 @@ def get_shopPage_context(request, shop_id):
 
     context['menu'] = get_menu(cur_vendor_info.vendor_id)
     context['posts'] = get_reviews(cur_vendor_info.vendor_id)
-    
+
     tag_re = re.split('[\*\,\/\+\s]', cur_vendor_info.tagList)
     if tag_re[0] != '':
         tag_re = [tag for tag in tag_re if tag != '']
@@ -792,7 +793,7 @@ def get_shopEditPage_context(request):
     if tag_re[0] != '':
         tag_re = [tag for tag in tag_re if tag != '']
         context['tags'] = tag_re
-    
+
     context['incompleted'], context['finished'] = get_orders(
         cur_vendor_info.vendor_id)
     context['productForm'] = ProductForm()
@@ -816,6 +817,13 @@ def shop_page(request, shop_id):
     context = get_shopPage_context(request, shop_id)
 
     return render(request, 'groupbuying/shop.html', context)
+
+
+def random_shop(request):
+    total_shops_num = len(VendorInfo.objects.all())
+    shop_id = random.randint(1, total_shops_num)
+
+    return redirect('shop/' + str(shop_id))
 
 
 @login_required
@@ -887,7 +895,8 @@ def update_category_name(request):
     cur_category.name = request.POST['new_menu_name']
     cur_category.save()
 
-    target_list = "#list-menu-" + str(request.POST['new_menu_name'].replace(" ", ""))
+    target_list = "#list-menu-" + \
+        str(request.POST['new_menu_name'].replace(" ", ""))
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
@@ -904,7 +913,8 @@ def add_category(request):
     new_category = Category(name=request.POST['new_category'],
                             vendor=request.user)
     new_category.save()
-    target_list = "#list-menu-" + str(request.POST['new_category'].replace(" ", ""))
+    target_list = "#list-menu-" + \
+        str(request.POST['new_category'].replace(" ", ""))
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
@@ -957,7 +967,8 @@ def add_product(request):
             new_product.content_type = form.cleaned_data['image'].content_type
         form.save()
 
-    target_list = "#list-menu-" + str(request.POST['current_category'].replace(" ", ""))
+    target_list = "#list-menu-" + \
+        str(request.POST['current_category'].replace(" ", ""))
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 

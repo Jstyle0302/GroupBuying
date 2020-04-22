@@ -13,7 +13,7 @@ class ProductForm(forms.ModelForm):
         fields = ['name', 'price', 'description', 'image']
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'name', 'class': 'form-control', 'id': 'id_product'}),
-            'price': forms.NumberInput(attrs={'placeholder': 'Price', 'min': '0', 'step':'0.1', 'class': 'form-control', 'id': 'id_product_price'}),
+            'price': forms.NumberInput(attrs={'placeholder': 'Price', 'min': '0', 'step': '0.1', 'class': 'form-control', 'id': 'id_product_price'}),
             'description': forms.Textarea(attrs={'cols': 70, 'rows': 5, 'placeholder': 'Write something about your product!', 'class': 'form-control'}),
             'image': forms.FileInput(attrs={'class': 'form-control-file', 'id': 'id_product_picture'})
         }
