@@ -1,5 +1,4 @@
 # team23
-Repository for team23
 Website link: http://ec2-18-191-21-131.us-east-2.compute.amazonaws.com/groupbuying/
 
 Sprint #1 Presentation link: https://docs.google.com/presentation/d/1a4ASrTPqu-wAwuPuVu2xb9VW79v-2UeRojcAiPfRZDA/edit?usp=sharing
