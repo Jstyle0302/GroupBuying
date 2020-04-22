@@ -1231,6 +1231,27 @@ def fill_context_filter_query_rules(context, fitler_query):
 
     return context
 
+def filtering_chatbot(request):
+    context = {}
+    search_text = ''
+    if request.method == 'POST':
+        return redirect(reverse('home'))
+
+    def fitler_query(): return 0
+
+    result = VendorInfo.objects.all()
+
+    result, fitler_query.price = filter_by_price(request, result)
+    result, fitler_query.tag = filter_by_tag(request, result)
+    fitler_query.rating = ''
+
+    context = fill_restaurant_context_info(result, search_text, 1)
+    context = fill_context_filter_query_rules(context, fitler_query)
+    context['restaurants'] = context['restaurants'][(
+        0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
+    cache.set('search_result', result)
+
+    return render(request, 'groupbuying/search.html', context)
 
 def filtering(request):
     context = {}
@@ -1262,12 +1283,17 @@ def filtering(request):
 
 def filter_by_price(request, prev_result):
     price_query = ''
-    if ('price_filter' not in request.POST
-            or not request.POST['price_filter']):
+    if (request.method == 'POST' and ('price_filter' not in request.POST
+            or not request.POST['price_filter'])):
+        return prev_result, price_query
+    if (request.method == 'GET' and ('price_filter' not in request.GET
+            or not request.GET['price_filter'])):
         return prev_result, price_query
 
-    if str(request.POST['price_filter']).isnumeric():
+    if request.method == 'POST' and str(request.POST['price_filter']).isnumeric():
         price = int(request.POST['price_filter'])
+    elif request.method == 'GET' and str(request.GET['price_filter']).isnumeric():
+        price = int(request.GET['price_filter'])
     else:
         price = 0
 
@@ -1325,10 +1351,15 @@ def filter_by_tag(request, prev_result):
     result = VendorInfo.objects.none()
     all_tag = get_all_tags()
 
-    for tag in all_tag:
-        if tag in request.POST:
-            fitler_tag.append(tag)
-
+    if (request.method == 'POST'):
+        for tag in all_tag:
+            if tag in request.POST:
+                fitler_tag.append(tag)
+    elif (request.method == 'GET'):
+        for tag in all_tag:
+            if tag in request.GET:
+                fitler_tag.append(tag)
+                
     if not fitler_tag:
         return prev_result, fitler_tag
 
@@ -1374,19 +1405,23 @@ def sorting(request):
 def search_page(request):
     context = {}
     errors = []
-
-    if request.method == 'GET':
-        return render(request, 'groupbuying/search.html', context)
-
-    if ('search_text' not in request.POST):
+    
+    if request.method == 'GET' and 'search_text' in request.GET:
+        search_text = request.GET['search_text']
+    elif request.method == 'GET' and 'search_text' not in request.GET:    
+        search_text = ""
+    elif request.method == 'POST' and ('search_text' not in request.POST):
         errors.append('Empty text. Please must enter restaurant info.')
         return render(request, 'groupbuying/search.html', context)
+    else :
+        search_text = request.POST['search_text']
 
-    search_result = search_text_proc(request.POST['search_text'])
+    
+    search_result = search_text_proc(search_text)
     cache.set('search_result', search_result)
     page = 1
     context = fill_restaurant_context_info(search_result,
-                                           request.POST['search_text'], page)
+                                           search_text, page)
 
     context['restaurants'] = context['restaurants'][(
         0)*PAGESIZE_CONSTANT():1*PAGESIZE_CONSTANT()]
