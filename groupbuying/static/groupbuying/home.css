@@ -1,5 +1,5 @@
 {% load static%}
 .banner {
     background-image: url('home_slide.jpg');
-    background-size: 100%;
+    background-size: cover;
 }
