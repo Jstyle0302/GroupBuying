@@ -883,7 +883,7 @@ def update_category_name(request):
     cur_category.name = request.POST['new_menu_name']
     cur_category.save()
 
-    target_list = "#list-menu-" + str(request.POST['new_menu_name'])
+    target_list = "#list-menu-" + str(request.POST['new_menu_name'].replace(" ", ""))
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
@@ -953,7 +953,7 @@ def add_product(request):
             new_product.content_type = form.cleaned_data['image'].content_type
         form.save()
 
-    target_list = "#list-menu-" + str(request.POST['current_category'])
+    target_list = "#list-menu-" + str(request.POST['current_category'].replace(" ", ""))
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
@@ -986,7 +986,7 @@ def update_product(request):
     else:
         print("FAIL: ProductForm is NOT valid")
 
-    target_list = "#list-menu-" + cur_product.category.name
+    target_list = "#list-menu-" + (cur_product.category.name).replace(" ", "")
 
     return HttpResponseRedirect(reverse('shop_edit') + target_list)
 
